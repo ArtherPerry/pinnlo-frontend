@@ -1,0 +1,225 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ── Portal grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ── Portal card ── */
+.portalCard {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color var(--transition-fast);
+}
+
+.portalCard:hover { border-color: var(--color-teal-200); }
+
+/* ── Color strip ── */
+.colorStrip {
+  height: 6px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+/* ── Card body ── */
+.cardBody {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  flex: 1;
+}
+
+.cardTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.cardTopLeft { display: flex; flex-direction: column; gap: 2px; }
+
+.clientName {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.companyName {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* ── Status badge ── */
+.statusBadge {
+  font-size: var(--text-small);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.statusActive    { background: var(--color-success-light); color: var(--color-success); }
+.statusInactive  { background: var(--color-bg-2);          color: var(--color-muted);   }
+.statusProtected { background: var(--color-warning-light); color: var(--color-warning); }
+
+/* ── Stats row ── */
+.cardStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.statValue {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.statLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+/* ── Share URL ── */
+.shareUrlRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  border: 0.5px solid var(--color-border);
+}
+
+.shareUrl {
+  font-size: var(--text-small);
+  color: var(--color-teal-600);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.copyBtn {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.copyBtn:hover {
+  background: var(--color-border);
+  color: var(--color-ink);
+}
+
+/* ── Sections list ── */
+.sectionsList {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.sectionChip {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-2);
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.sectionChipEnabled {
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  border: 0.5px solid var(--color-teal-200);
+}
+
+/* ── Card footer ── */
+.cardFooter {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-top: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+/* ── Empty ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.emptyIcon { width: 48px; height: 48px; color: var(--color-border); }
+.emptyTitle { font-size: var(--text-h3); font-weight: 600; color: var(--color-ink); }
+.emptySub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+/* ── Skeleton ── */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--space-4);
+}
+
+.skeletonCard {
+  height: 240px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-2) 25%,
+    var(--color-border) 50%,
+    var(--color-bg-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}

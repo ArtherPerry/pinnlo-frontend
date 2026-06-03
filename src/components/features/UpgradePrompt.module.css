@@ -1,0 +1,105 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+  min-height: 320px;
+}
+
+.icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.iconAgency     { background: #EEEDFE; }
+.iconEnterprise { background: var(--color-warning-light); }
+
+.title {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.sub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+  max-width: 380px;
+  line-height: 1.7;
+}
+
+/* ── Feature list ── */
+.featureList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: flex-start;
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-6);
+  width: 100%;
+  max-width: 380px;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+.featureCheck {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: white;
+}
+
+.checkAgency     { background: #7F77DD; }
+.checkEnterprise { background: var(--color-warning); }
+
+/* ── Plan badge ── */
+.planBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-small);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+}
+
+.badgeAgency     { background: #EEEDFE; color: #26215C; }
+.badgeEnterprise { background: var(--color-warning-light); color: var(--color-warning); }
+
+/* ── Buttons ── */
+.actions {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.currentPlan {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: var(--space-1);
+}

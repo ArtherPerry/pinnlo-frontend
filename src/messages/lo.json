@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "login": "ເຂົ້າສູ່ລະບົບ",
+    "signup": "ລົງທະບຽນ",
+    "logout": "ອອກຈາກລະບົບ",
+    "email": "ອີເມລ",
+    "password": "ລະຫັດຜ່ານ",
+    "agency_name": "ຊື່ເອເຈນຊີ"
+  },
+  "nav": {
+    "dashboard": "ແດສບອດ",
+    "posts": "ໂພສ",
+    "crm": "ລູກຄ້າ",
+    "analytics": "ການວິເຄາະ",
+    "settings": "ການຕັ້ງຄ່າ",
+    "approval": "ການອະນຸມັດ",
+    "competitors": "ຄູ່ແຂ່ງ",
+"benchmarks":  "ການປຽບທຽບ",
+"portals":     "ລາຍງານລູກຄ້າ",
+"listening":   "ການຟັງສັງຄົມ",
+"influencers": "ຜູ້ມີອິດທິພົນ",
+"developer":   "ການເຂົ້າເຖິງ API",
+"inbox": "ກ່ອງຈົດໝາຍ",
+"templates": "ແມ່ແບບ",
+"broadcasts": "ການອອກອາກາດ",
+"emails": "ແຄມເປນອີເມວ",
+"flows": "Bot Flows"
+  },
+  "common": {
+    "save": "ບັນທຶກ",
+    "cancel": "ຍົກເລີກ",
+    "delete": "ລຶບ",
+    "edit": "ແກ້ໄຂ",
+    "create": "ສ້າງ",
+    "loading": "ກຳລັງໂຫລດ...",
+    "error": "ເກີດຂໍ້ຜິດພາດ",
+    "success": "ສຳເລັດ"
+    
+  }
+}

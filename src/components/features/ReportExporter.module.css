@@ -1,0 +1,270 @@
+/* ── Trigger button ── */
+.exportBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: 32px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.exportBtn:hover {
+  border-color: var(--color-teal-500);
+  color: var(--color-teal-600);
+  background: var(--color-teal-50);
+}
+
+/* ── Modal overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 300;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+}
+
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 680px;
+  box-shadow: var(--shadow-lg);
+  margin: auto;
+  overflow: hidden;
+}
+
+/* ── Modal header ── */
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.modalTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.closeBtn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.closeBtn:hover { background: var(--color-bg-2); }
+
+/* ── Options panel ── */
+.optionsPanel {
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 0.5px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.optionLeft { display: flex; flex-direction: column; gap: 2px; }
+.optionTitle { font-size: var(--text-body); font-weight: 500; color: var(--color-ink); }
+.optionSub   { font-size: var(--text-small); color: var(--color-muted); }
+
+/* ── Toggle ── */
+.toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggleTrack {
+  position: absolute; inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.toggle input:checked + .toggleTrack { background: var(--color-teal-500); }
+.toggleThumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: var(--radius-full);
+  background: white;
+  transition: transform var(--transition-fast);
+  pointer-events: none;
+}
+.toggle input:checked ~ .toggleThumb { transform: translateX(16px); }
+
+/* ── Preview ── */
+.preview {
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-bg);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.previewLabel {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+/* ── Report preview card ── */
+.reportCard {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.reportBranding {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--space-4);
+  border-bottom: 3px solid var(--color-teal-500);
+}
+
+.reportBrandName {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.reportDate {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.reportSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.reportSectionTitle {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-ink);
+  padding-bottom: var(--space-1);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.reportMetricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2);
+}
+
+.reportMetric {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  text-align: center;
+}
+
+.reportMetricValue {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.reportMetricLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+.reportTableWrap { overflow-x: auto; }
+
+.reportTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-small);
+}
+
+.reportTable th {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.reportTable td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 0.5px solid var(--color-border);
+  color: var(--color-ink);
+}
+
+.reportFooter {
+  padding-top: var(--space-3);
+  border-top: 0.5px solid var(--color-border);
+  font-size: var(--text-caption);
+  color: var(--color-muted-light);
+  text-align: center;
+}
+
+/* ── Modal footer ── */
+.modalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 0.5px solid var(--color-border);
+}
+
+.modalFooterLeft {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.printBtn {
+  height: 36px;
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-teal-500);
+  color: white;
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: background var(--transition-fast);
+}
+
+.printBtn:hover { background: var(--color-teal-600); }

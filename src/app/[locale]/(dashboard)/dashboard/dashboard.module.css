@@ -1,0 +1,17 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+}
+
+.statLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-bottom: var(--space-1);
+}
+
+.statNum {
+  font-size: var(--text-h1);
+  font-weight: 600;
+  color: var(--color-ink);
+}

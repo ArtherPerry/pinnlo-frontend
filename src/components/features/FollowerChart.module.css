@@ -1,0 +1,90 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.chartArea {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.svg { width: 100%; display: block; }
+
+/* ── Legend ── */
+.legend {
+  display: flex;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ── Tooltip ── */
+.tooltip {
+  position: absolute;
+  background: var(--color-ink);
+  color: var(--color-white);
+  font-size: var(--text-small);
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  z-index: 10;
+  transition: opacity 0.1s;
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--color-ink);
+}
+
+/* ── Range selector ── */
+.rangeRow {
+  display: flex;
+  gap: 2px;
+  background: var(--color-bg-2);
+  border-radius: var(--radius-md);
+  padding: 3px;
+  align-self: flex-end;
+}
+
+.rangeBtn {
+  padding: 3px 10px;
+  border-radius: calc(var(--radius-md) - 2px);
+  border: none;
+  background: transparent;
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.rangeBtn:hover { color: var(--color-ink); }
+
+.rangeBtnActive {
+  background: var(--color-white);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+}

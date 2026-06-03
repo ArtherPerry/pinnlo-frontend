@@ -1,0 +1,32 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+  line-height: 1.6;
+}
+
+/* ── Plan tiers ── */
+.starter    { background: #EAF3DE; color: #173404; }
+.pro        { background: var(--color-info-light); color: var(--color-info); }
+.agency     { background: #EEEDFE; color: #26215C; }
+.enterprise { background: var(--color-warning-light); color: var(--color-warning); }
+
+/* ── Post status ── */
+.draft      { background: var(--color-bg-2); color: var(--color-muted); }
+.scheduled  { background: var(--color-info-light); color: #042C53; }
+.publishing { background: var(--color-warning-light); color: #412402; }
+.published  { background: var(--color-success-light); color: #173404; }
+.failed     { background: var(--color-danger-light); color: var(--color-danger); }
+.cancelled  { background: var(--color-bg-2); color: var(--color-muted); }
+
+/* ── Generic semantic ── */
+.success { background: var(--color-success-light); color: var(--color-success); }
+.warning { background: var(--color-warning-light); color: var(--color-warning); }
+.danger  { background: var(--color-danger-light);  color: var(--color-danger);  }
+.info    { background: var(--color-info-light);    color: var(--color-info);    }
+.neutral { background: var(--color-bg-2);          color: var(--color-muted);   }

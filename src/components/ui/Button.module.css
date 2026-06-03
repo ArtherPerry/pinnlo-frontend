@@ -1,0 +1,78 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* ── Variants ── */
+.primary {
+  background: var(--color-teal-500);
+  color: var(--color-white);
+  border-color: var(--color-teal-500);
+}
+.primary:hover:not(:disabled) { background: var(--color-teal-600); border-color: var(--color-teal-600); }
+.primary:active:not(:disabled) { background: var(--color-teal-800); border-color: var(--color-teal-800); }
+
+.secondary {
+  background: var(--color-white);
+  color: var(--color-ink);
+  border-color: var(--color-border);
+}
+.secondary:hover:not(:disabled) { background: var(--color-bg); border-color: var(--color-muted-light); }
+
+.ghost {
+  background: transparent;
+  color: var(--color-teal-600);
+  border-color: transparent;
+}
+.ghost:hover:not(:disabled) { background: var(--color-teal-50); }
+
+.danger {
+  background: var(--color-danger);
+  color: var(--color-white);
+  border-color: var(--color-danger);
+}
+.danger:hover:not(:disabled) { filter: brightness(0.9); }
+
+/* ── Sizes ── */
+.sm { height: 28px; padding: 0 var(--space-3); font-size: var(--text-small); }
+.md { height: 36px; padding: 0 var(--space-4); }
+.lg { height: 44px; padding: 0 var(--space-6); font-size: var(--text-body-lg); }
+
+/* ── Full width ── */
+.full { width: 100%; }
+
+/* ── Loading spinner ── */
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+.spinnerDark {
+  border-color: rgba(0,0,0,0.15);
+  border-top-color: var(--color-teal-500);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -1,0 +1,125 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: var(--color-bg);
+  border-top: 0.5px solid var(--color-border);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+.aiBadge {
+  font-size: var(--text-caption);
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  border: 0.5px solid var(--color-teal-200);
+  font-weight: 600;
+}
+
+/* ── Loading ── */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  padding: var(--space-2) 0;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-teal-200);
+  border-top-color: var(--color-teal-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Suggestions ── */
+.suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  line-height: 1.55;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast);
+}
+
+.suggestion:hover {
+  border-color: var(--color-teal-400);
+  background: var(--color-teal-50);
+  color: var(--color-teal-800);
+}
+
+.suggestionNum {
+  font-size: var(--text-caption);
+  color: var(--color-teal-500);
+  font-weight: 700;
+  min-width: 16px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+/* ── Error ── */
+.error {
+  font-size: var(--text-small);
+  color: var(--color-danger);
+  padding: var(--space-1) 0;
+}
+
+/* ── Trigger button ── */
+.triggerBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-teal-600);
+  border: 0.5px solid var(--color-teal-200);
+  background: var(--color-teal-50);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.triggerBtn:hover {
+  background: var(--color-teal-500);
+  color: white;
+  border-color: var(--color-teal-500);
+}
+
+.triggerBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

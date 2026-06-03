@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "agency_name": "Agency name"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "posts": "Posts",
+    "crm": "Contacts",
+    "approval":  "Approval",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "competitors": "Competitors",
+    "benchmarks":  "Benchmarks",
+    "portals":     "Report portals",
+    "listening":   "Social listening",
+"influencers": "Influencers",
+"developer":   "API access",
+"inbox": "Inbox",
+"templates": "Templates",
+"broadcasts": "Broadcasts",
+"emails": "Email campaigns",
+"flows": "Bot flows"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success"
+
+  }
+}

@@ -1,0 +1,191 @@
+.wrapper {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* ── Nav ── */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.navTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.navBtns {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.navBtn {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.navBtn:hover {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+.todayBtn {
+  height: 30px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-muted);
+  cursor: pointer;
+  font-size: var(--text-small);
+  font-weight: 500;
+  transition: background var(--transition-fast);
+}
+
+.todayBtn:hover {
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+/* ── Day-of-week header ── */
+.dowRow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.dowCell {
+  padding: var(--space-2) 0;
+  text-align: center;
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+}
+
+/* ── Calendar grid ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.cell {
+  min-height: 90px;
+  border-right: 0.5px solid var(--color-border);
+  border-bottom: 0.5px solid var(--color-border);
+  padding: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cell:nth-child(7n) { border-right: none; }
+
+.cellEmpty {
+  background: var(--color-bg);
+}
+
+.cellToday .dayNum {
+  background: var(--color-teal-500);
+  color: var(--color-white);
+  border-radius: var(--radius-full);
+}
+
+/* ── Day number ── */
+.dayNum {
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+}
+
+/* ── Post dots ── */
+.postDot {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: opacity var(--transition-fast);
+}
+
+.postDot:hover { opacity: 0.8; }
+
+.dotIndicator {
+  width: 5px;
+  height: 5px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.postDot.PUBLISHED     { background: var(--color-success-light); color: var(--color-success); }
+.postDot.SCHEDULED     { background: var(--color-info-light);    color: var(--color-info);    }
+.postDot.DRAFT         { background: var(--color-bg-2);          color: var(--color-muted);   }
+.postDot.PENDING_REVIEW{ background: var(--color-warning-light); color: var(--color-warning); }
+.postDot.FAILED        { background: var(--color-danger-light);  color: var(--color-danger);  }
+
+.dotIndicator.PUBLISHED     { background: var(--color-success); }
+.dotIndicator.SCHEDULED     { background: var(--color-info);    }
+.dotIndicator.DRAFT         { background: var(--color-muted);   }
+.dotIndicator.PENDING_REVIEW{ background: var(--color-warning); }
+.dotIndicator.FAILED        { background: var(--color-danger);  }
+
+.moreCount {
+  font-size: 10px;
+  color: var(--color-muted);
+  padding: 1px 4px;
+}
+
+/* ── Loading skeleton ── */
+.skeleton {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.skeletonCell {
+  height: 90px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-2) 25%,
+    var(--color-border) 50%,
+    var(--color-bg-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-right: 0.5px solid var(--color-border);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}

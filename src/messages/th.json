@@ -1,0 +1,40 @@
+{
+  "auth": {
+    "login": "เข้าสู่ระบบ",
+    "signup": "สมัครใช้งาน",
+    "logout": "ออกจากระบบ",
+    "email": "อีเมล",
+    "password": "รหัสผ่าน",
+    "agency_name": "ชื่อเอเจนซี่"
+  },
+  "nav": {
+    "dashboard": "แดชบอร์ด",
+    "posts": "โพสต์",
+    "crm": "ลูกค้า",
+    "analytics": "วิเคราะห์",
+    "settings": "ตั้งค่า",
+    "approval": "รออนุมัติ",
+    "competitors": "คู่แข่ง",
+"benchmarks":  "เปรียบเทียบ",
+"portals":     "รายงานลูกค้า",
+"listening":   "ติดตามคำค้นหา",
+"influencers": "อินฟลูเอนเซอร์",
+"developer":   "API",
+"inbox": "กล่องข้อความ",
+"templates": "เทมเพลต",
+"broadcasts": "แคมเปญ",
+"emails": "อีเมลแคมเปญ",
+"flows": "บอทโฟลว์"
+  },
+  "common": {
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "edit": "แก้ไข",
+    "create": "สร้าง",
+    "loading": "กำลังโหลด...",
+    "error": "เกิดข้อผิดพลาด",
+    "success": "สำเร็จ"
+    
+  }
+}

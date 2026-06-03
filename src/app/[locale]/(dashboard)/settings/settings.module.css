@@ -1,0 +1,386 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  max-width: 780px;
+}
+
+/* ── Tab nav ── */
+.tabNav {
+  display: flex;
+  gap: 2px;
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.tabBtn {
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.tabBtn:hover { color: var(--color-ink); }
+
+.tabBtnActive {
+  color: var(--color-teal-600);
+  border-bottom-color: var(--color-teal-500);
+}
+
+/* ── Section card ── */
+.card {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cardTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.cardBody {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Form row ── */
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.saveRow {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-2);
+  border-top: 0.5px solid var(--color-border);
+}
+
+/* ── Team table ── */
+.teamTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.teamTable th {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  text-align: left;
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.teamTable td {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  border-bottom: 0.5px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.teamTable tr:last-child td { border-bottom: none; }
+.teamTable tr:hover td { background: var(--color-bg); }
+
+.memberInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.memberAvatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-teal-500);
+  color: white;
+  font-size: var(--text-small);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.memberAvatarPending {
+  background: var(--color-bg-2);
+  color: var(--color-muted);
+  border: 0.5px dashed var(--color-border);
+}
+
+.memberName {
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.memberEmail {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* ── Role badge ── */
+.roleBadge {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.roleOwner   { background: var(--color-warning-light); color: var(--color-warning); }
+.roleManager { background: #EEEDFE; color: #26215C; }
+.roleStaff   { background: var(--color-bg-2); color: var(--color-muted); }
+
+/* ── Status badge ── */
+.statusBadge {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.statusActive  { background: var(--color-success-light); color: var(--color-success); }
+.statusPending { background: var(--color-info-light);    color: var(--color-info);    }
+
+/* ── Action btn ── */
+.actionBtn {
+  height: 26px;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm);
+  border: 0.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.actionBtn:hover { background: var(--color-bg-2); color: var(--color-ink); }
+
+.actionBtnDanger:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+  background: var(--color-danger-light);
+}
+
+/* ── Platform list ── */
+.platformList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.platformRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast);
+}
+
+.platformRow:hover { border-color: var(--color-teal-200); }
+
+.platformRowExpired {
+  border-color: var(--color-danger);
+  background: var(--color-danger-light);
+}
+
+.platformInfo { flex: 1; min-width: 0; }
+
+.platformName {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.platformMeta {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: 1px;
+}
+
+.platformActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* ── Notification rows ── */
+.notifRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.notifLeft { display: flex; flex-direction: column; gap: 1px; }
+.notifTitle { font-size: var(--text-body); font-weight: 500; color: var(--color-ink); }
+.notifSub   { font-size: var(--text-small); color: var(--color-muted); }
+
+/* ── Toggle ── */
+.toggle { position: relative; width: 36px; height: 20px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggleTrack {
+  position: absolute; inset: 0;
+  border-radius: var(--radius-full);
+  background: var(--color-border);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+.toggle input:checked + .toggleTrack { background: var(--color-teal-500); }
+.toggleThumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px;
+  border-radius: var(--radius-full);
+  background: white;
+  transition: transform var(--transition-fast);
+  pointer-events: none;
+}
+.toggle input:checked ~ .toggleThumb { transform: translateX(16px); }
+
+/* ── Plan card ── */
+.planCard {
+  background: var(--color-teal-50);
+  border: 1px solid var(--color-teal-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.planInfo { display: flex; flex-direction: column; gap: var(--space-1); }
+.planName {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-teal-800);
+}
+.planMeta { font-size: var(--text-small); color: var(--color-teal-600); }
+
+/* ── Danger zone ── */
+.dangerZone {
+  background: var(--color-danger-light);
+  border: 0.5px solid var(--color-danger);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.dangerText {
+  font-size: var(--text-small);
+  color: var(--color-danger);
+  line-height: 1.5;
+}
+
+/* ── Invite modal ── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; padding: var(--space-4);
+}
+
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  width: 100%; max-width: 440px;
+  box-shadow: var(--shadow-lg);
+}
+
+.modalHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.modalTitle { font-size: var(--text-h3); font-weight: 600; color: var(--color-ink); }
+
+.closeBtn {
+  width: 28px; height: 28px; border: none; background: transparent;
+  border-radius: var(--radius-md); color: var(--color-muted); cursor: pointer;
+  font-size: 18px; display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.closeBtn:hover { background: var(--color-bg-2); }
+
+.modalBody {
+  padding: var(--space-6);
+  display: flex; flex-direction: column; gap: var(--space-4);
+}
+
+.modalFooter {
+  display: flex; justify-content: flex-end; gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  border-top: 0.5px solid var(--color-border);
+}
+
+.sectionLabel {
+  font-size: var(--text-small); font-weight: 600;
+  color: var(--color-ink); margin-bottom: var(--space-2); display: block;
+}
+
+.roleGrid {
+  display: flex; gap: var(--space-2); flex-wrap: wrap;
+}
+
+.roleOption {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.roleOption:hover { border-color: var(--color-teal-200); }
+
+.roleOptionActive {
+  border-color: var(--color-teal-500);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .formRow { grid-template-columns: 1fr; }
+  .teamTable th:nth-child(n+3),
+  .teamTable td:nth-child(n+3) { display: none; }
+}

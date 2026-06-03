@@ -1,42 +1,62 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "../styles/tokens.css";
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans+Myanmar:wght@400;700&family=Noto+Sans+Lao:wght@400;700&display=swap');
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  line-height: 1.6;
+}
+
+h1 { font-size: var(--text-h1); font-weight: 600; line-height: 1.35; }
+h2 { font-size: var(--text-h2); font-weight: 600; line-height: 1.4;  }
+h3 { font-size: var(--text-h3); font-weight: 600; line-height: 1.45; }
+
+a { color: var(--color-teal-600); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::-webkit-scrollbar       { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--color-muted-light); }
+
+:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
+/* ── Print / PDF export styles ── */
+@media print {
+  /* Hide everything except the report */
+  body > * { display: none !important; }
+  #pinnlo-report { display: block !important; }
+
+  /* Reset */
+  #pinnlo-report {
+    position: fixed;
+    inset: 0;
+    background: white;
+    padding: 32px;
+    font-family: sans-serif;
+    color: #1a1a18;
+    font-size: 13px;
+    line-height: 1.6;
+    z-index: 99999;
   }
+
+  /* Page breaks */
+  .report-section { page-break-inside: avoid; margin-bottom: 32px; }
+  .report-page-break { page-break-before: always; }
 }

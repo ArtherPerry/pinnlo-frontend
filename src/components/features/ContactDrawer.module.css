@@ -1,0 +1,321 @@
+/* ── Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 150;
+}
+
+/* ── Drawer ── */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 420px;
+  background: var(--color-white);
+  border-left: 0.5px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 151;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.2s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0);    }
+}
+
+/* ── Header ── */
+.header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-teal-500);
+  color: white;
+  font-size: var(--text-h3);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.headerInfo { display: flex; flex-direction: column; gap: 2px; }
+
+.name {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.clientBadge {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.closeBtn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+  transition: background var(--transition-fast);
+}
+
+.closeBtn:hover {
+  background: var(--color-bg-2);
+  color: var(--color-ink);
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  border-bottom: 0.5px solid var(--color-border);
+  flex-shrink: 0;
+}
+
+.tab {
+  flex: 1;
+  height: 40px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.tab:hover { color: var(--color-ink); }
+
+.tabActive {
+  color: var(--color-teal-600);
+  border-bottom-color: var(--color-teal-500);
+}
+
+/* ── Body ── */
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Info section ── */
+.section { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.sectionTitle {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.infoItem { display: flex; flex-direction: column; gap: 2px; }
+
+.infoLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.infoValue {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.infoValueMuted {
+  font-size: var(--text-body);
+  color: var(--color-muted-light);
+  font-style: italic;
+}
+
+/* ── Platform chips ── */
+.platformChips {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.platformChip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 0.5px solid var(--color-border);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  background: var(--color-bg);
+}
+
+/* ── Notes ── */
+.notesBox {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  line-height: 1.6;
+  min-height: 60px;
+}
+
+.notesEmpty {
+  color: var(--color-muted-light);
+  font-style: italic;
+}
+
+/* ── Activity timeline ── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timelineItem {
+  display: flex;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  position: relative;
+}
+
+/* Vertical line */
+.timelineItem:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 28px;
+  bottom: 0;
+  width: 1px;
+  background: var(--color-border);
+}
+
+.timelineDot {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  background: var(--color-bg-2);
+  border: 1.5px solid var(--color-border);
+  position: relative;
+  z-index: 1;
+}
+
+.timelineDot.message  { background: var(--color-info-light);   border-color: var(--color-info);    }
+.timelineDot.note     { background: var(--color-teal-50);      border-color: var(--color-teal-200);}
+.timelineDot.tag      { background: var(--color-warning-light); border-color: var(--color-warning); }
+.timelineDot.assigned { background: var(--color-success-light); border-color: var(--color-success); }
+.timelineDot.system   { background: var(--color-bg-2);         border-color: var(--color-border);  }
+
+.timelineContent { flex: 1; min-width: 0; padding-top: 4px; }
+
+.timelineText {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  line-height: 1.55;
+}
+
+.timelineMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 3px;
+}
+
+.timelineBy {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.timelineTime {
+  font-size: var(--text-small);
+  color: var(--color-muted-light);
+}
+
+/* ── Add note ── */
+.noteForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.noteTextarea {
+  width: 100%;
+  min-height: 80px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  line-height: 1.6;
+}
+
+.noteTextarea:focus {
+  border-color: var(--color-teal-500);
+  box-shadow: 0 0 0 3px var(--color-teal-50);
+}
+
+.noteActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Loading ── */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8);
+  color: var(--color-muted);
+  font-size: var(--text-body);
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .drawer { width: 100%; }
+}

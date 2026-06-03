@@ -1,0 +1,290 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ── Overview cards ── */
+.overviewGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.overviewCard {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.overviewLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.overviewValue {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.overviewChange {
+  font-size: var(--text-small);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.changePos { color: var(--color-success); }
+.changeNeg { color: var(--color-danger);  }
+
+/* ── Section card ── */
+.sectionCard {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.sectionTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.sectionBody { padding: var(--space-4) var(--space-5); }
+
+/* ── Range tabs ── */
+.rangeTabs {
+  display: flex;
+  gap: 2px;
+  background: var(--color-bg-2);
+  border-radius: var(--radius-md);
+  padding: 3px;
+}
+
+.rangeTab {
+  padding: 3px 10px;
+  border-radius: calc(var(--radius-md) - 2px);
+  border: none;
+  background: transparent;
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.rangeTab:hover { color: var(--color-ink); }
+
+.rangeTabActive {
+  background: var(--color-white);
+  color: var(--color-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Line chart ── */
+.chartWrap {
+  width: 100%;
+  overflow: hidden;
+}
+
+.chartSvg { width: 100%; display: block; }
+
+/* ── Metric toggle ── */
+.metricToggles {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-4);
+}
+
+.metricToggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.metricToggle:hover { border-color: var(--color-teal-200); }
+
+.metricToggleActive {
+  border-color: var(--color-teal-500);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+}
+
+.metricDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ── Post performance table ── */
+.postTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.postTable th {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  text-align: left;
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.postTable th:not(:first-child) { text-align: right; }
+
+.postTable td {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  border-bottom: 0.5px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.postTable td:not(:first-child) { text-align: right; }
+.postTable tr:last-child td { border-bottom: none; }
+.postTable tr:hover td { background: var(--color-bg); }
+
+.postContent {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--text-small);
+}
+
+.engagementHigh { color: var(--color-success); font-weight: 600; }
+.engagementMid  { color: var(--color-warning); font-weight: 600; }
+.engagementLow  { color: var(--color-muted); }
+
+/* ── Heatmap ── */
+.heatmapWrap {
+  overflow-x: auto;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: 40px repeat(24, 1fr);
+  gap: 2px;
+  min-width: 640px;
+}
+
+.heatmapDayLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--space-2);
+  font-weight: 500;
+}
+
+.heatmapHourLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+  text-align: center;
+  padding-bottom: var(--space-1);
+}
+
+.heatmapCell {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  cursor: default;
+  transition: opacity var(--transition-fast);
+  position: relative;
+}
+
+.heatmapCell:hover { opacity: 0.8; }
+
+.heatmapLegend {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.legendTrack {
+  display: flex;
+  gap: 2px;
+}
+
+.legendSwatch {
+  width: 16px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.heatmapNote {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ── Skeleton ── */
+.skeletonBlock {
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-2) 25%,
+    var(--color-border) 50%,
+    var(--color-bg-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .overviewGrid { grid-template-columns: repeat(2, 1fr); }
+  .postTable th:nth-child(n+4),
+  .postTable td:nth-child(n+4) { display: none; }
+}

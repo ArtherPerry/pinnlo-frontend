@@ -1,0 +1,309 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Page header ── */
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.pageTitle {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin-bottom: var(--space-1);
+}
+
+.pageSub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+}
+
+.queueCount {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  border-radius: var(--radius-full);
+  font-size: var(--text-small);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── List ── */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Card ── */
+.card {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-left: 3px solid var(--color-warning);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ── Card header ── */
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.clientName {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.dot {
+  color: var(--color-border);
+  font-size: var(--text-small);
+}
+
+.author {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* ── Content ── */
+.content {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  line-height: 1.65;
+  padding: var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+/* ── Labels ── */
+.labels {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.label {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-2);
+  color: var(--color-muted);
+  font-weight: 500;
+}
+
+/* ── Schedule info ── */
+.scheduleInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.scheduleIcon { font-size: 14px; }
+
+.submittedAt {
+  font-size: var(--text-small);
+  color: var(--color-muted-light);
+}
+
+/* ── Actions ── */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 0.5px solid var(--color-border);
+}
+
+.actionBtn {
+  height: 34px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background var(--transition-fast),
+              opacity var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.actionBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.approveBtn {
+  background: var(--color-teal-500);
+  color: var(--color-white);
+  border-color: var(--color-teal-500);
+}
+.approveBtn:hover:not(:disabled) { background: var(--color-teal-600); }
+
+.rejectBtn {
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+}
+.rejectBtn:hover:not(:disabled) { background: var(--color-danger); color: white; }
+
+.cancelBtn {
+  background: var(--color-bg-2);
+  color: var(--color-ink);
+  border-color: var(--color-border);
+}
+.cancelBtn:hover:not(:disabled) { background: var(--color-border); }
+
+/* ── Skeleton ── */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeletonCard {
+  height: 200px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-2) 25%,
+    var(--color-border) 50%,
+    var(--color-bg-2) 75%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--radius-lg);
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Empty ── */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: var(--color-success-light);
+  color: var(--color-success);
+  font-size: 22px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.emptySub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+}
+
+/* ── Overlay / modal ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: var(--space-4);
+}
+
+.modal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  box-shadow: var(--shadow-lg);
+}
+
+.modalTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.modalSub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+  margin-top: calc(-1 * var(--space-2));
+}
+
+.previewSnippet {
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  line-height: 1.6;
+  border-left: 3px solid var(--color-warning);
+}
+
+.textarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  resize: vertical;
+  outline: none;
+  transition: border-color var(--transition-fast);
+  line-height: 1.6;
+}
+
+.textarea:focus {
+  border-color: var(--color-teal-500);
+  box-shadow: 0 0 0 3px var(--color-teal-50);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}

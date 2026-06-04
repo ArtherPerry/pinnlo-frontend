@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 import { NextIntlClientProvider } from "next-intl"
 import { getMessages } from "next-intl/server"
-import { QueryProvider } from "@/components/providers/QueryProvider"
-import { MSWProvider }   from "@/components/providers/MSWProvider"
+import { QueryProvider }  from "@/components/providers/QueryProvider"
+import { MSWProvider }    from "@/components/providers/MSWProvider"
+import { ErrorBoundary }  from "@/components/providers/ErrorBoundary"
 import "../globals.css"
 
 export const metadata: Metadata = {
@@ -25,7 +26,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <MSWProvider>
             <QueryProvider>
-              {children}
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
             </QueryProvider>
           </MSWProvider>
         </NextIntlClientProvider>

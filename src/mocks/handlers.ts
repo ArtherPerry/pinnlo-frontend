@@ -33,11 +33,11 @@ export const handlers = [
   })
 }),
 
-  http.post(`${BASE}/api/auth/signup`, () => {
+  http.post(`${BASE}/api/v1/auth/signup`, () => {
     return HttpResponse.json({ message: 'Signup successful' }, { status: 201 })
   }),
 
-  http.post(`${BASE}/api/auth/refresh`, () => {
+  http.post(`${BASE}/api/v1/auth/refresh`, () => {
     return HttpResponse.json({ accessToken: 'mock-refreshed-token-xyz' })
   }),
 
@@ -2444,28 +2444,8 @@ export const handlers = [
   http.delete(`${BASE}/api/flows/:id`, () => {
     return HttpResponse.json({ message: 'Flow deleted' })
   }),
-  // ── Auth ───────────────────────────────────────────────────────
-  http.post(`${BASE}/api/v1/auth/login`, async ({ request }) => {
-    const { email } = await request.json() as { email: string; password: string }
-
-    // Accept any password in dev — just match by email or return mock user
-    await new Promise((r) => setTimeout(r, 600))
-
-    return HttpResponse.json({
-      token: `mock-jwt-token-${Date.now()}`,
-      user: {
-        id:         'user-001',
-        email:      email || 'nattawut@agency.com',
-        name:       'Nattawut Chaimongkol',
-        role:       'OWNER',
-        agencyId:   'agency-001',
-        agencyName: 'NC Digital Agency',
-        plan:       'AGENCY',
-        locale:     'th',
-      },
-    })
-  }),
-
+  
+ 
   http.post(`${BASE}/api/v1/auth/logout`, () => {
     return HttpResponse.json({ message: 'Logged out' })
   }),

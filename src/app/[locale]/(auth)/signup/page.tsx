@@ -38,7 +38,7 @@ export default function SignupPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await api.post('/api/auth/signup', {
+      await api.post('/api/v1/auth/signup', {
         agencyName: data.agencyName,
         email:      data.email,
         password:   data.password,

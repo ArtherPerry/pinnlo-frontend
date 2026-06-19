@@ -20,7 +20,9 @@ declare global {
 }
 
 export function MSWProvider({ children }: { children: React.ReactNode }) {
-  const [ready, setReady] = useState(false)
+  const [ready, setReady] = useState(
+  typeof window !== 'undefined' && !!window.__mswStarted
+)
   const { user, setUser } = useAuth()
 
   useEffect(() => {

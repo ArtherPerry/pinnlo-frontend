@@ -89,7 +89,7 @@ function LanguageSwitcher() {
   const handleSwitch = (code: string) => {
     const newSegments = [...segments]
     newSegments[1] = code
-    router.push(newSegments.join('/'))
+    router.replace(newSegments.join('/'))
     setOpen(false)
   }
 

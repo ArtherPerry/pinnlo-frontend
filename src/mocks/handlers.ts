@@ -28,7 +28,7 @@ export const handlers = [
       agencyId:   'agency-001',
       agencyName: 'NC Digital Agency',
       plan:       'AGENCY',
-      locale:     'th',
+      locale:     'en',
     },
   })
 }),

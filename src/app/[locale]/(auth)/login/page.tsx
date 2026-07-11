@@ -143,8 +143,8 @@ export default function LoginPage() {
             lineHeight: 1.6,
           }}>
             <strong style={{ color: 'var(--color-ink)' }}>Dev mode</strong><br/>
-            Email: <code>nattawut@agency.com</code><br/>
-            Password: <code>pinnlo2026</code>
+            Email: <code>sithu@area29labs.com</code><br/>
+            Password: <code>test1234</code>
           </div>
         )}
 

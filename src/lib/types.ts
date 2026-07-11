@@ -12,6 +12,7 @@ export interface AuthUser {
   agencyName: string
   plan: Plan
   locale: Locale
+  platformAdmin: boolean
 }
 
 export interface AuthResponse {

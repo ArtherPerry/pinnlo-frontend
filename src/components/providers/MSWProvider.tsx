@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import type { AuthUser } from '@/hooks/useAuth'
+import api from '@/lib/api'
 
 const MOCK_USER: AuthUser = {
   id:         'user-001',
@@ -38,10 +39,14 @@ export function MSWProvider({ children }: { children: React.ReactNode }) {
         window.__mswStarted = true
       }
 
-      // Only restore mock user if token exists (user has logged in)
       const token = localStorage.getItem('pinnlo-token')
       if (token && !user) {
-        setUser(MOCK_USER)
+        try {
+          const { data } = await api.get('/api/v1/auth/me')
+          setUser(data)
+        } catch {
+          localStorage.removeItem('pinnlo-token')
+        }
       }
 
       setReady(true)

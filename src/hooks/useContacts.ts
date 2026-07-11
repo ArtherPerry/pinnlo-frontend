@@ -83,10 +83,10 @@ export function useCreateContact() {
       return { optimistic }
     },
     onSuccess: (newContact, _input, context) => {
-      qc.setQueriesData(
+     qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old
+          Array.isArray(old)
             ? old.map((c) => c.id === context?.optimistic.id ? newContact : c)
             : [newContact]
       )
@@ -95,7 +95,7 @@ export function useCreateContact() {
       qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old ? old.filter((c) => c.id !== context?.optimistic.id) : []
+          Array.isArray(old) ? old.filter((c) => c.id !== context?.optimistic.id) : []
       )
     },
   })
@@ -126,7 +126,7 @@ export function useUpdateContact(id: string) {
       qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old
+          Array.isArray(old)
             ? old.map((c) => c.id === id ? { ...c, ...input } : c)
             : old
       )
@@ -269,7 +269,7 @@ export function useAddTag(contactId: string) {
       qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old
+          Array.isArray(old)
             ? old.map((c) =>
                 c.id === contactId && !c.tags.includes(tag)
                   ? { ...c, tags: [...c.tags, tag] }
@@ -315,7 +315,7 @@ export function useRemoveTag(contactId: string) {
       qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old
+          Array.isArray(old)
             ? old.map((c) =>
                 c.id === contactId
                   ? { ...c, tags: c.tags.filter((t) => t !== tag) }
@@ -362,7 +362,7 @@ export function useAssignContact(contactId: string) {
       qc.setQueriesData(
         { queryKey: contactKeys.all() },
         (old: Contact[] | undefined) =>
-          old
+          Array.isArray(old)
             ? old.map((c) =>
                 c.id === contactId ? { ...c, assignedTo } : c
               )
@@ -387,7 +387,7 @@ interface TeamMember {
 }
 
 async function fetchTeam(): Promise<TeamMember[]> {
-  const { data } = await api.get('/api/team')
+  const { data } = await api.get('/api/settings/team')
   return data
 }
 

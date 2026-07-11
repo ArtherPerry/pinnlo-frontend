@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/hooks/useAuth'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
+import { ImpersonationBanner } from '@/components/ImpersonationBanner'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, _hydrated } = useAuth()
@@ -23,6 +24,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   )
 
   if (!user) return null
-
-  return <DashboardLayout>{children}</DashboardLayout>
+  
+ return (
+    <>
+      <ImpersonationBanner />
+      <DashboardLayout>{children}</DashboardLayout>
+    </>
+  )
 }

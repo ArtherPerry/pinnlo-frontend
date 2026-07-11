@@ -162,19 +162,22 @@ function InviteModal({ onClose }: { onClose: () => void }) {
   const toast = useToast()
 
   const handleInvite = async () => {
-    if (!email.trim()) { toast.show('Enter an email address', 'warning'); return }
-    setIsSubmitting(true)
-    try {
-      await api.post('/api/settings/team/invite', { email, role })
-      qc.invalidateQueries({ queryKey: ['settings', 'team'] })
-      toast.show(`Invitation sent to ${email} ✓`, 'success')
-      onClose()
-    } catch {
-      toast.show('Failed to send invitation', 'error')
-    } finally {
-      setIsSubmitting(false)
-    }
+  if (!email.trim()) { toast.show('Enter an email address', 'warning'); return }
+  setIsSubmitting(true)
+  try {
+    const { data } = await api.post('/api/settings/team/invite', { email, role })
+    qc.invalidateQueries({ queryKey: ['settings', 'team'] })
+    toast.show(
+      `Member added. Temporary password: ${data.tempPassword}`,
+      'success'
+    )
+    onClose()
+  } catch {
+    toast.show('Failed to add member', 'error')
+  } finally {
+    setIsSubmitting(false)
   }
+}
 
   return (
     <div className={styles.overlay} onClick={onClose}>

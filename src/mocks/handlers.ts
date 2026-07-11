@@ -5,41 +5,41 @@ const BASE = 'http://localhost:8080'
 export const handlers = [
 
   // ── Auth ──────────────────────────────────────────────────────
-  http.post(`${BASE}/api/v1/auth/login`, async ({ request }) => {
-  const { email, password } = await request.json() as { email: string; password: string }
+//   http.post(`${BASE}/api/v1/auth/login`, async ({ request }) => {
+//   const { email, password } = await request.json() as { email: string; password: string }
 
-  // Validate credentials
-  if (email !== 'nattawut@agency.com' || password !== 'pinnlo2026') {
-    return HttpResponse.json(
-      { message: 'Invalid email or password' },
-      { status: 401 }
-    )
-  }
+//   // Validate credentials
+//   if (email !== 'nattawut@agency.com' || password !== 'pinnlo2026') {
+//     return HttpResponse.json(
+//       { message: 'Invalid email or password' },
+//       { status: 401 }
+//     )
+//   }
 
-  await new Promise((r) => setTimeout(r, 600))
+//   await new Promise((r) => setTimeout(r, 600))
 
-  return HttpResponse.json({
-    token: `mock-jwt-token-${Date.now()}`,
-    user: {
-      id:         'user-001',
-      email:      'nattawut@agency.com',
-      name:       'Nattawut Chaimongkol',
-      role:       'OWNER',
-      agencyId:   'agency-001',
-      agencyName: 'NC Digital Agency',
-      plan:       'AGENCY',
-      locale:     'en',
-    },
-  })
-}),
+//   return HttpResponse.json({
+//     token: `mock-jwt-token-${Date.now()}`,
+//     user: {
+//       id:         'user-001',
+//       email:      'nattawut@agency.com',
+//       name:       'Nattawut Chaimongkol',
+//       role:       'OWNER',
+//       agencyId:   'agency-001',
+//       agencyName: 'NC Digital Agency',
+//       plan:       'AGENCY',
+//       locale:     'en',
+//     },
+//   })
+// }),
 
-  http.post(`${BASE}/api/v1/auth/signup`, () => {
-    return HttpResponse.json({ message: 'Signup successful' }, { status: 201 })
-  }),
+//   http.post(`${BASE}/api/v1/auth/signup`, () => {
+//     return HttpResponse.json({ message: 'Signup successful' }, { status: 201 })
+//   }),
 
-  http.post(`${BASE}/api/v1/auth/refresh`, () => {
-    return HttpResponse.json({ accessToken: 'mock-refreshed-token-xyz' })
-  }),
+//   http.post(`${BASE}/api/v1/auth/refresh`, () => {
+//     return HttpResponse.json({ accessToken: 'mock-refreshed-token-xyz' })
+//   }),
 
   // ── Dashboard ─────────────────────────────────────────────────
   http.get(`${BASE}/api/dashboard/stats`, () => {
@@ -51,20 +51,20 @@ export const handlers = [
     })
   }),
 
-  // ── Clients ───────────────────────────────────────────────────
-  http.get(`${BASE}/api/clients`, () => {
-    return HttpResponse.json({
-      content: [
-        { id: 'client-001', name: 'Somjai Coffee', platforms: ['FACEBOOK', 'INSTAGRAM'], status: 'ACTIVE' },
-        { id: 'client-002', name: 'BKK Fitness',   platforms: ['FACEBOOK', 'LINE'],      status: 'ACTIVE' },
-        { id: 'client-003', name: 'Mango Resort',  platforms: ['FACEBOOK', 'INSTAGRAM', 'WHATSAPP'], status: 'ACTIVE' },
-      ],
-      totalElements: 3,
-      totalPages:    1,
-      page:          0,
-      size:          20,
-    })
-  }),
+  // // ── Clients ───────────────────────────────────────────────────
+  // http.get(`${BASE}/api/clients`, () => {
+  //   return HttpResponse.json({
+  //     content: [
+  //       { id: 'client-001', name: 'Somjai Coffee', platforms: ['FACEBOOK', 'INSTAGRAM'], status: 'ACTIVE' },
+  //       { id: 'client-002', name: 'BKK Fitness',   platforms: ['FACEBOOK', 'LINE'],      status: 'ACTIVE' },
+  //       { id: 'client-003', name: 'Mango Resort',  platforms: ['FACEBOOK', 'INSTAGRAM', 'WHATSAPP'], status: 'ACTIVE' },
+  //     ],
+  //     totalElements: 3,
+  //     totalPages:    1,
+  //     page:          0,
+  //     size:          20,
+  //   })
+  // }),
 
  // ── Posts ─────────────────────────────────────────────────────
   http.get(`${BASE}/api/posts`, ({ request }) => {
@@ -286,301 +286,301 @@ export const handlers = [
     return HttpResponse.json({ year, month, days })
   }),
 
-  // ── CRM contacts ──────────────────────────────────────────────
-  http.get(`${BASE}/api/contacts`, ({ request }) => {
-    const url    = new URL(request.url)
-    const search = url.searchParams.get('search')?.toLowerCase() ?? ''
-    const tag    = url.searchParams.get('tag') ?? ''
+  // // ── CRM contacts ──────────────────────────────────────────────
+  // http.get(`${BASE}/api/contacts`, ({ request }) => {
+  //   const url    = new URL(request.url)
+  //   const search = url.searchParams.get('search')?.toLowerCase() ?? ''
+  //   const tag    = url.searchParams.get('tag') ?? ''
 
-    const allContacts = [
-      {
-        id:           'contact-001',
-        name:         'Sirinda Rattanapruk',
-        phone:        '+66812345678',
-        email:        'sirinda@email.com',
-        fbPsid:       'psid-001',
-        waId:         null,
-        lineUid:      null,
-        source:       'MESSENGER',
-        tags:         ['vip', 'interested'],
-        assignedTo:   'Pim S.',
-        clientId:     'client-001',
-        clientName:   'Somjai Coffee',
-        notes:        'Interested in catering packages for corporate events.',
-        lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
-        createdAt:    new Date(Date.now() - 86400000 * 3).toISOString(),
-        activities:   [
-          {
-            id: 'act-001',
-            type: 'MESSENGER_MESSAGE',
-            content: 'Hello, I would like to know more about your catering service.',
-            createdBy: 'Sirinda Rattanapruk',
-            createdAt: new Date(Date.now() - 3600000).toISOString(),
-          },
-          {
-            id: 'act-002',
-            type: 'TAG_ADDED',
-            content: 'Tag "vip" added',
-            createdBy: 'Pim S.',
-            createdAt: new Date(Date.now() - 7200000).toISOString(),
-          },
-          {
-            id: 'act-003',
-            type: 'NOTE',
-            content: 'Interested in catering packages for corporate events.',
-            createdBy: 'Pim S.',
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: 'act-004',
-            type: 'MESSENGER_MESSAGE',
-            content: 'Do you offer weekend catering?',
-            createdBy: 'Sirinda Rattanapruk',
-            createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          },
-          {
-            id: 'act-005',
-            type: 'ASSIGNED',
-            content: 'Assigned to Pim S.',
-            createdBy: 'Nattawut C.',
-            createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-          },
-        ],
-      },
-      {
-        id:           'contact-002',
-        name:         'Krit Phongsathorn',
-        phone:        '+66898765432',
-        email:        null,
-        fbPsid:       null,
-        waId:         '66898765432',
-        lineUid:      null,
-        source:       'WHATSAPP',
-        tags:         ['new', 'follow-up'],
-        assignedTo:   null,
-        clientId:     'client-002',
-        clientName:   'BKK Fitness',
-        notes:        null,
-        lastActiveAt: new Date(Date.now() - 1800000).toISOString(),
-        createdAt:    new Date(Date.now() - 1800000).toISOString(),
-        activities:   [
-          {
-            id: 'act-006',
-            type: 'WHATSAPP_MESSAGE',
-            content: 'Hi, what are your membership prices?',
-            createdBy: 'Krit Phongsathorn',
-            createdAt: new Date(Date.now() - 1800000).toISOString(),
-          },
-        ],
-      },
-      {
-        id:           'contact-003',
-        name:         'Mallika Suwannarat',
-        phone:        '+66845678901',
-        email:        'mallika@corp.co.th',
-        fbPsid:       'psid-003',
-        waId:         null,
-        lineUid:      'line-uid-003',
-        source:       'LINE',
-        tags:         ['vip', 'corporate'],
-        assignedTo:   'Nattawut C.',
-        clientId:     'client-003',
-        clientName:   'Mango Resort',
-        notes:        'Books 10+ rooms every quarter for corporate retreats.',
-        lastActiveAt: new Date(Date.now() - 86400000).toISOString(),
-        createdAt:    new Date(Date.now() - 86400000 * 14).toISOString(),
-        activities:   [
-          {
-            id: 'act-007',
-            type: 'LINE_MESSAGE',
-            content: 'We need to book 15 rooms for the March retreat.',
-            createdBy: 'Mallika Suwannarat',
-            createdAt: new Date(Date.now() - 86400000).toISOString(),
-          },
-          {
-            id: 'act-008',
-            type: 'NOTE',
-            content: 'Books 10+ rooms every quarter for corporate retreats.',
-            createdBy: 'Nattawut C.',
-            createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
-          },
-        ],
-      },
-      {
-        id:           'contact-004',
-        name:         'Thanakorn Wichitkraisorn',
-        phone:        '+66823456789',
-        email:        null,
-        fbPsid:       'psid-004',
-        waId:         null,
-        lineUid:      null,
-        source:       'MESSENGER',
-        tags:         ['interested'],
-        assignedTo:   'Pim S.',
-        clientId:     'client-001',
-        clientName:   'Somjai Coffee',
-        notes:        null,
-        lastActiveAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-        createdAt:    new Date(Date.now() - 86400000 * 5).toISOString(),
-        activities:   [
-          {
-            id: 'act-009',
-            type: 'MESSENGER_MESSAGE',
-            content: 'Are you open on public holidays?',
-            createdBy: 'Thanakorn Wichitkraisorn',
-            createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-          },
-        ],
-      },
-      {
-        id:           'contact-005',
-        name:         'Napatsorn Kanchana',
-        phone:        '+66867891234',
-        email:        'napat@gmail.com',
-        fbPsid:       null,
-        waId:         null,
-        lineUid:      null,
-        source:       'MANUAL',
-        tags:         ['corporate', 'follow-up'],
-        assignedTo:   null,
-        clientId:     'client-002',
-        clientName:   'BKK Fitness',
-        notes:        'HR manager at PTT. Looking for corporate fitness packages.',
-        lastActiveAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-        createdAt:    new Date(Date.now() - 86400000 * 10).toISOString(),
-        activities:   [
-          {
-            id: 'act-010',
-            type: 'NOTE',
-            content: 'HR manager at PTT. Looking for corporate fitness packages.',
-            createdBy: 'Nattawut C.',
-            createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-          },
-        ],
-      },
-    ]
+  //   const allContacts = [
+  //     {
+  //       id:           'contact-001',
+  //       name:         'Sirinda Rattanapruk',
+  //       phone:        '+66812345678',
+  //       email:        'sirinda@email.com',
+  //       fbPsid:       'psid-001',
+  //       waId:         null,
+  //       lineUid:      null,
+  //       source:       'MESSENGER',
+  //       tags:         ['vip', 'interested'],
+  //       assignedTo:   'Pim S.',
+  //       clientId:     'client-001',
+  //       clientName:   'Somjai Coffee',
+  //       notes:        'Interested in catering packages for corporate events.',
+  //       lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
+  //       createdAt:    new Date(Date.now() - 86400000 * 3).toISOString(),
+  //       activities:   [
+  //         {
+  //           id: 'act-001',
+  //           type: 'MESSENGER_MESSAGE',
+  //           content: 'Hello, I would like to know more about your catering service.',
+  //           createdBy: 'Sirinda Rattanapruk',
+  //           createdAt: new Date(Date.now() - 3600000).toISOString(),
+  //         },
+  //         {
+  //           id: 'act-002',
+  //           type: 'TAG_ADDED',
+  //           content: 'Tag "vip" added',
+  //           createdBy: 'Pim S.',
+  //           createdAt: new Date(Date.now() - 7200000).toISOString(),
+  //         },
+  //         {
+  //           id: 'act-003',
+  //           type: 'NOTE',
+  //           content: 'Interested in catering packages for corporate events.',
+  //           createdBy: 'Pim S.',
+  //           createdAt: new Date(Date.now() - 86400000).toISOString(),
+  //         },
+  //         {
+  //           id: 'act-004',
+  //           type: 'MESSENGER_MESSAGE',
+  //           content: 'Do you offer weekend catering?',
+  //           createdBy: 'Sirinda Rattanapruk',
+  //           createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  //         },
+  //         {
+  //           id: 'act-005',
+  //           type: 'ASSIGNED',
+  //           content: 'Assigned to Pim S.',
+  //           createdBy: 'Nattawut C.',
+  //           createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id:           'contact-002',
+  //       name:         'Krit Phongsathorn',
+  //       phone:        '+66898765432',
+  //       email:        null,
+  //       fbPsid:       null,
+  //       waId:         '66898765432',
+  //       lineUid:      null,
+  //       source:       'WHATSAPP',
+  //       tags:         ['new', 'follow-up'],
+  //       assignedTo:   null,
+  //       clientId:     'client-002',
+  //       clientName:   'BKK Fitness',
+  //       notes:        null,
+  //       lastActiveAt: new Date(Date.now() - 1800000).toISOString(),
+  //       createdAt:    new Date(Date.now() - 1800000).toISOString(),
+  //       activities:   [
+  //         {
+  //           id: 'act-006',
+  //           type: 'WHATSAPP_MESSAGE',
+  //           content: 'Hi, what are your membership prices?',
+  //           createdBy: 'Krit Phongsathorn',
+  //           createdAt: new Date(Date.now() - 1800000).toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id:           'contact-003',
+  //       name:         'Mallika Suwannarat',
+  //       phone:        '+66845678901',
+  //       email:        'mallika@corp.co.th',
+  //       fbPsid:       'psid-003',
+  //       waId:         null,
+  //       lineUid:      'line-uid-003',
+  //       source:       'LINE',
+  //       tags:         ['vip', 'corporate'],
+  //       assignedTo:   'Nattawut C.',
+  //       clientId:     'client-003',
+  //       clientName:   'Mango Resort',
+  //       notes:        'Books 10+ rooms every quarter for corporate retreats.',
+  //       lastActiveAt: new Date(Date.now() - 86400000).toISOString(),
+  //       createdAt:    new Date(Date.now() - 86400000 * 14).toISOString(),
+  //       activities:   [
+  //         {
+  //           id: 'act-007',
+  //           type: 'LINE_MESSAGE',
+  //           content: 'We need to book 15 rooms for the March retreat.',
+  //           createdBy: 'Mallika Suwannarat',
+  //           createdAt: new Date(Date.now() - 86400000).toISOString(),
+  //         },
+  //         {
+  //           id: 'act-008',
+  //           type: 'NOTE',
+  //           content: 'Books 10+ rooms every quarter for corporate retreats.',
+  //           createdBy: 'Nattawut C.',
+  //           createdAt: new Date(Date.now() - 86400000 * 7).toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id:           'contact-004',
+  //       name:         'Thanakorn Wichitkraisorn',
+  //       phone:        '+66823456789',
+  //       email:        null,
+  //       fbPsid:       'psid-004',
+  //       waId:         null,
+  //       lineUid:      null,
+  //       source:       'MESSENGER',
+  //       tags:         ['interested'],
+  //       assignedTo:   'Pim S.',
+  //       clientId:     'client-001',
+  //       clientName:   'Somjai Coffee',
+  //       notes:        null,
+  //       lastActiveAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  //       createdAt:    new Date(Date.now() - 86400000 * 5).toISOString(),
+  //       activities:   [
+  //         {
+  //           id: 'act-009',
+  //           type: 'MESSENGER_MESSAGE',
+  //           content: 'Are you open on public holidays?',
+  //           createdBy: 'Thanakorn Wichitkraisorn',
+  //           createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id:           'contact-005',
+  //       name:         'Napatsorn Kanchana',
+  //       phone:        '+66867891234',
+  //       email:        'napat@gmail.com',
+  //       fbPsid:       null,
+  //       waId:         null,
+  //       lineUid:      null,
+  //       source:       'MANUAL',
+  //       tags:         ['corporate', 'follow-up'],
+  //       assignedTo:   null,
+  //       clientId:     'client-002',
+  //       clientName:   'BKK Fitness',
+  //       notes:        'HR manager at PTT. Looking for corporate fitness packages.',
+  //       lastActiveAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+  //       createdAt:    new Date(Date.now() - 86400000 * 10).toISOString(),
+  //       activities:   [
+  //         {
+  //           id: 'act-010',
+  //           type: 'NOTE',
+  //           content: 'HR manager at PTT. Looking for corporate fitness packages.',
+  //           createdBy: 'Nattawut C.',
+  //           createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
+  //         },
+  //       ],
+  //     },
+  //   ]
 
-    let filtered = allContacts
+  //   let filtered = allContacts
 
-    if (search) {
-      filtered = filtered.filter((c) =>
-        c.name.toLowerCase().includes(search) ||
-        c.phone?.includes(search) ||
-        c.email?.toLowerCase().includes(search) ||
-        c.clientName.toLowerCase().includes(search)
-      )
-    }
+  //   if (search) {
+  //     filtered = filtered.filter((c) =>
+  //       c.name.toLowerCase().includes(search) ||
+  //       c.phone?.includes(search) ||
+  //       c.email?.toLowerCase().includes(search) ||
+  //       c.clientName.toLowerCase().includes(search)
+  //     )
+  //   }
 
-    if (tag) {
-      filtered = filtered.filter((c) => c.tags.includes(tag))
-    }
+  //   if (tag) {
+  //     filtered = filtered.filter((c) => c.tags.includes(tag))
+  //   }
 
-    return HttpResponse.json({
-      content:       filtered,
-      totalElements: filtered.length,
-      totalPages:    1,
-      page:          0,
-      size:          20,
-    })
-  }),
+  //   return HttpResponse.json({
+  //     content:       filtered,
+  //     totalElements: filtered.length,
+  //     totalPages:    1,
+  //     page:          0,
+  //     size:          20,
+  //   })
+  // }),
 
-  http.get(`${BASE}/api/contacts/:id`, ({ params }) => {
-    return HttpResponse.json({
-      id:           params.id,
-      name:         'Sirinda Rattanapruk',
-      phone:        '+66812345678',
-      email:        'sirinda@email.com',
-      fbPsid:       'psid-001',
-      waId:         null,
-      lineUid:      null,
-      source:       'MESSENGER',
-      tags:         ['vip', 'interested'],
-      assignedTo:   'Pim S.',
-      clientId:     'client-001',
-      clientName:   'Somjai Coffee',
-      notes:        'Interested in catering packages for corporate events.',
-      lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
-      createdAt:    new Date(Date.now() - 86400000 * 3).toISOString(),
-      activities:   [],
-    })
-  }),
+  // http.get(`${BASE}/api/contacts/:id`, ({ params }) => {
+  //   return HttpResponse.json({
+  //     id:           params.id,
+  //     name:         'Sirinda Rattanapruk',
+  //     phone:        '+66812345678',
+  //     email:        'sirinda@email.com',
+  //     fbPsid:       'psid-001',
+  //     waId:         null,
+  //     lineUid:      null,
+  //     source:       'MESSENGER',
+  //     tags:         ['vip', 'interested'],
+  //     assignedTo:   'Pim S.',
+  //     clientId:     'client-001',
+  //     clientName:   'Somjai Coffee',
+  //     notes:        'Interested in catering packages for corporate events.',
+  //     lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
+  //     createdAt:    new Date(Date.now() - 86400000 * 3).toISOString(),
+  //     activities:   [],
+  //   })
+  // }),
 
-  http.post(`${BASE}/api/contacts`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>
-    return HttpResponse.json({
-      id:          `contact-${Date.now()}`,
-      ...body,
-      fbPsid:      null,
-      waId:        null,
-      lineUid:     null,
-      lastActiveAt: null,
-      createdAt:   new Date().toISOString(),
-      activities:  [],
-    }, { status: 201 })
-  }),
+  // http.post(`${BASE}/api/contacts`, async ({ request }) => {
+  //   const body = await request.json() as Record<string, unknown>
+  //   return HttpResponse.json({
+  //     id:          `contact-${Date.now()}`,
+  //     ...body,
+  //     fbPsid:      null,
+  //     waId:        null,
+  //     lineUid:     null,
+  //     lastActiveAt: null,
+  //     createdAt:   new Date().toISOString(),
+  //     activities:  [],
+  //   }, { status: 201 })
+  // }),
 
-  http.patch(`${BASE}/api/contacts/:id`, async ({ params, request }) => {
-    const body = await request.json() as Record<string, unknown>
-    return HttpResponse.json({
-      id: params.id,
-      ...body,
-      updatedAt: new Date().toISOString(),
-    })
-  }),
+  // http.patch(`${BASE}/api/contacts/:id`, async ({ params, request }) => {
+  //   const body = await request.json() as Record<string, unknown>
+  //   return HttpResponse.json({
+  //     id: params.id,
+  //     ...body,
+  //     updatedAt: new Date().toISOString(),
+  //   })
+  // }),
 
-  http.delete(`${BASE}/api/contacts/:id`, () => {
-    return HttpResponse.json({ message: 'Contact deleted' })
-  }),
+  // http.delete(`${BASE}/api/contacts/:id`, () => {
+  //   return HttpResponse.json({ message: 'Contact deleted' })
+  // }),
 
-  http.post(`${BASE}/api/contacts/:id/notes`, async ({ request }) => {
-    const body = await request.json() as { content: string }
-    return HttpResponse.json({
-      id:        `act-${Date.now()}`,
-      type:      'NOTE',
-      content:   body.content,
-      createdBy: 'Nattawut C.',
-      createdAt: new Date().toISOString(),
-    }, { status: 201 })
-  }),
+  // http.post(`${BASE}/api/contacts/:id/notes`, async ({ request }) => {
+  //   const body = await request.json() as { content: string }
+  //   return HttpResponse.json({
+  //     id:        `act-${Date.now()}`,
+  //     type:      'NOTE',
+  //     content:   body.content,
+  //     createdBy: 'Nattawut C.',
+  //     createdAt: new Date().toISOString(),
+  //   }, { status: 201 })
+  // }),
 
-  http.post(`${BASE}/api/contacts/:id/tags`, async ({  request }) => {
-    const body = await request.json() as { tag: string }
-    return HttpResponse.json({ tag: body.tag })
-  }),
+  // http.post(`${BASE}/api/contacts/:id/tags`, async ({  request }) => {
+  //   const body = await request.json() as { tag: string }
+  //   return HttpResponse.json({ tag: body.tag })
+  // }),
 
-  http.delete(`${BASE}/api/contacts/:id/tags/:tag`, () => {
-    return HttpResponse.json({ message: 'Tag removed' })
-  }),
+  // http.delete(`${BASE}/api/contacts/:id/tags/:tag`, () => {
+  //   return HttpResponse.json({ message: 'Tag removed' })
+  // }),
 
-  http.patch(`${BASE}/api/contacts/:id/assign`, async ({  request }) => {
-    const body = await request.json() as { assignedTo: string | null }
-    return HttpResponse.json({ assignedTo: body.assignedTo })
-  }),
+  // http.patch(`${BASE}/api/contacts/:id/assign`, async ({  request }) => {
+  //   const body = await request.json() as { assignedTo: string | null }
+  //   return HttpResponse.json({ assignedTo: body.assignedTo })
+  // }),
 
-  http.get(`${BASE}/api/contacts/export/csv`, () => {
-    const csv = [
-      'Name,Phone,Email,Source,Tags,Client,Assigned To,Created At',
-      'Sirinda Rattanapruk,+66812345678,sirinda@email.com,MESSENGER,"vip,interested",Somjai Coffee,Pim S.,2026-05-29',
-      'Krit Phongsathorn,+66898765432,,WHATSAPP,"new,follow-up",BKK Fitness,,2026-05-31',
-      'Mallika Suwannarat,+66845678901,mallika@corp.co.th,LINE,"vip,corporate",Mango Resort,Nattawut C.,2026-05-18',
-    ].join('\n')
+  // http.get(`${BASE}/api/contacts/export/csv`, () => {
+  //   const csv = [
+  //     'Name,Phone,Email,Source,Tags,Client,Assigned To,Created At',
+  //     'Sirinda Rattanapruk,+66812345678,sirinda@email.com,MESSENGER,"vip,interested",Somjai Coffee,Pim S.,2026-05-29',
+  //     'Krit Phongsathorn,+66898765432,,WHATSAPP,"new,follow-up",BKK Fitness,,2026-05-31',
+  //     'Mallika Suwannarat,+66845678901,mallika@corp.co.th,LINE,"vip,corporate",Mango Resort,Nattawut C.,2026-05-18',
+  //   ].join('\n')
 
-    return new HttpResponse(csv, {
-      headers: {
-        'Content-Type':        'text/csv',
-        'Content-Disposition': 'attachment; filename="contacts.csv"',
-      },
-    })
-  }),
+  //   return new HttpResponse(csv, {
+  //     headers: {
+  //       'Content-Type':        'text/csv',
+  //       'Content-Disposition': 'attachment; filename="contacts.csv"',
+  //     },
+  //   })
+  // }),
 
   // ── Staff list (for assignment) ────────────────────────────────
-  http.get(`${BASE}/api/team`, () => {
-    return HttpResponse.json([
-      { id: 'user-001', name: 'Nattawut C.', role: 'OWNER'   },
-      { id: 'user-002', name: 'Pim S.',      role: 'MANAGER' },
-      { id: 'user-003', name: 'Korn T.',     role: 'STAFF'   },
-    ])
-  }),
+  // http.get(`${BASE}/api/team`, () => {
+  //   return HttpResponse.json([
+  //     { id: 'user-001', name: 'Nattawut C.', role: 'OWNER'   },
+  //     { id: 'user-002', name: 'Pim S.',      role: 'MANAGER' },
+  //     { id: 'user-003', name: 'Korn T.',     role: 'STAFF'   },
+  //   ])
+  // }),
 
   // ── Analytics ─────────────────────────────────────────────────
   http.get(`${BASE}/api/analytics/overview`, () => {
@@ -1453,68 +1453,68 @@ export const handlers = [
     return HttpResponse.json({ ...body })
   }),
 
-  http.get(`${BASE}/api/settings/team`, () => {
-    return HttpResponse.json([
-      {
-        id:        'user-001',
-        name:      'Nattawut Chaimongkol',
-        email:     'nattawut@ncdigital.co.th',
-        role:      'OWNER',
-        status:    'ACTIVE',
-        joinedAt:  new Date(Date.now() - 86400000 * 90).toISOString(),
-        lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
-      },
-      {
-        id:        'user-002',
-        name:      'Pim Suwannapha',
-        email:     'pim@ncdigital.co.th',
-        role:      'MANAGER',
-        status:    'ACTIVE',
-        joinedAt:  new Date(Date.now() - 86400000 * 45).toISOString(),
-        lastActiveAt: new Date(Date.now() - 86400000).toISOString(),
-      },
-      {
-        id:        'user-003',
-        name:      'Korn Thirawat',
-        email:     'korn@ncdigital.co.th',
-        role:      'STAFF',
-        status:    'ACTIVE',
-        joinedAt:  new Date(Date.now() - 86400000 * 14).toISOString(),
-        lastActiveAt: new Date(Date.now() - 86400000 * 3).toISOString(),
-      },
-      {
-        id:        'user-004',
-        name:      'Invite pending',
-        email:     'new@ncdigital.co.th',
-        role:      'STAFF',
-        status:    'PENDING',
-        joinedAt:  null,
-        lastActiveAt: null,
-      },
-    ])
-  }),
+  // http.get(`${BASE}/api/settings/team`, () => {
+  //   return HttpResponse.json([
+  //     {
+  //       id:        'user-001',
+  //       name:      'Nattawut Chaimongkol',
+  //       email:     'nattawut@ncdigital.co.th',
+  //       role:      'OWNER',
+  //       status:    'ACTIVE',
+  //       joinedAt:  new Date(Date.now() - 86400000 * 90).toISOString(),
+  //       lastActiveAt: new Date(Date.now() - 3600000).toISOString(),
+  //     },
+  //     {
+  //       id:        'user-002',
+  //       name:      'Pim Suwannapha',
+  //       email:     'pim@ncdigital.co.th',
+  //       role:      'MANAGER',
+  //       status:    'ACTIVE',
+  //       joinedAt:  new Date(Date.now() - 86400000 * 45).toISOString(),
+  //       lastActiveAt: new Date(Date.now() - 86400000).toISOString(),
+  //     },
+  //     {
+  //       id:        'user-003',
+  //       name:      'Korn Thirawat',
+  //       email:     'korn@ncdigital.co.th',
+  //       role:      'STAFF',
+  //       status:    'ACTIVE',
+  //       joinedAt:  new Date(Date.now() - 86400000 * 14).toISOString(),
+  //       lastActiveAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+  //     },
+  //     {
+  //       id:        'user-004',
+  //       name:      'Invite pending',
+  //       email:     'new@ncdigital.co.th',
+  //       role:      'STAFF',
+  //       status:    'PENDING',
+  //       joinedAt:  null,
+  //       lastActiveAt: null,
+  //     },
+  //   ])
+  // }),
 
-  http.post(`${BASE}/api/settings/team/invite`, async ({ request }) => {
-    const body = await request.json() as Record<string, unknown>
-    return HttpResponse.json({
-      id:        `user-${Date.now()}`,
-      name:      'Invite pending',
-      email:     body.email,
-      role:      body.role,
-      status:    'PENDING',
-      joinedAt:  null,
-      lastActiveAt: null,
-    }, { status: 201 })
-  }),
+  // http.post(`${BASE}/api/settings/team/invite`, async ({ request }) => {
+  //   const body = await request.json() as Record<string, unknown>
+  //   return HttpResponse.json({
+  //     id:        `user-${Date.now()}`,
+  //     name:      'Invite pending',
+  //     email:     body.email,
+  //     role:      body.role,
+  //     status:    'PENDING',
+  //     joinedAt:  null,
+  //     lastActiveAt: null,
+  //   }, { status: 201 })
+  // }),
 
-  http.delete(`${BASE}/api/settings/team/:id`, () => {
-    return HttpResponse.json({ message: 'Member removed' })
-  }),
+  // http.delete(`${BASE}/api/settings/team/:id`, () => {
+  //   return HttpResponse.json({ message: 'Member removed' })
+  // }),
 
-  http.patch(`${BASE}/api/settings/team/:id`, async ({ params, request }) => {
-    const body = await request.json() as Record<string, unknown>
-    return HttpResponse.json({ id: params.id, ...body })
-  }),
+  // http.patch(`${BASE}/api/settings/team/:id`, async ({ params, request }) => {
+  //   const body = await request.json() as Record<string, unknown>
+  //   return HttpResponse.json({ id: params.id, ...body })
+  // }),
 
   http.get(`${BASE}/api/settings/platforms`, () => {
     return HttpResponse.json([

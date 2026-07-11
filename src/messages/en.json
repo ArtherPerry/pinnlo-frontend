@@ -9,6 +9,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
+    "clients": "Clients",
     "posts": "Posts",
     "crm": "Contacts",
     "approval":  "Approval",
@@ -18,6 +19,10 @@
     "benchmarks":  "Benchmarks",
     "portals":     "Report portals",
     "listening":   "Social listening",
+    "intelligence": "Intelligence",
+    "content": "Content",
+    "audience": "Audience",
+    "more": "More",
 "influencers": "Influencers",
 "developer":   "API access",
 "inbox": "Inbox",

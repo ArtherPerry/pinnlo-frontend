@@ -47,7 +47,7 @@ export default function ApprovalPage() {
         <div>
           <h2 className={styles.pageTitle}>Approval queue</h2>
           <p className={styles.pageSub}>
-            Posts waiting for your review before they go live.
+            Internal review (step 1 of 2). Approved posts go to the client for final sign-off.
           </p>
         </div>
         {posts && posts.length > 0 && (
@@ -92,7 +92,11 @@ export default function ApprovalPage() {
                   <span className={styles.dot}>·</span>
                   <span className={styles.author}>by {post.createdBy}</span>
                 </div>
-                <Badge variant="warning">Pending review</Badge>
+                <div className={styles.pipeline}>
+                  <span className={`${styles.pipeStep} ${styles.pipeActive}`}>1 · Internal</span>
+                  <span className={styles.pipeArrow}>→</span>
+                  <span className={styles.pipeStep}>2 · Client</span>
+                </div>
               </div>
 
               {/* Content */}
@@ -134,6 +138,13 @@ export default function ApprovalPage() {
               {/* Actions */}
               <div className={styles.actions}>
                 <button
+                  className={cn(styles.actionBtn, styles.skipBtn)}
+                  onClick={() => handleApprove(post.id)}
+                  title="Send straight to the client without internal sign-off"
+                >
+                  Skip to client
+                </button>
+                <button
                   className={cn(styles.actionBtn, styles.rejectBtn)}
                   onClick={() => setRejectTarget(post)}
                   disabled={reject.isPending}
@@ -145,7 +156,7 @@ export default function ApprovalPage() {
                   onClick={() => handleApprove(post.id)}
                   disabled={approve.isPending}
                 >
-                  {approve.isPending ? 'Approving...' : '✓ Approve & schedule'}
+                  {approve.isPending ? 'Approving...' : '✓ Approve & send to client'}
                 </button>
               </div>
 

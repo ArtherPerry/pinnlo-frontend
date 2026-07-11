@@ -1,0 +1,252 @@
+.page {
+  max-width: 1000px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.title {
+  font-size: var(--text-h1);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.subtitle {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+  margin-top: var(--space-1);
+}
+
+.workspaceCounter {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  text-align: right;
+}
+
+.counterValue {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.counterLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.clientCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.clientInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.clientAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-teal-500);
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--text-body-lg);
+  flex-shrink: 0;
+}
+
+.clientMain {
+  min-width: 0;
+}
+
+.clientName {
+  font-size: var(--text-body-lg);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.clientSub {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+.clientActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.workspaceStatus {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-small);
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-muted-light);
+}
+
+.statusDotActive {
+  background: var(--color-success);
+}
+
+/* Detail drawer */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  z-index: 50;
+}
+
+.drawer {
+  width: 460px;
+  max-width: 90vw;
+  height: 100%;
+  background: var(--color-white);
+  overflow-y: auto;
+  padding: var(--space-6);
+}
+
+.drawerHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+}
+
+.drawerTitle {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-muted);
+}
+
+.drawerSection {
+  margin-top: var(--space-6);
+}
+
+.drawerSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.drawerSectionTitle {
+  font-size: var(--text-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-muted);
+}
+
+.workspaceToggle {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toggleInfo {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.toggleHint {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+.userRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.userRow:last-child {
+  border-bottom: none;
+}
+
+.userMain {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.userNameText {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.userEmailText {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.emptyUsers {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  padding: var(--space-3) 0;
+}
+
+.tempPwBox {
+  background: var(--color-teal-50);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-top: var(--space-3);
+  font-size: var(--text-small);
+}
+
+.tempPwValue {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-teal-600);
+}

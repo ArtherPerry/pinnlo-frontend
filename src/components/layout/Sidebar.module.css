@@ -168,3 +168,19 @@
   background: var(--color-danger-light);
   color: var(--color-danger);
 }
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: var(--space-4);
+}
+
+.navGroupLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-muted-light);
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-2);
+}

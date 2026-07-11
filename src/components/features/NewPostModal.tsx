@@ -13,6 +13,7 @@ import type { Platform } from '@/lib/types'
 import styles from './NewPostModal.module.css'
 import { CaptionGenerator } from './CaptionGenerator'
 import { ImageGenerator } from './ImageGenerator'
+import { AIReview } from './AIReview'
 
 const PLATFORMS: Platform[] = ['FACEBOOK', 'INSTAGRAM', 'WHATSAPP', 'LINE']
 
@@ -64,6 +65,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
 
   const content   = watch('content')
   const platforms = watch('platforms') as Platform[]
+  const currentContent = watch('content') ?? ''
 
   // Smallest limit among selected platforms
   const charLimit = platforms.length > 0
@@ -102,6 +104,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
   }
   const [showAI, setShowAI] = useState(false)
   const [showImageAI, setShowImageAI] = useState(false)
+  const [step, setStep] = useState<'compose' | 'review'>('compose')
 
   // Min datetime = now + 5 minutes
   const minDateTime = new Date(Date.now() + 5 * 60 * 1000)
@@ -126,6 +129,16 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={styles.body}>
+
+            {step === 'review' ? (
+              <AIReview
+                content={currentContent}
+                platforms={platforms}
+                clientName={clients?.find((c) => c.id === watch('clientId'))?.name}
+                hasMedia={mediaFiles.length > 0}
+              />
+            ) : (
+            <>
 
             {/* ── Client ── */}
             <div>
@@ -193,6 +206,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                 </p>
               )}
             </div>
+            
 
             {/* ── Content ── */}
 <div>
@@ -353,27 +367,44 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                   {...register('labels')}
                 />
               </div>
-            </div>
+          </div>
+
+            </>
+            )}
 
           </div>
 
-          {/* Footer */}
+         {/* Footer */}
           <div className={styles.footer}>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              loading={isSubmitting}
-              disabled={charError}
-            >
-              Schedule post
-            </Button>
+            {step === 'compose' ? (
+              <>
+                <Button type="button" variant="secondary" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  type="button"
+                  variant="primary"
+                  disabled={charError || !currentContent.trim()}
+                  onClick={() => setStep('review')}
+                >
+                  ✨ Get AI Review
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button type="button" variant="secondary" onClick={() => setStep('compose')}>
+                  ← Back to edit
+                </Button>
+                <Button
+                  type="submit"
+                  variant="primary"
+                  loading={isSubmitting}
+                  disabled={charError}
+                >
+                  Schedule post
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </div>

@@ -115,29 +115,55 @@ const Icons = {
   ),
 }
 
-const NAV_ITEMS = [
-  // ── Content
-  { key: 'dashboard',   href: '/dashboard',      icon: Icons.dashboard,   exact: true },
-  { key: 'posts',       href: '/posts',           icon: Icons.posts,       exact: true },
-  { key: 'approval',    href: '/posts/approval',  icon: Icons.approval    },
-  // ── CRM & messaging
-  { key: 'crm',         href: '/crm',             icon: Icons.crm         },
-  { key: 'inbox',       href: '/inbox',           icon: Icons.inbox       },
-  { key: 'templates',   href: '/templates',       icon: Icons.templates   },
-  { key: 'broadcasts',  href: '/broadcasts',      icon: Icons.broadcasts  },
-  { key: 'emails',      href: '/emails',          icon: Icons.emails      },
-  { key: 'flows',       href: '/flows',           icon: Icons.flows       },
-  // ── Analytics & insights
-  { key: 'analytics',   href: '/analytics',       icon: Icons.analytics   },
-  { key: 'competitors', href: '/competitors',     icon: Icons.competitors },
-  { key: 'benchmarks',  href: '/benchmarks',      icon: Icons.benchmarks  },
-  { key: 'portals',     href: '/portals',         icon: Icons.portals     },
-  // ── Enterprise
-  { key: 'listening',   href: '/listening',       icon: Icons.listening   },
-  { key: 'influencers', href: '/influencers',     icon: Icons.influencers },
-  { key: 'developer',   href: '/developer',       icon: Icons.developer   },
-  // ── Account
-  { key: 'settings',    href: '/settings',        icon: Icons.settings    },
+const NAV_GROUPS = [
+  {
+    label: null,
+    items: [
+      { key: 'dashboard', href: '/dashboard', icon: Icons.dashboard, exact: true },
+      { key: 'clients',   href: '/clients',   icon: Icons.crm, exact: true },
+    ],
+  },
+  {
+    label: 'intelligence',
+    items: [
+      { key: 'competitors', href: '/competitors', icon: Icons.competitors },
+      { key: 'benchmarks',  href: '/benchmarks',  icon: Icons.benchmarks },
+      { key: 'analytics',   href: '/analytics',   icon: Icons.analytics },
+    ],
+  },
+  {
+    label: 'content',
+    items: [
+      { key: 'posts',     href: '/posts',          icon: Icons.posts, exact: true },
+      { key: 'approval',  href: '/posts/approval', icon: Icons.approval },
+      { key: 'templates', href: '/templates',      icon: Icons.templates },
+    ],
+  },
+  {
+    label: 'audience',
+    items: [
+      { key: 'crm',        href: '/crm',        icon: Icons.crm },
+      { key: 'inbox',      href: '/inbox',      icon: Icons.inbox },
+      { key: 'broadcasts', href: '/broadcasts', icon: Icons.broadcasts },
+      { key: 'emails',     href: '/emails',     icon: Icons.emails },
+      { key: 'flows',      href: '/flows',      icon: Icons.flows },
+    ],
+  },
+  {
+    label: 'more',
+    items: [
+      { key: 'portals',     href: '/portals',     icon: Icons.portals },
+      { key: 'listening',   href: '/listening',   icon: Icons.listening },
+      { key: 'influencers', href: '/influencers', icon: Icons.influencers },
+      { key: 'developer',   href: '/developer',   icon: Icons.developer },
+    ],
+  },
+  {
+    label: null,
+    items: [
+      { key: 'settings', href: '/settings', icon: Icons.settings },
+    ],
+  },
 ]
 
 export function Sidebar() {
@@ -169,23 +195,29 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className={styles.nav}>
-        {NAV_ITEMS.map(({ key, href, icon, exact }) => {
-  const fullHref = `/${locale}${href}`
-  const isActive = exact
-    ? pathname === fullHref
-    : pathname.startsWith(fullHref)
-
-          return (
-            <Link
-              key={key}
-              href={fullHref}
-              className={cn(styles.navItem, isActive && styles.active)}
-            >
-              <span className={styles.navIcon}>{icon}</span>
-              <span className={styles.navLabel}>{t(key)}</span>
-            </Link>
-          )
-        })}
+        {NAV_GROUPS.map((group, gi) => (
+          <div key={gi} className={styles.navGroup}>
+            {group.label && (
+              <div className={styles.navGroupLabel}>{t(group.label)}</div>
+            )}
+            {group.items.map(({ key, href, icon, exact }) => {
+              const fullHref = `/${locale}${href}`
+              const isActive = exact
+                ? pathname === fullHref
+                : pathname.startsWith(fullHref)
+              return (
+                <Link
+                  key={key}
+                  href={fullHref}
+                  className={cn(styles.navItem, isActive && styles.active)}
+                >
+                  <span className={styles.navIcon}>{icon}</span>
+                  <span className={styles.navLabel}>{t(key)}</span>
+                </Link>
+              )
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* User + logout */}

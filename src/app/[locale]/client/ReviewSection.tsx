@@ -118,7 +118,7 @@ export function ReviewSection({ onCountChange }: { onCountChange: (n: number) =>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.modalTitle}>Request changes</div>
             <div className={styles.modalSub}>
-              Let your agency know what you'd like changed. They'll revise and send it back for review.
+              Let your agency know what you&apos;d like changed. They&apos;ll revise and send it back for review.
             </div>
             <textarea
               className={styles.textarea}

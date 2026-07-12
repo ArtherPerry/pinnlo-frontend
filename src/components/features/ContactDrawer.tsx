@@ -5,7 +5,7 @@ import { useContact, useAddNote } from '@/hooks/useContacts'
 import { Button, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import { formatDate, cn } from '@/lib/utils'
-import type { ActivityType, Platform } from '@/lib/types'
+import type { ActivityType } from '@/lib/types'
 import { TagManager } from './TagManager'
 import styles from './ContactDrawer.module.css'
 import { AssignmentDropdown } from './AssignmentDropdown'
@@ -22,14 +22,6 @@ const ACTIVITY_CONFIG: Record<ActivityType, { icon: string; dot: string }> = {
   ASSIGNED:          { icon: '👤', dot: 'assigned' },
   UNASSIGNED:        { icon: '👤', dot: 'assigned' },
   STATUS_CHANGED:    { icon: '🔄', dot: 'system'   },
-}
-
-const SOURCE_PLATFORMS: Record<string, Platform | null> = {
-  MESSENGER:  'FACEBOOK',
-  WHATSAPP:   'WHATSAPP',
-  LINE:       'LINE',
-  MANUAL:     null,
-  CSV_IMPORT: null,
 }
 
 interface ContactDrawerProps {
@@ -145,7 +137,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                       <span className={styles.infoValue}>
                         {formatDate(contact.createdAt, 'th-TH', {
                           dateStyle: 'medium',
-                        } as any)}
+                        })}
                       </span>
                     </div>
                     <div className={styles.infoItem}>
@@ -155,7 +147,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                             {formatDate(contact.lastActiveAt, 'th-TH', {
                               dateStyle: 'medium',
                               timeStyle: 'short',
-                            } as any)}
+                            })}
                           </span>
                         : <span className={styles.infoValueMuted}>Unknown</span>
                       }
@@ -277,7 +269,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                                   {formatDate(activity.createdAt, 'th-TH', {
                                     dateStyle: 'medium',
                                     timeStyle: 'short',
-                                  } as any)}
+                                  })}
                                 </span>
                               </div>
                             </div>

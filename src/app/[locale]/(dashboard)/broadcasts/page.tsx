@@ -11,12 +11,11 @@ import { useTemplates } from '@/hooks/useTemplates'
 import { useClients } from '@/hooks/useClients'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
-import { cn, formatDate } from '@/lib/utils'
+import { formatDate } from '@/lib/utils'
 import type {
   BroadcastCampaign,
   BroadcastStatus,
   BroadcastPlatform,
-  CreateBroadcastInput,
 } from '@/lib/types'
 
 const STATUS_COLORS: Record<BroadcastStatus, { bg: string; text: string }> = {
@@ -319,7 +318,7 @@ function CreateBroadcastModal({ onClose }: { onClose: () => void }) {
                 borderRadius: 3,
               }}>
                 {'{{name}}'}
-              </code> to personalise each message with the contact's name.
+              </code> to personalise each message with the contact&apos;s name.
             </p>
           </div>
 
@@ -441,9 +440,6 @@ function BroadcastCard({ broadcast }: { broadcast: BroadcastCampaign }) {
   }
 
   const statusColor = STATUS_COLORS[broadcast.status]
-  const deliveryRate = broadcast.sentCount > 0
-    ? ((broadcast.sentCount / broadcast.recipientCount) * 100).toFixed(0)
-    : null
 
   return (
     <div style={{
@@ -648,10 +644,10 @@ function BroadcastCard({ broadcast }: { broadcast: BroadcastCampaign }) {
           </div>
           <span>
             {broadcast.sentAt
-              ? `Sent ${formatDate(broadcast.sentAt, 'th-TH', { dateStyle: 'medium' } as any)}`
+              ? `Sent ${formatDate(broadcast.sentAt, 'th-TH', { dateStyle: 'medium' })}`
               : broadcast.scheduledAt
-                ? `Scheduled ${formatDate(broadcast.scheduledAt, 'th-TH', { dateStyle: 'medium', timeStyle: 'short' } as any)}`
-                : `Created ${formatDate(broadcast.createdAt, 'th-TH', { dateStyle: 'medium' } as any)}`
+                ? `Scheduled ${formatDate(broadcast.scheduledAt, 'th-TH', { dateStyle: 'medium', timeStyle: 'short' })}`
+                : `Created ${formatDate(broadcast.createdAt, 'th-TH', { dateStyle: 'medium' })}`
             }
           </span>
         </div>

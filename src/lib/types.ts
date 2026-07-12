@@ -102,6 +102,7 @@ export interface CreatePostInput {
   platforms:   Platform[]
   scheduledAt: string | null
   labels?:     string[]
+  mediaIds?:   string[]
 }
 
 export interface PostFormValues {

@@ -7,7 +7,6 @@ import { useApprovePost, useRejectPost, useDeletePost } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
 import styles from './PostCard.module.css'
-import { EditPostModal } from './EditPostModal'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
   DRAFT:          'draft',
@@ -32,16 +31,15 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 interface PostCardProps {
-  post:       Post
-  onEdit?:    (post: Post) => void
+  post: Post
 }
 
-export function PostCard({ post, onEdit }: PostCardProps) {
+export function PostCard({ post }: PostCardProps) {
   const [confirmDelete,  setConfirmDelete ] = useState(false)
   const [rejectModal,    setRejectModal   ] = useState(false)
   const [rejectComment,  setRejectComment ] = useState('')
 
-  const [editModal, setEditModal] = useState(false)
+  const [, setEditModal] = useState(false)
   const toast      = useToast()
   const approve    = useApprovePost()
   const reject     = useRejectPost()
@@ -100,7 +98,7 @@ export function PostCard({ post, onEdit }: PostCardProps) {
             <span className={styles.client}>{post.clientName}</span>
             <span className={styles.dot}>·</span>
             <PlatformIcons
-              platforms={post.platforms as any}
+              platforms={post.platforms}
               size={14}
             />
           </div>

@@ -49,7 +49,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
 
   const handleStatusChange = async (status: PortalStatus) => {
     try {
-      await updatePortal.mutateAsync({ status } as any)
+      await updatePortal.mutateAsync({ status })
       toast.show('Portal updated ✓', 'success')
     } catch {
       toast.show('Failed to update portal', 'error')
@@ -60,7 +60,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
     try {
       await updatePortal.mutateAsync({
         branding: { ...portal!.branding, primaryColor: color },
-      } as any)
+      })
       toast.show('Brand color updated ✓', 'success')
     } catch {
       toast.show('Failed to update color', 'error')
@@ -72,7 +72,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
     try {
       await updatePortal.mutateAsync({
         branding: { ...portal!.branding, companyName },
-      } as any)
+      })
       toast.show('Company name updated ✓', 'success')
     } catch {
       toast.show('Failed to update', 'error')
@@ -85,7 +85,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
       s.id === section.id ? { ...s, enabled: !s.enabled } : s
     )
     try {
-      await updatePortal.mutateAsync({ sections: updated } as any)
+      await updatePortal.mutateAsync({ sections: updated })
     } catch {
       toast.show('Failed to update section', 'error')
     }

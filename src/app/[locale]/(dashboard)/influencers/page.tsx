@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useInfluencers } from '@/hooks/useEnterprise'
-import { Button, PlatformIcon } from '@/components/ui'
+import { PlatformIcon } from '@/components/ui'
 import { InfluencerDrawer } from '@/components/features/InfluencerDrawer'
 import { PlanGate } from '@/components/features/PlanGate'
 import { useToast } from '@/hooks/useToast'

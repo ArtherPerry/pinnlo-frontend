@@ -1,7 +1,6 @@
 'use client'
 
 import { usePosts, useApprovePost, useRejectPost } from '@/hooks/usePosts'
-import { Badge } from '@/components/ui'
 import { PlatformIcons } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import { formatDate, cn } from '@/lib/utils'
@@ -88,7 +87,7 @@ export default function ApprovalPage() {
                 <div className={styles.cardMeta}>
                   <span className={styles.clientName}>{post.clientName}</span>
                   <span className={styles.dot}>·</span>
-                  <PlatformIcons platforms={post.platforms as any} size={14} />
+                  <PlatformIcons platforms={post.platforms} size={14} />
                   <span className={styles.dot}>·</span>
                   <span className={styles.author}>by {post.createdBy}</span>
                 </div>
@@ -132,7 +131,7 @@ export default function ApprovalPage() {
                 Submitted {formatDate(post.createdAt, 'th-TH', {
                   dateStyle: 'medium',
                   timeStyle: 'short',
-                } as any)}
+                })}
               </div>
 
               {/* Actions */}

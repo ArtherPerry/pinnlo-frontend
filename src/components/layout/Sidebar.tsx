@@ -115,7 +115,19 @@ const Icons = {
   ),
 }
 
-const NAV_GROUPS = [
+type NavItem = {
+  key: string
+  href: string
+  icon: JSX.Element
+  exact?: boolean
+}
+
+type NavGroup = {
+  label: string | null
+  items: NavItem[]
+}
+
+const NAV_GROUPS: NavGroup[] = [
   {
     label: null,
     items: [

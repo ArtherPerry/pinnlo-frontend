@@ -2,19 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
-import type { AuthUser } from '@/hooks/useAuth'
 import api from '@/lib/api'
-
-const MOCK_USER: AuthUser = {
-  id:         'user-001',
-  email:      'nattawut@agency.com',
-  name:       'Nattawut Chaimongkol',
-  role:       'OWNER',
-  agencyId:   'agency-001',
-  agencyName: 'NC Digital Agency',
-  plan:       'AGENCY',
-  locale:     'th',
-}
 
 declare global {
   interface Window { __mswStarted?: boolean }

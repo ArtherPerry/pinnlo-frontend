@@ -3,7 +3,6 @@
 import { useInfluencer } from '@/hooks/useEnterprise'
 import { PlatformIcon } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
-import styles from './InfluencerDrawer.module.css'
 
 interface InfluencerDrawerProps {
   influencerId: string
@@ -219,7 +218,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
                         <span style={{ marginLeft: 'auto' }}>
                           {formatDate(post.postedAt, 'th-TH', {
                             dateStyle: 'medium',
-                          } as any)}
+                          })}
                         </span>
                       </div>
                     </div>

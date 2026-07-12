@@ -10,10 +10,10 @@ import {
   useDeleteBenchmark,
 } from '@/hooks/useCompetitors'
 import { useClients } from '@/hooks/useClients'
-import { Button, Input, PlatformIcon } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
-import type { BenchmarkGroup, BenchmarkMember } from '@/lib/types'
+import type { BenchmarkGroup } from '@/lib/types'
 import styles from './benchmarks.module.css'
 
 // ── Helpers ────────────────────────────────────────────────────────
@@ -192,14 +192,11 @@ function CreateBenchmarkModal({ onClose }: { onClose: () => void }) {
     register,
     handleSubmit,
     control,
-    watch,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { name: '', clientId: '' },
   })
-
-  const selectedClientId = watch('clientId')
 
   const onSubmit = async (values: FormValues) => {
     try {

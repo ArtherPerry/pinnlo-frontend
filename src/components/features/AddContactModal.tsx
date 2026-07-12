@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -48,8 +47,6 @@ export function AddContactModal({ onClose }: AddContactModalProps) {
     register,
     handleSubmit,
     control,
-    watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -63,9 +60,6 @@ export function AddContactModal({ onClose }: AddContactModalProps) {
       notes:    '',
     },
   })
-
-  const selectedSource   = watch('source')
-  const selectedClientId = watch('clientId')
 
   const onSubmit = async (values: FormValues) => {
     try {

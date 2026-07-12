@@ -82,8 +82,9 @@ function CreateAgencyModal({ onClose }: { onClose: () => void }) {
     try {
       const data = await create.mutateAsync({ agencyName, ownerName, ownerEmail, plan })
       setResult({ tempPassword: data.tempPassword })
-    } catch (e: any) {
-      setError(e?.response?.data?.message ?? 'Failed to create agency')
+    } catch (e) {
+      const err = e as { response?: { data?: { message?: string } } }
+      setError(err?.response?.data?.message ?? 'Failed to create agency')
     }
   }
 

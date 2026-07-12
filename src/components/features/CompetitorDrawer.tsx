@@ -109,7 +109,7 @@ export function CompetitorDrawer({ competitorId, onClose }: CompetitorDrawerProp
                   <span className={styles.infoValue}>
                     {formatDate(comp.createdAt, 'th-TH', {
                       dateStyle: 'medium',
-                    } as any)}
+                    })}
                   </span>
                 </div>
                 <div className={styles.infoItem}>
@@ -118,7 +118,7 @@ export function CompetitorDrawer({ competitorId, onClose }: CompetitorDrawerProp
                     {formatDate(comp.lastSyncedAt, 'th-TH', {
                       dateStyle: 'medium',
                       timeStyle: 'short',
-                    } as any)}
+                    })}
                   </span>
                 </div>
                 <div className={styles.infoItem} style={{ gridColumn: '1 / -1' }}>

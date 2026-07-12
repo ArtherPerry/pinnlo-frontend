@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { Contact } from '@/lib/types'
-import { cn, formatDate } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { PlatformIcon } from '@/components/ui'
 import { useDeleteContact } from '@/hooks/useContacts'
 import { useToast } from '@/hooks/useToast'

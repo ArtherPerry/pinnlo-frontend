@@ -9,14 +9,12 @@ import {
 } from '@/hooks/useTemplates'
 import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
-import { cn, formatDate } from '@/lib/utils'
 import type {
   MessageTemplate,
   CreateTemplateInput,
   TemplateCategory,
   TemplatePlatform,
 } from '@/lib/types'
-import styles from './templates.module.css'
 
 const CATEGORIES: { value: TemplateCategory | ''; label: string }[] = [
   { value: '',          label: 'All categories' },

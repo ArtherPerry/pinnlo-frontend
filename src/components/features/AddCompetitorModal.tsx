@@ -49,7 +49,6 @@ export function AddCompetitorModal({ onClose }: AddCompetitorModalProps) {
   })
 
   const selectedPlatform = watch('platform')
-  const selectedClientId = watch('clientId')
 
   const onSubmit = async (values: FormValues) => {
     try {

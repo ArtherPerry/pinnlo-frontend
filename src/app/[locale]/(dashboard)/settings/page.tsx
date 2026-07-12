@@ -7,17 +7,54 @@ import { useToast } from '@/hooks/useToast'
 import { useAuth } from '@/hooks/useAuth'
 import { cn, formatDate } from '@/lib/utils'
 import api from '@/lib/api'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import type { Role, Plan, Platform } from '@/lib/types'
 import styles from './settings.module.css'
 
 type Tab = 'agency' | 'team' | 'platforms' | 'notifications' | 'billing'
+
+interface AgencySettings {
+  id:        string
+  name:      string
+  email:     string
+  phone:     string
+  website:   string
+  timezone:  string
+  language:  string
+  plan:      Plan
+  createdAt: string
+}
+
+interface TeamMember {
+  id:           string
+  name:         string
+  email:        string
+  role:         Role
+  status:       'ACTIVE' | 'PENDING'
+  joinedAt:     string | null
+  lastActiveAt: string | null
+}
+
+interface PlatformSetting {
+  id:              string
+  type:            Platform
+  name:            string
+  pageId:          string
+  status:          'CONNECTED' | 'TOKEN_EXPIRED' | 'DISCONNECTED'
+  tokenExpiresAt:  string | null
+  connectedAt:     string
+}
+
+type NotificationSettings = Record<string, boolean> & {
+  emailDigestFrequency?: string
+}
 
 // ── Hooks ──────────────────────────────────────────────────────────
 function useAgencySettings() {
   return useQuery({
     queryKey: ['settings', 'agency'],
     queryFn:  async () => {
-      const { data } = await api.get('/api/settings/agency')
+      const { data } = await api.get<AgencySettings>('/api/settings/agency')
       return data
     },
   })
@@ -27,8 +64,8 @@ function useTeamSettings() {
   return useQuery({
     queryKey: ['settings', 'team'],
     queryFn:  async () => {
-      const { data } = await api.get('/api/settings/team')
-      return data as any[]
+      const { data } = await api.get<TeamMember[]>('/api/settings/team')
+      return data
     },
   })
 }
@@ -37,8 +74,8 @@ function usePlatformSettings() {
   return useQuery({
     queryKey: ['settings', 'platforms'],
     queryFn:  async () => {
-      const { data } = await api.get('/api/settings/platforms')
-      return data as any[]
+      const { data } = await api.get<PlatformSetting[]>('/api/settings/platforms')
+      return data
     },
   })
 }
@@ -47,7 +84,7 @@ function useNotificationSettings() {
   return useQuery({
     queryKey: ['settings', 'notifications'],
     queryFn:  async () => {
-      const { data } = await api.get('/api/settings/notifications')
+      const { data } = await api.get<NotificationSettings>('/api/settings/notifications')
       return data
     },
   })
@@ -63,7 +100,7 @@ function AgencyTab() {
     values: agency,
   })
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: AgencySettings) => {
     try {
       await api.patch('/api/settings/agency', values)
       qc.setQueryData(['settings', 'agency'], values)
@@ -237,7 +274,7 @@ function TeamTab() {
     if (!confirm(`Remove ${name} from the team?`)) return
     try {
       await api.delete(`/api/settings/team/${id}`)
-      qc.setQueryData(['settings', 'team'], (old: any[]) =>
+      qc.setQueryData(['settings', 'team'], (old?: TeamMember[]) =>
         old?.filter((m) => m.id !== id) ?? []
       )
       toast.show('Team member removed', 'success')
@@ -302,7 +339,7 @@ function TeamTab() {
                 </td>
                 <td style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
                   {member.lastActiveAt
-                    ? formatDate(member.lastActiveAt, 'th-TH', { dateStyle: 'medium' } as any)
+                    ? formatDate(member.lastActiveAt, 'th-TH', { dateStyle: 'medium' })
                     : '—'
                   }
                 </td>
@@ -349,7 +386,7 @@ function PlatformsTab() {
     if (!confirm(`Disconnect "${name}"? Posts will stop publishing to this platform.`)) return
     try {
       await api.delete(`/api/settings/platforms/${id}`)
-      qc.setQueryData(['settings', 'platforms'], (old: any[]) =>
+      qc.setQueryData(['settings', 'platforms'], (old?: PlatformSetting[]) =>
         old?.filter((p) => p.id !== id) ?? []
       )
       toast.show('Platform disconnected', 'success')
@@ -389,7 +426,7 @@ function PlatformsTab() {
                 <div className={styles.platformMeta}>
                   {PLATFORM_STATUS_LABELS[platform.status]}
                   {platform.tokenExpiresAt && !isExpired && (
-                    <> · Token expires {formatDate(platform.tokenExpiresAt, 'th-TH', { dateStyle: 'medium' } as any)}</>
+                    <> · Token expires {formatDate(platform.tokenExpiresAt, 'th-TH', { dateStyle: 'medium' })}</>
                   )}
                   {isExpired && (
                     <span style={{ color: 'var(--color-danger)', fontWeight: 500 }}>
@@ -429,7 +466,7 @@ function PlatformsTab() {
         lineHeight: 1.6,
       }}>
         ℹ To connect a new platform, go to the client workspace settings and use the
-        "Connect platform" button. Platforms are connected per client, not agency-wide.
+        &quot;Connect platform&quot; button. Platforms are connected per client, not agency-wide.
       </div>
     </div>
   )
@@ -439,7 +476,6 @@ function PlatformsTab() {
 function NotificationsTab() {
   const { data: notifs, isLoading } = useNotificationSettings()
   const [local, setLocal] = useState<Record<string, boolean>>({})
-  const qc    = useQueryClient()
   const toast = useToast()
 
   const getValue = (key: string) =>

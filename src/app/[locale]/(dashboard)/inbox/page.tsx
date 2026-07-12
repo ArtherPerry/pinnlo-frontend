@@ -121,7 +121,7 @@ function MessageBubble({ message }: { message: InboxMessage }) {
           {formatDate(message.sentAt, 'th-TH', {
             dateStyle: 'medium',
             timeStyle: 'short',
-          } as any)}
+          })}
         </div>
       </div>
     </div>

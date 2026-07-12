@@ -27,6 +27,8 @@ function formatFollowers(n: number): string {
   return String(n)
 }
 
+const PAD = { top: 10, right: 10, bottom: 24, left: 48 }
+
 export function FollowerChart({ snapshots, color = '#1D9E75' }: FollowerChartProps) {
   const [range,   setRange  ] = useState<Range>(30)
   const [tooltip, setTooltip] = useState<TooltipState>({
@@ -37,7 +39,6 @@ export function FollowerChart({ snapshots, color = '#1D9E75' }: FollowerChartPro
   const data   = snapshots.slice(-range)
   const W      = 360
   const H      = 140
-  const PAD    = { top: 10, right: 10, bottom: 24, left: 48 }
   const innerW = W - PAD.left - PAD.right
   const innerH = H - PAD.top - PAD.bottom
 
@@ -46,8 +47,14 @@ export function FollowerChart({ snapshots, color = '#1D9E75' }: FollowerChartPro
   const maxVal   = Math.max(...values)
   const range_   = maxVal - minVal || 1
 
-  const xScale = (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * innerW
-  const yScale = (v: number) => PAD.top + innerH - ((v - minVal) / range_) * innerH
+  const xScale = useCallback(
+    (i: number) => PAD.left + (i / Math.max(data.length - 1, 1)) * innerW,
+    [data.length, innerW]
+  )
+  const yScale = useCallback(
+    (v: number) => PAD.top + innerH - ((v - minVal) / range_) * innerH,
+    [innerH, minVal, range_]
+  )
 
   // Build SVG path
   const points = data.map((s, i) => ({ x: xScale(i), y: yScale(s.followers) }))
@@ -89,7 +96,7 @@ const areaPath = points.length > 0 && lastPoint
       change:    snap.change,
       visible:   true,
     })
-  }, [data, W, H, PAD, innerW])
+  }, [data, W, H, innerW, xScale, yScale])
 
   const handleMouseLeave = useCallback(() => {
     setTooltip((prev) => ({ ...prev, visible: false }))

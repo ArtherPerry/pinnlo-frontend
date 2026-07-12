@@ -206,7 +206,7 @@ function ApiKeyCard({ apiKey }: { apiKey: ApiKey }) {
           <span>Last used:</span>
           <span className={styles.keyMetaValue}>
             {apiKey.lastUsedAt
-              ? formatDate(apiKey.lastUsedAt, 'th-TH', { dateStyle: 'medium' } as any)
+              ? formatDate(apiKey.lastUsedAt, 'th-TH', { dateStyle: 'medium' })
               : 'Never'
             }
           </span>
@@ -215,14 +215,14 @@ function ApiKeyCard({ apiKey }: { apiKey: ApiKey }) {
           <div className={styles.keyMetaItem}>
             <span>Expires:</span>
             <span className={styles.keyMetaValue}>
-              {formatDate(apiKey.expiresAt, 'th-TH', { dateStyle: 'medium' } as any)}
+              {formatDate(apiKey.expiresAt, 'th-TH', { dateStyle: 'medium' })}
             </span>
           </div>
         )}
         <div className={styles.keyMetaItem}>
           <span>Created:</span>
           <span className={styles.keyMetaValue}>
-            {formatDate(apiKey.createdAt, 'th-TH', { dateStyle: 'medium' } as any)}
+            {formatDate(apiKey.createdAt, 'th-TH', { dateStyle: 'medium' })}
           </span>
         </div>
       </div>

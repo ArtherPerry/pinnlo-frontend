@@ -4,7 +4,6 @@ import styles from './AIReview.module.css'
 
 interface AIReviewProps {
   content: string
-  platforms: string[]
   clientName?: string
   hasMedia: boolean
 }
@@ -42,7 +41,7 @@ function buildMockReview(content: string, clientName?: string) {
   }
 }
 
-export function AIReview({ content, platforms, clientName, hasMedia }: AIReviewProps) {
+export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
   const review = buildMockReview(content, clientName)
 
   return (
@@ -52,7 +51,7 @@ export function AIReview({ content, platforms, clientName, hasMedia }: AIReviewP
         <div>
           <div className={styles.introTitle}>AI Review</div>
           <div className={styles.introSub}>
-            Grounded in Southeast Asia market knowledge, {clientName ?? 'this client'}'s history, and competitor activity.
+            Grounded in Southeast Asia market knowledge, {clientName ?? 'this client'}&apos;s history, and competitor activity.
           </div>
         </div>
       </div>

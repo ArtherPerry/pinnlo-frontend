@@ -9,7 +9,7 @@ import { useClients } from '@/hooks/useClients'
 import { useCreatePost } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
-import type { Platform } from '@/lib/types'
+import type { Platform, MediaAsset } from '@/lib/types'
 import styles from './NewPostModal.module.css'
 import { CaptionGenerator } from './CaptionGenerator'
 import { ImageGenerator } from './ImageGenerator'
@@ -43,7 +43,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
   const createPost = useCreatePost()
   const toast      = useToast()
 
-  const [mediaFiles, setMediaFiles] = useState<any[]>([])
+  const [mediaFiles, setMediaFiles] = useState<MediaAsset[]>([])
 
   const {
     register,
@@ -95,7 +95,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
           ? values.labels.split(',').map((l) => l.trim()).filter(Boolean)
           : [],
         mediaIds: mediaFiles.map((f) => f.id),
-      } as any)
+      })
       toast.show('Post scheduled ✓', 'success')
       onClose()
     } catch {
@@ -133,7 +133,6 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
             {step === 'review' ? (
               <AIReview
                 content={currentContent}
-                platforms={platforms}
                 clientName={clients?.find((c) => c.id === watch('clientId'))?.name}
                 hasMedia={mediaFiles.length > 0}
               />

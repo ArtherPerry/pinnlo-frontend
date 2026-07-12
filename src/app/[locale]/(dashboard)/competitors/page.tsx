@@ -184,7 +184,7 @@ export default function CompetitorsPage() {
           </svg>
           <div className={styles.emptyTitle}>No competitors tracked yet</div>
           <div className={styles.emptySub}>
-            Add a competitor's Facebook or Instagram page to start
+            Add a competitor&apos;s Facebook or Instagram page to start
             monitoring their follower growth and engagement.
           </div>
           <Button variant="primary" size="sm" onClick={() => setShowForm(true)}>

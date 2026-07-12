@@ -52,7 +52,7 @@ export default function SignupPage() {
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.title}>{t('signup')}</h2>
-      <p className={styles.sub}>Create your Pinnlo agency account</p>
+      <p className={styles.sub}>Create your Pinnalo agency account</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
         <Input
@@ -108,7 +108,7 @@ export default function SignupPage() {
       </p>
 
       <p className={styles.terms}>
-        By signing up you agree to Pinnlo&apos;s Terms of Service and Privacy Policy.
+        By signing up you agree to Pinnalo&apos;s Terms of Service and Privacy Policy.
       </p>
     </div>
   )

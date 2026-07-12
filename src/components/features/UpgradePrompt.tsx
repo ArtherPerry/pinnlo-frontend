@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { usePlanTier } from '@/hooks/useAuth'
 import type { Plan } from '@/lib/types'
 import styles from './UpgradePrompt.module.css'
+import { Zap, Building2, Check } from 'lucide-react'
 
 interface UpgradePromptProps {
   requiredPlan: 'AGENCY' | 'ENTERPRISE'
@@ -44,7 +45,7 @@ export function UpgradePrompt({
         styles.icon,
         isEnterprise ? styles.iconEnterprise : styles.iconAgency
       )}>
-        {isEnterprise ? '⚡' : '🏢'}
+        {isEnterprise ? <Zap size={20} /> : <Building2 size={20} />}
       </div>
 
       {/* Plan badge */}
@@ -74,7 +75,7 @@ export function UpgradePrompt({
               styles.featureCheck,
               isEnterprise ? styles.checkEnterprise : styles.checkAgency
             )}>
-              ✓
+              <Check size={14} />
             </span>
             {feature}
           </div>

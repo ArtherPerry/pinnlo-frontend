@@ -1,6 +1,7 @@
 'use client'
 
 import styles from './AIReview.module.css'
+import { Sparkles, Target, Clock, FileText, Eye, TrendingUp } from 'lucide-react'
 
 interface AIReviewProps {
   content: string
@@ -47,7 +48,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
   return (
     <div className={styles.wrap}>
       <div className={styles.intro}>
-        <span className={styles.introIcon}>✨</span>
+        <span className={styles.introIcon}><Sparkles size={20} /></span>
         <div>
           <div className={styles.introTitle}>AI Review</div>
           <div className={styles.introSub}>
@@ -58,7 +59,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}>🎯</span> Target Audience
+          <span className={styles.sectionIcon}><Target size={16} /></span> Target Audience
         </div>
         <div className={styles.sectionBody}>
           <div className={styles.primary}>{review.audience.primary}</div>
@@ -68,7 +69,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}>🕐</span> Best Timing & Location
+          <span className={styles.sectionIcon}><Clock size={16} /></span> Best Timing & Location
         </div>
         <div className={styles.sectionBody}>
           <div className={styles.primary}>{review.timing.bestTime}</div>
@@ -79,7 +80,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}>📝</span> Content Feedback
+          <span className={styles.sectionIcon}><FileText size={16} /></span> Content Feedback
           <span className={styles.scoreTag}>{review.content.score}</span>
         </div>
         <div className={styles.sectionBody}>
@@ -91,7 +92,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}>👀</span> Competitor Insight
+          <span className={styles.sectionIcon}><Eye size={16} /></span> Competitor Insight
         </div>
         <div className={styles.sectionBody}>
           <div className={styles.primary}>{review.competitor.insight}</div>
@@ -101,7 +102,7 @@ export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}>📈</span> Performance Outlook
+          <span className={styles.sectionIcon}><TrendingUp size={16} /></span> Performance Outlook
         </div>
         <div className={styles.sectionBody}>
           <div className={styles.primary}>{review.performance.estimate}</div>

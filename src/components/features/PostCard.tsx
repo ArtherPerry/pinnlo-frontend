@@ -7,6 +7,7 @@ import { useApprovePost, useRejectPost, useDeletePost } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
 import styles from './PostCard.module.css'
+import { AlertTriangle, Clock, Check } from 'lucide-react'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
   DRAFT:          'draft',
@@ -115,7 +116,7 @@ export function PostCard({ post }: PostCardProps) {
         {/* Failed error */}
         {isFailed && post.targets.some((t) => t.errorMsg) && (
           <div className={styles.errorBar}>
-            ⚠ {post.targets.find((t) => t.errorMsg)?.errorMsg}
+           <AlertTriangle size={14} /> {post.targets.find((t) => t.errorMsg)?.errorMsg}
           </div>
         )}
 
@@ -133,7 +134,7 @@ export function PostCard({ post }: PostCardProps) {
           <div className={styles.bottomMeta}>
             {post.scheduledAt && (
               <span className={styles.schedule}>
-                🕐 {formatDate(post.scheduledAt, 'th-TH', {
+               <Clock size={14} /> {formatDate(post.scheduledAt, 'th-TH', {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}
@@ -152,7 +153,7 @@ export function PostCard({ post }: PostCardProps) {
                   onClick={handleApprove}
                   disabled={approve.isPending}
                 >
-                  {approve.isPending ? '...' : '✓ Approve'}
+                  {approve.isPending ? '...' : <><Check size={14} /> Approve</>}
                 </button>
                 <button
                   className={cn(styles.actionBtn, styles.rejectBtn)}

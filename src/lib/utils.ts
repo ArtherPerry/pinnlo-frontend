@@ -3,10 +3,16 @@ export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(' ')
 }
 
-// Format date for display with timezone
+const LOCALE_MAP: Record<string, string> = {
+  en: 'en-GB',
+  th: 'th-TH-u-ca-gregory',
+  my: 'my-MM',
+  lo: 'lo-LA',
+}
+
 export function formatDate(
   date: string | Date,
-  locale = 'th-TH',
+  locale = 'en',
   options?: Intl.DateTimeFormatOptions
 ): string {
   const opts: Intl.DateTimeFormatOptions = options ?? {
@@ -14,7 +20,8 @@ export function formatDate(
     month: 'short',
     day:   'numeric',
   }
-  return new Intl.DateTimeFormat(locale, opts).format(new Date(date))
+  const resolved = LOCALE_MAP[locale] ?? locale
+  return new Intl.DateTimeFormat(resolved, opts).format(new Date(date))
 }
 
 // Format currency by market

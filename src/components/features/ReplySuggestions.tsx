@@ -3,6 +3,7 @@
 import { useGenerateReplySuggestions } from '@/hooks/useAI'
 import { useToast } from '@/hooks/useToast'
 import styles from './ReplySuggestions.module.css'
+import { Sparkles } from 'lucide-react'
 
 interface ReplySuggestionsProps {
   message:  string   // the customer's last message
@@ -37,7 +38,7 @@ export function ReplySuggestions({
         onClick={handleGenerate}
         disabled={!message.trim()}
       >
-        ✨ Suggest replies
+        <Sparkles size={14} /> Suggest replies
       </button>
     )
   }

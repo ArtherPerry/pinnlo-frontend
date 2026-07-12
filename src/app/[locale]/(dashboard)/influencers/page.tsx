@@ -142,7 +142,7 @@ export default function InfluencersPage() {
       features={[
         'Search 10,000+ influencers across Thailand, Myanmar and Laos',
         'Filter by tier, platform, location and engagement rate',
-        'Pinnlo relevance scoring for brand fit',
+        'Pinnalo relevance scoring for brand fit',
         'View recent posts and engagement analytics',
         'Direct email contact for collaboration',
       ]}

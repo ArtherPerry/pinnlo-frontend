@@ -3,12 +3,13 @@
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
 import styles from './Toast.module.css'
+import { CheckCircle, XCircle, AlertTriangle, Info, type LucideIcon } from 'lucide-react'
 
-const ICONS: Record<string, string> = {
-  success: '✓',
-  error:   '✕',
-  warning: '⚠',
-  info:    'ℹ',
+const ICONS: Record<string, LucideIcon> = {
+  success: CheckCircle,
+  error:   XCircle,
+  warning: AlertTriangle,
+  info:    Info,
 }
 
 export function ToastContainer() {
@@ -18,25 +19,28 @@ export function ToastContainer() {
 
   return (
     <div className={styles.container} aria-live="polite" aria-atomic="false">
-      {toasts.map((toast) => (
-        <div
-          key={toast.id}
-          className={cn(styles.toast, styles[toast.type])}
-          role="alert"
-        >
-          <span className={styles.icon} aria-hidden="true">
-            {ICONS[toast.type]}
-          </span>
-          <span className={styles.message}>{toast.message}</span>
-          <button
-            className={styles.dismiss}
-            onClick={() => dismiss(toast.id)}
-            aria-label="Dismiss"
+      {toasts.map((toast) => {
+        const Icon = ICONS[toast.type]
+        return (
+          <div
+            key={toast.id}
+            className={cn(styles.toast, styles[toast.type])}
+            role="alert"
           >
-            ×
-          </button>
-        </div>
-      ))}
+            <span className={styles.icon} aria-hidden="true">
+              <Icon size={16} />
+            </span>
+            <span className={styles.message}>{toast.message}</span>
+            <button
+              className={styles.dismiss}
+              onClick={() => dismiss(toast.id)}
+              aria-label="Dismiss"
+            >
+              ×
+            </button>
+          </div>
+        )
+      })}
     </div>
   )
 }

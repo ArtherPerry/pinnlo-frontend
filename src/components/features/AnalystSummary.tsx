@@ -3,11 +3,12 @@
 import { useState } from 'react'
 import type { AnalyticsOverview } from '@/lib/types'
 import styles from './AnalystSummary.module.css'
+import { Sparkles, Video, Calendar, AlertTriangle, TrendingUp, Eye, MessageCircle, type LucideIcon } from 'lucide-react'
 
 type ViewMode = 'client' | 'agency'
 
 interface Insight {
-  icon: string
+  icon: LucideIcon
   text: string
 }
 
@@ -15,9 +16,6 @@ interface Action {
   text: string
 }
 
-// Generates the analyst narrative from the metrics.
-// Mocked interpretation for now — real version will be RAG-grounded
-// (SEA market knowledge + client history + competitor data).
 function buildNarrative(overview: AnalyticsOverview | undefined, view: ViewMode) {
   const reachGrowth = overview?.reachGrowth ?? 40
   const followerGrowth = overview?.followerGrowth ?? 3.2
@@ -30,9 +28,9 @@ function buildNarrative(overview: AnalyticsOverview | undefined, view: ViewMode)
     : `Your reach dropped ${Math.abs(reachGrowth)}% this month, but there's a clear reason and an easy fix.`
 
   const insights: Insight[] = [
-    { icon: '🎥', text: 'Your <strong>video posts</strong> reached about 5x more people than photos this month.' },
-    { icon: '📅', text: 'Posts on <strong>Saturday mornings</strong> got the most engagement — that\'s when your audience is most active.' },
-    { icon: followerGrowth < 2 ? '⚠️' : '📈',
+    { icon: Video, text: 'Your <strong>video posts</strong> reached about 5x more people than photos this month.' },
+    { icon: Calendar, text: 'Posts on <strong>Saturday mornings</strong> got the most engagement — that&apos;s when your audience is most active.' },
+    { icon: followerGrowth < 2 ? AlertTriangle : TrendingUp,
       text: followerGrowth < 2
         ? `Engagement is healthy, but <strong>follower growth is slowing</strong> (${followerGrowth}%). Worth attention.`
         : `Followers grew a healthy <strong>${followerGrowth}%</strong> this month.` },
@@ -40,11 +38,11 @@ function buildNarrative(overview: AnalyticsOverview | undefined, view: ViewMode)
 
   if (view === 'agency') {
     insights.push({
-      icon: '👀',
+      icon: Eye,
       text: 'Two tracked competitors ran discount promos this month — an opening to differentiate on experience.',
     })
     insights.push({
-      icon: '💬',
+      icon: MessageCircle,
       text: `Engagement rate (${engagementRate}%) is above the F&B category average for this region.`,
     })
   }
@@ -76,7 +74,7 @@ export function AnalystSummary({ overview, clientName }: {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <div className={styles.badge}>✨</div>
+          <div className={styles.badge}><Sparkles size={20} /></div>
           <div>
             <div className={styles.title}>AI Analyst Report</div>
             <div className={styles.subtitle}>
@@ -104,12 +102,15 @@ export function AnalystSummary({ overview, clientName }: {
 
       <div className={styles.sectionTitle}>What&apos;s happening</div>
       <div className={styles.insightList}>
-        {insights.map((ins, i) => (
-          <div key={i} className={styles.insight}>
-            <span className={styles.insightIcon}>{ins.icon}</span>
-            <span className={styles.insightText} dangerouslySetInnerHTML={{ __html: ins.text }} />
-          </div>
-        ))}
+        {insights.map((ins, i) => {
+          const Icon = ins.icon
+          return (
+            <div key={i} className={styles.insight}>
+              <span className={styles.insightIcon}><Icon size={16} /></span>
+              <span className={styles.insightText} dangerouslySetInnerHTML={{ __html: ins.text }} />
+            </div>
+          )
+        })}
       </div>
 
       <div className={styles.sectionTitle}>What to do next</div>

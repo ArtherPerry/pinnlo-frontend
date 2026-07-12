@@ -14,6 +14,7 @@ import styles from './NewPostModal.module.css'
 import { CaptionGenerator } from './CaptionGenerator'
 import { ImageGenerator } from './ImageGenerator'
 import { AIReview } from './AIReview'
+import { Sparkles } from 'lucide-react'
 
 const PLATFORMS: Platform[] = ['FACEBOOK', 'INSTAGRAM', 'WHATSAPP', 'LINE']
 
@@ -237,7 +238,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
         transition: 'all var(--transition-fast)',
       }}
     >
-      ✨ {showAI ? 'Hide AI' : 'AI caption'}
+      <Sparkles size={14} /> {showAI ? 'Hide AI' : 'AI caption'}
     </button>
   </div>
 
@@ -309,7 +310,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
         transition: 'all var(--transition-fast)',
       }}
     >
-      🎨 {showImageAI ? 'Hide AI' : 'AI image'}
+     <Sparkles size={14} /> {showAI ? 'Hide AI' : 'AI Image'}
     </button>
   </div>
 
@@ -386,7 +387,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                   disabled={charError || !currentContent.trim()}
                   onClick={() => setStep('review')}
                 >
-                  ✨ Get AI Review
+                 <Sparkles size={16} /> Get AI Review
                 </Button>
               </>
             ) : (

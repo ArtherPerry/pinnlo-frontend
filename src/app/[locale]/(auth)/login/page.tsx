@@ -77,7 +77,7 @@ export default function LoginPage() {
             letterSpacing: '-0.02em',
             marginBottom: 4,
           }}>
-            Pinnlo
+            Pinnalo
           </div>
           <div style={{
             fontSize: 'var(--text-small)',

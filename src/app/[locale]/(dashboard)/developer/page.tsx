@@ -262,7 +262,7 @@ export default function DeveloperPage() {
           <div className={styles.headerLeft}>
             <h2 className={styles.pageTitle}>API access</h2>
             <p className={styles.pageSub}>
-              Manage API keys and monitor usage for your Pinnlo integration.
+              Manage API keys and monitor usage for your Pinnalo integration.
             </p>
           </div>
           <Button variant="primary" size="sm" onClick={() => setShowCreate(true)}>

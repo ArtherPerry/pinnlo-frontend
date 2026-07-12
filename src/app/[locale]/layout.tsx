@@ -7,7 +7,7 @@ import { ErrorBoundary }  from "@/components/providers/ErrorBoundary"
 import "../globals.css"
 
 export const metadata: Metadata = {
-  title: "Pinnlo — Social Media Management",
+  title: "Pinnalo — Social Media Management",
   description: "Social media management for Southeast Asia agencies",
 }
 

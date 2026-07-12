@@ -113,7 +113,7 @@ export function AddCompetitorModal({ onClose }: AddCompetitorModalProps) {
             />
             <p className={styles.hint}>
               Enter the full URL of their Facebook or Instagram page.
-              Pinnlo will sync follower counts and engagement data daily.
+              Pinnalo will sync follower counts and engagement data daily.
             </p>
 
             {/* Client */}

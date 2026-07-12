@@ -5,6 +5,7 @@ import { useGenerateImages } from '@/hooks/useAI'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
 import styles from './ImageGenerator.module.css'
+import { Check } from 'lucide-react'
 
 const STYLES = [
   { value: 'photorealistic', label: 'Photorealistic' },
@@ -155,7 +156,7 @@ export function ImageGenerator({ platform, onUse, onClose }: ImageGeneratorProps
                     className={styles.imagePreview}
                   />
                   <div className={styles.imageOverlay}>
-                    <div className={styles.selectedTick}>✓</div>
+                    <div className={styles.selectedTick}><Check size={14} /></div>
                   </div>
                 </div>
               ))}
@@ -168,7 +169,7 @@ export function ImageGenerator({ platform, onUse, onClose }: ImageGeneratorProps
                 disabled={selectedIdx === null}
               >
                 {selectedIdx !== null
-                  ? `Use image ${selectedIdx + 1} →`
+                  ? `Use image ${selectedIdx + 1}`
                   : 'Select an image'
                 }
               </button>

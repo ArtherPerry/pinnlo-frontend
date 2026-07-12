@@ -15,6 +15,7 @@
 
 .introIcon {
   font-size: 22px;
+  display: flex; align-items: center;
 }
 
 .introTitle {
@@ -47,6 +48,7 @@
 
 .sectionIcon {
   font-size: 16px;
+  display: flex; align-items: center;
 }
 
 .scoreTag {

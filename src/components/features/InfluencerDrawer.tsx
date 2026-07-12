@@ -3,6 +3,7 @@
 import { useInfluencer } from '@/hooks/useEnterprise'
 import { PlatformIcon } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
+import { MessageCircle } from 'lucide-react'
 
 interface InfluencerDrawerProps {
   influencerId: string
@@ -213,7 +214,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
                         color: 'var(--color-muted)',
                       }}>
                         <span>👍 {post.likes.toLocaleString()}</span>
-                        <span>💬 {post.comments.toLocaleString()}</span>
+                        <span><MessageCircle size={13} /> {post.comments.toLocaleString()}</span>
                         <span>↗ {post.shares.toLocaleString()}</span>
                         <span style={{ marginLeft: 'auto' }}>
                           {formatDate(post.postedAt, 'th-TH', {

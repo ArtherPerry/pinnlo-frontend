@@ -9,19 +9,19 @@ import type { ActivityType } from '@/lib/types'
 import { TagManager } from './TagManager'
 import styles from './ContactDrawer.module.css'
 import { AssignmentDropdown } from './AssignmentDropdown'
-
+import { MessageCircle, FileText, Tag, User, RefreshCw, type LucideIcon } from 'lucide-react'
 type Tab = 'info' | 'activity'
 
-const ACTIVITY_CONFIG: Record<ActivityType, { icon: string; dot: string }> = {
-  MESSENGER_MESSAGE: { icon: '💬', dot: 'message'  },
-  WHATSAPP_MESSAGE:  { icon: '💬', dot: 'message'  },
-  LINE_MESSAGE:      { icon: '💬', dot: 'message'  },
-  NOTE:              { icon: '📝', dot: 'note'     },
-  TAG_ADDED:         { icon: '🏷',  dot: 'tag'      },
-  TAG_REMOVED:       { icon: '🏷',  dot: 'tag'      },
-  ASSIGNED:          { icon: '👤', dot: 'assigned' },
-  UNASSIGNED:        { icon: '👤', dot: 'assigned' },
-  STATUS_CHANGED:    { icon: '🔄', dot: 'system'   },
+const ACTIVITY_CONFIG: Record<ActivityType, { icon: LucideIcon; dot: string }> = {
+  MESSENGER_MESSAGE: { icon: MessageCircle, dot: 'message'  },
+  WHATSAPP_MESSAGE:  { icon: MessageCircle, dot: 'message'  },
+  LINE_MESSAGE:      { icon: MessageCircle, dot: 'message'  },
+  NOTE:              { icon: FileText,      dot: 'note'     },
+  TAG_ADDED:         { icon: Tag,           dot: 'tag'      },
+  TAG_REMOVED:       { icon: Tag,           dot: 'tag'      },
+  ASSIGNED:          { icon: User,          dot: 'assigned' },
+  UNASSIGNED:        { icon: User,          dot: 'assigned' },
+  STATUS_CHANGED:    { icon: RefreshCw,     dot: 'system'   },
 }
 
 interface ContactDrawerProps {
@@ -247,15 +247,16 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                     <div className={styles.timeline}>
                       {contact.activities.map((activity) => {
                         const config = ACTIVITY_CONFIG[activity.type] ?? {
-                          icon: '•', dot: 'system',
+                          icon: RefreshCw, dot: 'system',
                         }
+                        const ActivityIcon = config.icon
                         return (
                           <div key={activity.id} className={styles.timelineItem}>
                             <div className={cn(
                               styles.timelineDot,
                               styles[config.dot]
                             )}>
-                              {config.icon}
+                              <ActivityIcon size={13} />
                             </div>
                             <div className={styles.timelineContent}>
                               <div className={styles.timelineText}>

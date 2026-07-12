@@ -13,15 +13,14 @@ import { cn } from '@/lib/utils'
 import type { AnalyticsHistoryPoint, HeatmapCell } from '@/lib/types'
 import styles from './analytics.module.css'
 import { ReportExporter } from '@/components/features/ReportExporter'
+import { AnalystSummary } from '@/components/features/AnalystSummary'
 
-// ── Helpers ───────────────────────────────────────────────────────
 function formatNum(n: number): string {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
   if (n >= 1000)    return `${(n / 1000).toFixed(1)}K`
   return String(n)
 }
 
-// ── History line chart ─────────────────────────────────────────────
 type MetricKey = 'followers' | 'reach' | 'engagement'
 
 const METRIC_COLORS: Record<MetricKey, string> = {
@@ -34,6 +33,12 @@ const METRIC_LABELS: Record<MetricKey, string> = {
   followers:  'Followers',
   reach:      'Reach',
   engagement: 'Engagement',
+}
+
+const CLIENT_NAMES: Record<string, string> = {
+  somjai: 'Somjai Coffee',
+  bkk:    'BKK Fitness',
+  mango:  'Mango Resort',
 }
 
 function HistoryChart({
@@ -74,7 +79,7 @@ function HistoryChart({
   const xLabels = data.length > 0
     ? [0, Math.floor((data.length - 1) / 2), data.length - 1].map((i) => ({
         i,
-        label: new Date(data[i].date).toLocaleDateString('th-TH', { month: 'short', day: 'numeric' }),
+        label: new Date(data[i].date).toLocaleDateString('en-GB', { month: 'short', day: 'numeric' }),
       }))
     : []
 
@@ -91,20 +96,18 @@ function HistoryChart({
       x:       (xS(idx) / W) * 100,
       y:       (yS(d[metric] as number) / H) * 100,
       value:   d[metric] as number,
-      date:    new Date(d.date).toLocaleDateString('th-TH', { dateStyle: 'medium' }),
+      date:    new Date(d.date).toLocaleDateString('en-GB', { dateStyle: 'medium' }),
       visible: true,
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, metric])
 
   if (data.length === 0) return (
-    <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
-      No data for this period
-    </div>
+    <div className={styles.chartEmpty}>No data for this period</div>
   )
 
   return (
-    <div className={styles.chartWrap} style={{ position: 'relative' }}>
+    <div className={styles.chartWrap}>
       <svg
         ref={svgRef}
         viewBox={`0 0 ${W} ${H}`}
@@ -159,29 +162,18 @@ function HistoryChart({
       </svg>
 
       {tooltip.visible && (
-        <div style={{
-          position: 'absolute',
-          left: `${tooltip.x}%`,
-          bottom: `${100 - tooltip.y + 5}%`,
-          background: 'var(--color-ink)',
-          color: 'white',
-          fontSize: 'var(--text-small)',
-          padding: '5px 10px',
-          borderRadius: 'var(--radius-md)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-        }}>
-          <div style={{ fontWeight: 600 }}>{formatNum(tooltip.value)}</div>
-          <div style={{ opacity: 0.7, fontSize: '11px' }}>{tooltip.date}</div>
+        <div
+          className={styles.chartTooltip}
+          style={{ left: `${tooltip.x}%`, bottom: `${100 - tooltip.y + 5}%` }}
+        >
+          <div className={styles.chartTooltipValue}>{formatNum(tooltip.value)}</div>
+          <div className={styles.chartTooltipDate}>{tooltip.date}</div>
         </div>
       )}
     </div>
   )
 }
 
-// ── Heatmap ────────────────────────────────────────────────────────
 function HeatmapChart({ data }: { data: HeatmapCell[][] }) {
   const [hovered, setHovered] = useState<HeatmapCell | null>(null)
 
@@ -197,24 +189,12 @@ function HeatmapChart({ data }: { data: HeatmapCell[][] }) {
 
   return (
     <div>
-      {hovered && (
-        <div style={{
-          fontSize: 'var(--text-small)',
-          color: 'var(--color-ink)',
-          marginBottom: 'var(--space-2)',
-          fontWeight: 500,
-          height: '20px',
-        }}>
-          {hovered.label} — Score: {hovered.score}/100
-        </div>
-      )}
-      {!hovered && (
-        <div style={{ height: '20px', marginBottom: 'var(--space-2)' }} />
-      )}
+      <div className={styles.heatmapHover}>
+        {hovered ? `${hovered.label} — Score: ${hovered.score}/100` : ''}
+      </div>
 
       <div className={styles.heatmapWrap}>
         <div className={styles.heatmap}>
-          {/* Hour labels row */}
           <div className={styles.heatmapDayLabel} />
           {hours.map((h) => (
             <div key={h} className={styles.heatmapHourLabel}>
@@ -222,7 +202,6 @@ function HeatmapChart({ data }: { data: HeatmapCell[][] }) {
             </div>
           ))}
 
-          {/* Data rows */}
           {data.map((row) => (
             <>
               <div key={`label-${row[0].day}`} className={styles.heatmapDayLabel}>
@@ -243,7 +222,6 @@ function HeatmapChart({ data }: { data: HeatmapCell[][] }) {
         </div>
       </div>
 
-      {/* Legend */}
       <div className={styles.heatmapLegend}>
         <span>Low</span>
         <div className={styles.legendTrack}>
@@ -265,10 +243,11 @@ function HeatmapChart({ data }: { data: HeatmapCell[][] }) {
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   const [historyDays, setHistoryDays] = useState(30)
   const [activeMetric, setActiveMetric] = useState<MetricKey>('followers')
+  const [period, setPeriod] = useState('this-month')
+  const [reportClient, setReportClient] = useState('all')
 
   const plan = usePlan()
 
@@ -277,29 +256,51 @@ export default function AnalyticsPage() {
   const { data: posts,    isLoading: postsLoading    } = usePostPerformance()
   const { data: heatmapData, isLoading: heatmapLoading } = useHeatmap()
 
+  const selectedClientName = reportClient === 'all' ? undefined : CLIENT_NAMES[reportClient]
+
   return (
     <div className={styles.page}>
 
-      {/* Header */}
-      <div className={styles.toolbar}>
-  <div>
-    <h2 style={{ fontSize: 'var(--text-h2)', fontWeight: 600 }}>Analytics</h2>
-    <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: '2px' }}>
-      Page performance, post metrics, and audience insights.
-    </p>
-  </div>
-  <ReportExporter
-    clientName="All clients"
-    brandColor="#1D9E75"
-    companyName="NC Digital Agency"
-  />
-</div>
+      {/* Report bar */}
+      <div className={styles.reportBar}>
+        <div className={styles.reportBarLeft}>
+          <span className={styles.reportPeriodLabel}>Report</span>
+          <select
+            className={styles.reportSelect}
+            value={reportClient}
+            onChange={(e) => setReportClient(e.target.value)}
+          >
+            <option value="all">All clients</option>
+            <option value="somjai">Somjai Coffee</option>
+            <option value="bkk">BKK Fitness</option>
+            <option value="mango">Mango Resort</option>
+          </select>
+          <select
+            className={styles.reportSelect}
+            value={period}
+            onChange={(e) => setPeriod(e.target.value)}
+          >
+            <option value="this-month">This month</option>
+            <option value="last-month">Last month</option>
+            <option value="last-30">Last 30 days</option>
+            <option value="last-quarter">Last quarter</option>
+          </select>
+        </div>
+        <ReportExporter
+          clientName={selectedClientName ?? 'All clients'}
+          brandColor="#1D9E75"
+          companyName="NC Digital Agency"
+        />
+      </div>
+
+      {/* AI Analyst narrative */}
+      <AnalystSummary overview={overview} clientName={selectedClientName} />
 
       {/* Overview cards */}
       {overviewLoading ? (
         <div className={styles.overviewGrid}>
-          {[1,2,3,4].map((n) => (
-            <div key={n} className={cn(styles.skeletonBlock)} style={{ height: 88 }} />
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className={styles.skeletonCard} />
           ))}
         </div>
       ) : overview && (
@@ -310,6 +311,10 @@ export default function AnalyticsPage() {
             <span className={cn(styles.overviewChange, overview.followerGrowth >= 0 ? styles.changePos : styles.changeNeg)}>
               {overview.followerGrowth >= 0 ? '▲' : '▼'} {Math.abs(overview.followerGrowth).toFixed(1)}% / 30d
             </span>
+            <span className={styles.overviewInsight}>
+              <span className={styles.overviewInsightIcon}>→</span>
+              {overview.followerGrowth < 2 ? 'Growth is slowing — consider a giveaway' : 'Steady growth from consistent posting'}
+            </span>
           </div>
           <div className={styles.overviewCard}>
             <span className={styles.overviewLabel}>Total reach</span>
@@ -317,19 +322,31 @@ export default function AnalyticsPage() {
             <span className={cn(styles.overviewChange, overview.reachGrowth >= 0 ? styles.changePos : styles.changeNeg)}>
               {overview.reachGrowth >= 0 ? '▲' : '▼'} {Math.abs(overview.reachGrowth).toFixed(1)}% / 30d
             </span>
+            <span className={styles.overviewInsight}>
+              <span className={styles.overviewInsightIcon}>→</span>
+              {overview.reachGrowth >= 0 ? 'Mostly driven by your video posts' : 'Down from posting less on weekends'}
+            </span>
           </div>
           <div className={styles.overviewCard}>
             <span className={styles.overviewLabel}>Engagement rate</span>
             <span className={styles.overviewValue}>{overview.engagementRate.toFixed(1)}%</span>
-            <span className={styles.overviewChange} style={{ color: 'var(--color-muted)' }}>
+            <span className={cn(styles.overviewChange, styles.changeMuted)}>
               {overview.totalEngagement.toLocaleString()} interactions
+            </span>
+            <span className={styles.overviewInsight}>
+              <span className={styles.overviewInsightIcon}>→</span>
+              Above the F&amp;B average for your region
             </span>
           </div>
           <div className={styles.overviewCard}>
             <span className={styles.overviewLabel}>Posts published</span>
             <span className={styles.overviewValue}>{overview.postsPublished}</span>
-            <span className={styles.overviewChange} style={{ color: 'var(--color-muted)' }}>
+            <span className={cn(styles.overviewChange, styles.changeMuted)}>
               Last 30 days
+            </span>
+            <span className={styles.overviewInsight}>
+              <span className={styles.overviewInsightIcon}>→</span>
+              Try 2–3 more videos next month
             </span>
           </div>
         </div>
@@ -352,7 +369,6 @@ export default function AnalyticsPage() {
           </div>
         </div>
         <div className={styles.sectionBody}>
-          {/* Metric toggles */}
           <div className={styles.metricToggles}>
             {(Object.keys(METRIC_LABELS) as MetricKey[]).map((key) => (
               <button
@@ -360,17 +376,14 @@ export default function AnalyticsPage() {
                 className={cn(styles.metricToggle, activeMetric === key && styles.metricToggleActive)}
                 onClick={() => setActiveMetric(key)}
               >
-                <span
-                  className={styles.metricDot}
-                  style={{ background: METRIC_COLORS[key] }}
-                />
+                <span className={styles.metricDot} style={{ background: METRIC_COLORS[key] }} />
                 {METRIC_LABELS[key]}
               </button>
             ))}
           </div>
 
           {historyLoading ? (
-            <div className={cn(styles.skeletonBlock)} style={{ height: 160 }} />
+            <div className={styles.skeletonChart} />
           ) : history ? (
             <HistoryChart data={history} metric={activeMetric} />
           ) : null}
@@ -383,7 +396,7 @@ export default function AnalyticsPage() {
           <span className={styles.sectionTitle}>Post performance</span>
         </div>
         {postsLoading ? (
-          <div className={cn(styles.skeletonBlock)} style={{ height: 200, margin: 'var(--space-4)' }} />
+          <div className={styles.skeletonTable} />
         ) : posts && (
           <table className={styles.postTable}>
             <thead>
@@ -400,12 +413,12 @@ export default function AnalyticsPage() {
               {posts.map((post) => (
                 <tr key={post.id}>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                    <div className={styles.postCell}>
                       <PlatformIcon platform={post.platform as 'FACEBOOK' | 'INSTAGRAM' | 'WHATSAPP' | 'LINE'} size={13} />
                       <div>
                         <div className={styles.postContent}>{post.content}</div>
-                        <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
-                          {post.clientName} · {new Date(post.publishedAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })}
+                        <div className={styles.postMeta}>
+                          {post.clientName} · {new Date(post.publishedAt).toLocaleDateString('en-GB', { dateStyle: 'medium' })}
                         </div>
                       </div>
                     </div>
@@ -435,13 +448,11 @@ export default function AnalyticsPage() {
         <div className={styles.sectionCard}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionTitle}>Best posting times</span>
-            <span style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
-              {heatmapData?.timezone}
-            </span>
+            <span className={styles.sectionMeta}>{heatmapData?.timezone}</span>
           </div>
           <div className={styles.sectionBody}>
             {heatmapLoading ? (
-              <div className={cn(styles.skeletonBlock)} style={{ height: 200 }} />
+              <div className={styles.skeletonChart} />
             ) : heatmapData ? (
               <HeatmapChart data={heatmapData.heatmap} />
             ) : null}
@@ -451,19 +462,10 @@ export default function AnalyticsPage() {
         <div className={styles.sectionCard}>
           <div className={styles.sectionHeader}>
             <span className={styles.sectionTitle}>Best posting times</span>
-            <span style={{
-              fontSize: 'var(--text-small)',
-              padding: '2px 8px',
-              borderRadius: 'var(--radius-full)',
-              background: 'var(--color-info-light)',
-              color: 'var(--color-info)',
-              fontWeight: 500,
-            }}>
-              Pro plan
-            </span>
+            <span className={styles.planTag}>Pro plan</span>
           </div>
-          <div className={styles.sectionBody} style={{ textAlign: 'center', padding: 'var(--space-8)' }}>
-            <p style={{ color: 'var(--color-muted)', fontSize: 'var(--text-body)', marginBottom: 'var(--space-3)' }}>
+          <div className={cn(styles.sectionBody, styles.upsell)}>
+            <p className={styles.upsellText}>
               Upgrade to Pro to see AI-powered best posting time recommendations based on your audience&apos;s engagement patterns.
             </p>
           </div>

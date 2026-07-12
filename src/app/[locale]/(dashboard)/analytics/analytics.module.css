@@ -288,3 +288,256 @@
   .postTable th:nth-child(n+4),
   .postTable td:nth-child(n+4) { display: none; }
 }
+
+.overviewInsight {
+  font-size: var(--text-caption);
+  color: var(--color-teal-600);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.overviewInsightIcon {
+  flex-shrink: 0;
+}
+
+.reportBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.reportBarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.reportPeriodLabel {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.periodSelect {
+  height: 36px;
+  padding: 0 var(--space-8) 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+.periodSelect:focus {
+  border-color: var(--color-teal-500);
+}
+
+.clientSelect {
+  height: 36px;
+  padding: 0 var(--space-8) 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+  background: var(--color-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+/* ── Report bar ────────────────────────────────────────────── */
+.reportBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-5);
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.reportBarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.reportPeriodLabel {
+  font-size: var(--text-h3);
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.reportSelect {
+  height: 36px;
+  padding: 0 var(--space-8) 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+  background-color: var(--color-white);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-2) center;
+  cursor: pointer;
+  outline: none;
+  appearance: none;
+}
+
+.reportSelect:focus {
+  border-color: var(--color-teal-500);
+}
+
+/* ── Overview card insight line ────────────────────────────── */
+.overviewInsight {
+  font-size: var(--text-caption);
+  color: var(--color-teal-600);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.overviewInsightIcon {
+  flex-shrink: 0;
+}
+
+.changeMuted {
+  color: var(--color-muted);
+}
+
+/* ── Chart (replaces inline styles in HistoryChart) ────────── */
+.chartWrap {
+  position: relative;
+}
+
+.chartEmpty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.chartTooltip {
+  position: absolute;
+  background: var(--color-ink);
+  color: var(--color-white);
+  font-size: var(--text-small);
+  padding: 5px 10px;
+  border-radius: var(--radius-md);
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.chartTooltipValue {
+  font-weight: 600;
+}
+
+.chartTooltipDate {
+  opacity: 0.7;
+  font-size: 11px;
+}
+
+/* ── Heatmap hover line (replaces inline height juggling) ──── */
+.heatmapHover {
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+  font-weight: 500;
+  height: 20px;
+}
+
+/* ── Post performance table cells ──────────────────────────── */
+.postCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.postMeta {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+/* ── Section meta / plan tag / upsell ──────────────────────── */
+.sectionMeta {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.planTag {
+  font-size: var(--text-small);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-info-light);
+  color: var(--color-info);
+  font-weight: 500;
+}
+
+.upsell {
+  text-align: center;
+  padding: var(--space-8);
+}
+
+.upsellText {
+  color: var(--color-muted);
+  font-size: var(--text-body);
+  margin-bottom: var(--space-3);
+}
+
+/* ── Skeletons (replaces inline height props) ──────────────── */
+.skeletonCard {
+  height: 88px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-bg) 50%, var(--color-bg-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonChart {
+  height: 160px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-bg) 50%, var(--color-bg-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.skeletonTable {
+  height: 200px;
+  margin: var(--space-4);
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-bg) 50%, var(--color-bg-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

@@ -10,6 +10,8 @@ import {
 import { useClients } from '@/hooks/useClients'
 import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { useLocale } from 'next-intl'
+import { formatDate } from '@/lib/utils'
 import type {
   EmailCampaign,
   EmailCampaignStatus,
@@ -429,6 +431,7 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
   const deleteCampaign = useDeleteEmailCampaign()
   const sendCampaign   = useSendEmailCampaign()
   const toast          = useToast()
+  const locale         = useLocale()
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${campaign.name}"?`)) return
@@ -671,10 +674,10 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
           </div>
           <span>
             {campaign.sentAt
-              ? `Sent ${new Date(campaign.sentAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })}`
+              ? `Sent ${formatDate(campaign.sentAt, locale, { dateStyle: 'medium' })}`
               : campaign.scheduledAt
-                ? `Scheduled ${new Date(campaign.scheduledAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })}`
-                : `Created ${new Date(campaign.createdAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })}`
+                ? `Scheduled ${formatDate(campaign.scheduledAt, locale, { dateStyle: 'medium' })}`
+                : `Created ${formatDate(campaign.createdAt, locale, { dateStyle: 'medium' })}`
             }
           </span>
         </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import type { Post } from '@/lib/types'
 import { Badge, PlatformIcons } from '@/components/ui'
 import { useApprovePost, useRejectPost, useDeletePost } from '@/hooks/usePosts'
@@ -42,6 +43,7 @@ export function PostCard({ post }: PostCardProps) {
 
   const [, setEditModal] = useState(false)
   const toast      = useToast()
+  const locale     = useLocale()
   const approve    = useApprovePost()
   const reject     = useRejectPost()
   const deletePost = useDeletePost()
@@ -134,7 +136,7 @@ export function PostCard({ post }: PostCardProps) {
           <div className={styles.bottomMeta}>
             {post.scheduledAt && (
               <span className={styles.schedule}>
-               <Clock size={14} /> {formatDate(post.scheduledAt, 'th-TH', {
+               <Clock size={14} /> {formatDate(post.scheduledAt, locale, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}

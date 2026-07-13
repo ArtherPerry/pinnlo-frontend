@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { useLocale } from 'next-intl'
 import { useCompetitor } from '@/hooks/useCompetitors'
 import { PlatformIcon } from '@/components/ui'
 import { FollowerChart } from './FollowerChart'
@@ -20,6 +21,7 @@ function formatFollowers(n: number): string {
 
 export function CompetitorDrawer({ competitorId, onClose }: CompetitorDrawerProps) {
   const { data: comp, isLoading } = useCompetitor(competitorId)
+  const locale = useLocale()
 
   return (
     <>
@@ -107,7 +109,7 @@ export function CompetitorDrawer({ competitorId, onClose }: CompetitorDrawerProp
                 <div className={styles.infoItem}>
                   <span className={styles.infoLabel}>Tracking since</span>
                   <span className={styles.infoValue}>
-                    {formatDate(comp.createdAt, 'th-TH', {
+                    {formatDate(comp.createdAt, locale, {
                       dateStyle: 'medium',
                     })}
                   </span>
@@ -115,7 +117,7 @@ export function CompetitorDrawer({ competitorId, onClose }: CompetitorDrawerProp
                 <div className={styles.infoItem}>
                   <span className={styles.infoLabel}>Last synced</span>
                   <span className={styles.infoValue}>
-                    {formatDate(comp.lastSyncedAt, 'th-TH', {
+                    {formatDate(comp.lastSyncedAt, locale, {
                       dateStyle: 'medium',
                       timeStyle: 'short',
                     })}

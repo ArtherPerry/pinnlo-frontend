@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import { useContact, useAddNote } from '@/hooks/useContacts'
 import { Button, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
@@ -30,6 +31,7 @@ interface ContactDrawerProps {
 }
 
 export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
+  const locale = useLocale()
   const [activeTab, setActiveTab] = useState<Tab>('info')
   const [note,      setNote     ] = useState('')
 
@@ -135,7 +137,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                     <div className={styles.infoItem}>
                       <span className={styles.infoLabel}>Added</span>
                       <span className={styles.infoValue}>
-                        {formatDate(contact.createdAt, 'th-TH', {
+                        {formatDate(contact.createdAt, locale, {
                           dateStyle: 'medium',
                         })}
                       </span>
@@ -144,7 +146,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                       <span className={styles.infoLabel}>Last active</span>
                       {contact.lastActiveAt
                         ? <span className={styles.infoValue}>
-                            {formatDate(contact.lastActiveAt, 'th-TH', {
+                            {formatDate(contact.lastActiveAt, locale, {
                               dateStyle: 'medium',
                               timeStyle: 'short',
                             })}
@@ -267,7 +269,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
                                   {activity.createdBy}
                                 </span>
                                 <span className={styles.timelineTime}>
-                                  {formatDate(activity.createdAt, 'th-TH', {
+                                  {formatDate(activity.createdAt, locale, {
                                     dateStyle: 'medium',
                                     timeStyle: 'short',
                                   })}

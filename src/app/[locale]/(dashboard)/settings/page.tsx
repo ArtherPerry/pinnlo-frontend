@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
@@ -267,8 +268,9 @@ function InviteModal({ onClose }: { onClose: () => void }) {
 function TeamTab() {
   const { data: team, isLoading } = useTeamSettings()
   const [showInvite, setShowInvite] = useState(false)
-  const qc    = useQueryClient()
-  const toast = useToast()
+  const qc     = useQueryClient()
+  const toast  = useToast()
+  const locale = useLocale()
 
   const handleRemove = async (id: string, name: string) => {
     if (!confirm(`Remove ${name} from the team?`)) return
@@ -339,7 +341,7 @@ function TeamTab() {
                 </td>
                 <td style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
                   {member.lastActiveAt
-                    ? formatDate(member.lastActiveAt, 'th-TH', { dateStyle: 'medium' })
+                    ? formatDate(member.lastActiveAt, locale, { dateStyle: 'medium' })
                     : '—'
                   }
                 </td>
@@ -379,8 +381,9 @@ const PLATFORM_STATUS_LABELS: Record<string, string> = {
 
 function PlatformsTab() {
   const { data: platforms, isLoading } = usePlatformSettings()
-  const qc    = useQueryClient()
-  const toast = useToast()
+  const qc     = useQueryClient()
+  const toast  = useToast()
+  const locale = useLocale()
 
   const handleDisconnect = async (id: string, name: string) => {
     if (!confirm(`Disconnect "${name}"? Posts will stop publishing to this platform.`)) return
@@ -426,7 +429,7 @@ function PlatformsTab() {
                 <div className={styles.platformMeta}>
                   {PLATFORM_STATUS_LABELS[platform.status]}
                   {platform.tokenExpiresAt && !isExpired && (
-                    <> · Token expires {formatDate(platform.tokenExpiresAt, 'th-TH', { dateStyle: 'medium' })}</>
+                    <> · Token expires {formatDate(platform.tokenExpiresAt, locale, { dateStyle: 'medium' })}</>
                   )}
                   {isExpired && (
                     <span style={{ color: 'var(--color-danger)', fontWeight: 500 }}>

@@ -13,7 +13,8 @@ import {
 } from '@/hooks/useEnterprise'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
-import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
+import { cn, formatDate } from '@/lib/utils'
 import { PlanGate } from '@/components/features/PlanGate'
 import type {
   ListeningQuery,
@@ -210,6 +211,7 @@ function AddQueryModal({ onClose }: { onClose: () => void }) {
 }
 
 function MentionCard({ mention }: { mention: Mention }) {
+  const locale = useLocale()
   const initials = mention.author
     .split(' ')
     .map((n) => n[0])
@@ -238,7 +240,7 @@ function MentionCard({ mention }: { mention: Mention }) {
         <div className={styles.mentionStats}>
           <span>👍 {mention.engagement.toLocaleString()}</span>
           <span>
-            {new Date(mention.foundAt).toLocaleDateString('th-TH', {
+            {formatDate(mention.foundAt, locale, {
               dateStyle: 'medium',
               timeStyle: 'short',
             } as Intl.DateTimeFormatOptions)}
@@ -338,6 +340,7 @@ function QueryCard({
 }
 
 export default function ListeningPage() {
+  const locale = useLocale()
   const [showForm,      setShowForm     ] = useState(false)
   const [activeQueryId, setActiveQueryId] = useState<string | null>(null)
 
@@ -420,7 +423,7 @@ export default function ListeningPage() {
                     <div className={styles.panelMeta}>
                       {activeQuery.mentionCount} total mentions · Last found{' '}
                       {activeQuery.lastFoundAt
-                        ? new Date(activeQuery.lastFoundAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })
+                        ? formatDate(activeQuery.lastFoundAt, locale, { dateStyle: 'medium' })
                         : 'never'
                       }
                     </div>

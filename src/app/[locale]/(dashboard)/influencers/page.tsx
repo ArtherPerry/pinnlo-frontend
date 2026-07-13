@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
 import type { Influencer, InfluencerTier } from '@/lib/types'
 import styles from './influencers.module.css'
+import { Search } from 'lucide-react'
 
 function formatFollowers(n: number): string {
   if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
@@ -117,6 +118,9 @@ export default function InfluencersPage() {
   const [platformFilter, setPlatformFilter] = useState('')
   const [activeId,       setActiveId      ] = useState<string | null>(null)
   const [debounceTimer,  setDebounceTimer ] = useState<ReturnType<typeof setTimeout>>()
+  const [areaFilter,     setAreaFilter    ] = useState('')
+  const [nicheFilter,    setNicheFilter   ] = useState('')
+  const [languageFilter, setLanguageFilter] = useState('')
 
   const handleSearch = useCallback((value: string) => {
     setKeyword(value)
@@ -130,6 +134,9 @@ export default function InfluencersPage() {
     tier:     tierFilter    as InfluencerTier || undefined,
     platform: platformFilter || undefined,
   })
+  const AREAS = ['Yangon', 'Mandalay', 'Naypyidaw', 'Bago', 'Mawlamyine', 'Taunggyi', 'Nationwide']
+const NICHES = ['Food & Dining', 'Beauty & Cosmetics', 'Fashion', 'Lifestyle', 'Tech & Gadgets', 'Travel', 'Health & Fitness', 'Entertainment']
+const LANGUAGES = ['Burmese', 'English', 'Both']
 
   const avgEngagement = influencers?.length
     ? influencers.reduce((s, i) => s + i.engagementRate, 0) / influencers.length
@@ -161,11 +168,7 @@ export default function InfluencersPage() {
         <div className={styles.searchBar}>
           <div className={styles.searchWrapper}>
             <span className={styles.searchIcon}>
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                   stroke="currentColor" strokeWidth="1.5">
-                <circle cx="6" cy="6" r="4.5"/>
-                <path d="M9.5 9.5L13 13"/>
-              </svg>
+              <Search size={14} />
             </span>
             <input
               type="search"
@@ -196,6 +199,32 @@ export default function InfluencersPage() {
             <option value="">All platforms</option>
             <option value="FACEBOOK">Facebook</option>
             <option value="INSTAGRAM">Instagram</option>
+          </select>
+          <select
+            className={styles.filterSelect}
+            value={areaFilter}
+            onChange={(e) => setAreaFilter(e.target.value)}
+          >
+            <option value="">All areas</option>
+            {AREAS.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+
+          <select
+            className={styles.filterSelect}
+            value={nicheFilter}
+            onChange={(e) => setNicheFilter(e.target.value)}
+          >
+            <option value="">All niches</option>
+            {NICHES.map((n) => <option key={n} value={n}>{n}</option>)}
+          </select>
+
+          <select
+            className={styles.filterSelect}
+            value={languageFilter}
+            onChange={(e) => setLanguageFilter(e.target.value)}
+          >
+            <option value="">All languages</option>
+            {LANGUAGES.map((l) => <option key={l} value={l}>{l}</option>)}
           </select>
         </div>
 

@@ -5,6 +5,7 @@ import { PlatformIcons } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import { formatDate, cn } from '@/lib/utils'
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import type { Post } from '@/lib/types'
 import styles from './approval.module.css'
 
@@ -13,6 +14,7 @@ export default function ApprovalPage() {
   const approve = useApprovePost()
   const reject  = useRejectPost()
   const toast   = useToast()
+  const locale  = useLocale()
 
   const [rejectTarget,  setRejectTarget ] = useState<Post | null>(null)
   const [rejectComment, setRejectComment] = useState('')
@@ -116,7 +118,7 @@ export default function ApprovalPage() {
                   <span className={styles.scheduleIcon}>🕐</span>
                   Scheduled for{' '}
                   <strong>
-                    {formatDate(post.scheduledAt, 'th-TH', {
+                    {formatDate(post.scheduledAt, locale, {
                       weekday:  'long',
                       year:     'numeric',
                       month:    'long',
@@ -128,7 +130,7 @@ export default function ApprovalPage() {
 
               {/* Submitted info */}
               <div className={styles.submittedAt}>
-                Submitted {formatDate(post.createdAt, 'th-TH', {
+                Submitted {formatDate(post.createdAt, locale, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}

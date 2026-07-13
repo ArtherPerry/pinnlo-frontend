@@ -12,6 +12,7 @@ import {
 import { useClients } from '@/hooks/useClients'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { formatDate } from '@/lib/utils'
 import type {
   BotFlow,
   FlowStatus,
@@ -428,7 +429,7 @@ function FlowCard({ flow }: { flow: BotFlow }) {
           fontSize: 'var(--text-small)',
           color: 'var(--color-muted)',
         }}>
-          <span>Updated {new Date(flow.updatedAt).toLocaleDateString('th-TH', { dateStyle: 'medium' })}</span>
+          <span>Updated {formatDate(flow.updatedAt, locale, { dateStyle: 'medium' })}</span>
           <span style={{
             color: 'var(--color-teal-600)',
             fontWeight: 500,

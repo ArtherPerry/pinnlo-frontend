@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import {
   useApiKeys,
   useApiUsage,
@@ -158,6 +159,7 @@ function NewKeyReveal({ fullKey, onClose }: { fullKey: string; onClose: () => vo
 function ApiKeyCard({ apiKey }: { apiKey: ApiKey }) {
   const revokeKey = useRevokeApiKey()
   const toast     = useToast()
+  const locale    = useLocale()
   const isRevoked = apiKey.status === 'REVOKED'
 
   const handleRevoke = async () => {
@@ -206,7 +208,7 @@ function ApiKeyCard({ apiKey }: { apiKey: ApiKey }) {
           <span>Last used:</span>
           <span className={styles.keyMetaValue}>
             {apiKey.lastUsedAt
-              ? formatDate(apiKey.lastUsedAt, 'th-TH', { dateStyle: 'medium' })
+              ? formatDate(apiKey.lastUsedAt, locale, { dateStyle: 'medium' })
               : 'Never'
             }
           </span>
@@ -215,14 +217,14 @@ function ApiKeyCard({ apiKey }: { apiKey: ApiKey }) {
           <div className={styles.keyMetaItem}>
             <span>Expires:</span>
             <span className={styles.keyMetaValue}>
-              {formatDate(apiKey.expiresAt, 'th-TH', { dateStyle: 'medium' })}
+              {formatDate(apiKey.expiresAt, locale, { dateStyle: 'medium' })}
             </span>
           </div>
         )}
         <div className={styles.keyMetaItem}>
           <span>Created:</span>
           <span className={styles.keyMetaValue}>
-            {formatDate(apiKey.createdAt, 'th-TH', { dateStyle: 'medium' })}
+            {formatDate(apiKey.createdAt, locale, { dateStyle: 'medium' })}
           </span>
         </div>
       </div>

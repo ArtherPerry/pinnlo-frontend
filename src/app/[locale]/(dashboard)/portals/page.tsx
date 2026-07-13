@@ -9,7 +9,8 @@ import { useClients } from '@/hooks/useClients'
 import { Button } from '@/components/ui'
 import { PortalSettingsDrawer } from '@/components/features/PortalSettingsDrawer'
 import { useToast } from '@/hooks/useToast'
-import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
+import { cn, formatDate } from '@/lib/utils'
 import type { ReportPortal, PortalStatus } from '@/lib/types'
 import styles from './portals.module.css'
 import { ReportExporter } from '@/components/features/ReportExporter'
@@ -41,6 +42,7 @@ function PortalCard({
   portal:     ReportPortal
   onSettings: (id: string) => void
 }) {
+  const locale = useLocale()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = (e: React.MouseEvent) => {
@@ -87,7 +89,7 @@ function PortalCard({
           <div className={styles.stat}>
             <span className={styles.statValue}>
               {portal.lastViewedAt
-                ? new Date(portal.lastViewedAt).toLocaleDateString('th-TH', { month: 'short', day: 'numeric' })
+                ? formatDate(portal.lastViewedAt, locale, { month: 'short', day: 'numeric' })
                 : 'Never'
               }
             </span>

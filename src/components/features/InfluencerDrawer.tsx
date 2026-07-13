@@ -1,9 +1,12 @@
 'use client'
 
+import { useState } from 'react'
 import { useInfluencer } from '@/hooks/useEnterprise'
 import { PlatformIcon } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, ThumbsUp, Share2 } from 'lucide-react'
+import { AudienceInsight } from './AudienceInsight'
+import { TargetingPlan } from './TargetingPlan'
 
 interface InfluencerDrawerProps {
   influencerId: string
@@ -18,6 +21,11 @@ function formatFollowers(n: number): string {
 
 export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProps) {
   const { data: inf, isLoading } = useInfluencer(influencerId)
+  const [showTargeting, setShowTargeting] = useState(false)
+
+  const engagedAudience = inf
+    ? Math.round(inf.followers * (inf.engagementRate / 100) * 8)
+    : 0
 
   return (
     <>
@@ -95,140 +103,165 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
             Loading influencer data...
           </div>
         ) : inf ? (
-          <div style={{ padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
-
-            {/* Metrics */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
-              {[
-                { value: formatFollowers(inf.followers), label: 'Followers' },
-                { value: `${inf.engagementRate.toFixed(1)}%`, label: 'Engagement' },
-                { value: `${inf.postsPerWeek}×/wk`, label: 'Posting freq.' },
-                { value: inf.avgLikes.toLocaleString(), label: 'Avg likes' },
-                { value: inf.avgComments.toLocaleString(), label: 'Avg comments' },
-                { value: `${inf.score}/100`, label: 'Relevance score' },
-              ].map(({ value, label }) => (
-                <div key={label} style={{
-                  background: 'var(--color-bg)',
-                  borderRadius: 'var(--radius-md)',
-                  padding: 'var(--space-3)',
-                  textAlign: 'center',
-                }}>
-                  <div style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: 'var(--color-ink)' }}>
-                    {value}
-                  </div>
-                  <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
-                    {label}
-                  </div>
-                </div>
-              ))}
+          showTargeting ? (
+            /* ── TARGETING STEP (replaces audience view) ── */
+            <div style={{ padding: 'var(--space-5)' }}>
+              <TargetingPlan
+                influencerName={inf.name}
+                engagedAudience={engagedAudience}
+                onBack={() => setShowTargeting(false)}
+              />
             </div>
+          ) : (
+            /* ── DETAIL + AUDIENCE VIEW ── */
+            <div style={{ padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
 
-            {/* Info */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
-              {[
-                { label: 'Location', value: inf.location },
-                { label: 'Language', value: inf.language.toUpperCase() },
-                { label: 'Platform', value: inf.platform },
-                { label: 'Tier', value: inf.tier },
-                { label: 'Email', value: inf.email ?? 'Not available' },
-                { label: 'Profile', value: 'View ↗', href: inf.profileUrl },
-              ].map(({ label, value, href }) => (
-                <div key={label}>
-                  <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginBottom: 2 }}>
-                    {label}
-                  </div>
-                  {href ? (
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-teal-600)' }}
-                    >
-                      {value}
-                    </a>
-                  ) : (
-                    <div style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-ink)' }}>
+              {/* Metrics */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
+                {[
+                  { value: formatFollowers(inf.followers), label: 'Followers' },
+                  { value: `${inf.engagementRate.toFixed(1)}%`, label: 'Engagement' },
+                  { value: `${inf.postsPerWeek}×/wk`, label: 'Posting freq.' },
+                  { value: inf.avgLikes.toLocaleString(), label: 'Avg likes' },
+                  { value: inf.avgComments.toLocaleString(), label: 'Avg comments' },
+                  { value: `${inf.score}/100`, label: 'Relevance score' },
+                ].map(({ value, label }) => (
+                  <div key={label} style={{
+                    background: 'var(--color-bg)',
+                    borderRadius: 'var(--radius-md)',
+                    padding: 'var(--space-3)',
+                    textAlign: 'center',
+                  }}>
+                    <div style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: 'var(--color-ink)' }}>
                       {value}
                     </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* Categories */}
-            <div>
-              <div style={{
-                fontSize: 'var(--text-label)', fontWeight: 600,
-                color: 'var(--color-muted)', letterSpacing: '0.04em',
-                marginBottom: 'var(--space-2)',
-              }}>
-                CATEGORIES
-              </div>
-              <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
-                {inf.categories.map((cat) => (
-                  <span key={cat} style={{
-                    fontSize: 'var(--text-small)',
-                    padding: '3px 10px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--color-teal-50)',
-                    color: 'var(--color-teal-600)',
-                    border: '0.5px solid var(--color-teal-200)',
-                    fontWeight: 500,
-                  }}>
-                    {cat}
-                  </span>
+                    <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+                      {label}
+                    </div>
+                  </div>
                 ))}
               </div>
-            </div>
 
-            {/* Recent posts */}
-            {inf.recentPosts.length > 0 && (
+              {/* Info */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+                {[
+                  { label: 'Location', value: inf.location },
+                  { label: 'Language', value: inf.language.toUpperCase() },
+                  { label: 'Platform', value: inf.platform },
+                  { label: 'Tier', value: inf.tier },
+                  { label: 'Email', value: inf.email ?? 'Not available' },
+                  { label: 'Profile', value: 'View ↗', href: inf.profileUrl },
+                ].map(({ label, value, href }) => (
+                  <div key={label}>
+                    <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginBottom: 2 }}>
+                      {label}
+                    </div>
+                    {href ? (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-teal-600)' }}
+                      >
+                        {value}
+                      </a>
+                    ) : (
+                      <div style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-ink)' }}>
+                        {value}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Categories */}
               <div>
                 <div style={{
                   fontSize: 'var(--text-label)', fontWeight: 600,
                   color: 'var(--color-muted)', letterSpacing: '0.04em',
-                  marginBottom: 'var(--space-3)',
+                  marginBottom: 'var(--space-2)',
                 }}>
-                  RECENT POSTS
+                  CATEGORIES
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
-                  {inf.recentPosts.map((post) => (
-                    <div key={post.id} style={{
-                      background: 'var(--color-bg)',
-                      borderRadius: 'var(--radius-md)',
-                      padding: 'var(--space-3) var(--space-4)',
-                      display: 'flex', flexDirection: 'column',
-                      gap: 'var(--space-2)',
+                <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+                  {inf.categories.map((cat) => (
+                    <span key={cat} style={{
+                      fontSize: 'var(--text-small)',
+                      padding: '3px 10px',
+                      borderRadius: 'var(--radius-full)',
+                      background: 'var(--color-teal-50)',
+                      color: 'var(--color-teal-600)',
+                      border: '0.5px solid var(--color-teal-200)',
+                      fontWeight: 500,
                     }}>
-                      <p style={{
-                        fontSize: 'var(--text-body)',
-                        color: 'var(--color-ink)',
-                        lineHeight: 1.55,
-                        margin: 0,
-                      }}>
-                        {post.content}
-                      </p>
-                      <div style={{
-                        display: 'flex', gap: 'var(--space-4)',
-                        fontSize: 'var(--text-small)',
-                        color: 'var(--color-muted)',
-                      }}>
-                        <span>👍 {post.likes.toLocaleString()}</span>
-                        <span><MessageCircle size={13} /> {post.comments.toLocaleString()}</span>
-                        <span>↗ {post.shares.toLocaleString()}</span>
-                        <span style={{ marginLeft: 'auto' }}>
-                          {formatDate(post.postedAt, 'th-TH', {
-                            dateStyle: 'medium',
-                          })}
-                        </span>
-                      </div>
-                    </div>
+                      {cat}
+                    </span>
                   ))}
                 </div>
               </div>
-            )}
 
-          </div>
+              {/* Recent posts */}
+              {inf.recentPosts.length > 0 && (
+                <div>
+                  <div style={{
+                    fontSize: 'var(--text-label)', fontWeight: 600,
+                    color: 'var(--color-muted)', letterSpacing: '0.04em',
+                    marginBottom: 'var(--space-3)',
+                  }}>
+                    RECENT POSTS
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                    {inf.recentPosts.map((post) => (
+                      <div key={post.id} style={{
+                        background: 'var(--color-bg)',
+                        borderRadius: 'var(--radius-md)',
+                        padding: 'var(--space-3) var(--space-4)',
+                        display: 'flex', flexDirection: 'column',
+                        gap: 'var(--space-2)',
+                      }}>
+                        <p style={{
+                          fontSize: 'var(--text-body)',
+                          color: 'var(--color-ink)',
+                          lineHeight: 1.55,
+                          margin: 0,
+                        }}>
+                          {post.content}
+                        </p>
+                        <div style={{
+                          display: 'flex', gap: 'var(--space-4)', alignItems: 'center',
+                          fontSize: 'var(--text-small)',
+                          color: 'var(--color-muted)',
+                        }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <ThumbsUp size={13} /> {post.likes.toLocaleString()}
+                          </span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <MessageCircle size={13} /> {post.comments.toLocaleString()}
+                          </span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                            <Share2 size={13} /> {post.shares.toLocaleString()}
+                          </span>
+                          <span style={{ marginLeft: 'auto' }}>
+                            {formatDate(post.postedAt, 'en', {
+                              dateStyle: 'medium',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Audience insight + reverse-advertise entry point */}
+              <AudienceInsight
+                influencerName={inf.name}
+                engagedAudience={engagedAudience}
+                onBuildTargeting={() => setShowTargeting(true)}
+              />
+
+            </div>
+          )
         ) : (
           <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
             Influencer not found

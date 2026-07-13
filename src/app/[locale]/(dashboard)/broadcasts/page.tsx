@@ -11,6 +11,7 @@ import { useTemplates } from '@/hooks/useTemplates'
 import { useClients } from '@/hooks/useClients'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { useLocale } from 'next-intl'
 import { formatDate } from '@/lib/utils'
 import type {
   BroadcastCampaign,
@@ -418,6 +419,7 @@ function BroadcastCard({ broadcast }: { broadcast: BroadcastCampaign }) {
   const deleteBroadcast = useDeleteBroadcast()
   const sendBroadcast   = useSendBroadcast()
   const toast           = useToast()
+  const locale          = useLocale()
 
   const handleDelete = async () => {
     if (!confirm(`Delete "${broadcast.name}"?`)) return
@@ -644,10 +646,10 @@ function BroadcastCard({ broadcast }: { broadcast: BroadcastCampaign }) {
           </div>
           <span>
             {broadcast.sentAt
-              ? `Sent ${formatDate(broadcast.sentAt, 'th-TH', { dateStyle: 'medium' })}`
+              ? `Sent ${formatDate(broadcast.sentAt, locale, { dateStyle: 'medium' })}`
               : broadcast.scheduledAt
-                ? `Scheduled ${formatDate(broadcast.scheduledAt, 'th-TH', { dateStyle: 'medium', timeStyle: 'short' })}`
-                : `Created ${formatDate(broadcast.createdAt, 'th-TH', { dateStyle: 'medium' })}`
+                ? `Scheduled ${formatDate(broadcast.scheduledAt, locale, { dateStyle: 'medium', timeStyle: 'short' })}`
+                : `Created ${formatDate(broadcast.createdAt, locale, { dateStyle: 'medium' })}`
             }
           </span>
         </div>

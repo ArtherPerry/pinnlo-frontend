@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
-import { cn } from '@/lib/utils'
+import { useLocale } from 'next-intl'
+import { cn, formatDate } from '@/lib/utils'
 import type { FollowerSnapshot } from '@/lib/types'
 import styles from './FollowerChart.module.css'
 
@@ -30,6 +31,7 @@ function formatFollowers(n: number): string {
 const PAD = { top: 10, right: 10, bottom: 24, left: 48 }
 
 export function FollowerChart({ snapshots, color = '#1D9E75' }: FollowerChartProps) {
+  const locale = useLocale()
   const [range,   setRange  ] = useState<Range>(30)
   const [tooltip, setTooltip] = useState<TooltipState>({
     x: 0, y: 0, date: '', followers: 0, change: 0, visible: false,
@@ -91,12 +93,12 @@ const areaPath = points.length > 0 && lastPoint
     setTooltip({
       x:         (xScale(clampedIdx) / W) * 100,
       y:         (yScale(snap.followers) / H) * 100,
-      date:      new Date(snap.date).toLocaleDateString('th-TH', { dateStyle: 'medium' }),
+      date:      formatDate(snap.date, locale, { dateStyle: 'medium' }),
       followers: snap.followers,
       change:    snap.change,
       visible:   true,
     })
-  }, [data, W, H, innerW, xScale, yScale])
+  }, [data, W, H, innerW, xScale, yScale, locale])
 
   const handleMouseLeave = useCallback(() => {
     setTooltip((prev) => ({ ...prev, visible: false }))

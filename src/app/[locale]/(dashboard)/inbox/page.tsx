@@ -9,6 +9,7 @@ import {
 } from '@/hooks/useInbox'
 import { Button, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import { useLocale } from 'next-intl'
 import { cn, formatDate } from '@/lib/utils'
 import type { InboxThread, InboxMessage } from '@/lib/types'
 import styles from './inbox.module.css'
@@ -92,6 +93,7 @@ function ThreadItem({
 
 // ── Message bubble ─────────────────────────────────────────────────
 function MessageBubble({ message }: { message: InboxMessage }) {
+  const locale = useLocale()
   const isOut = message.type === 'OUTBOUND'
 
   return (
@@ -118,7 +120,7 @@ function MessageBubble({ message }: { message: InboxMessage }) {
           isOut && styles.bubbleMetaOutbound
         )}>
           {message.author} ·{' '}
-          {formatDate(message.sentAt, 'th-TH', {
+          {formatDate(message.sentAt, locale, {
             dateStyle: 'medium',
             timeStyle: 'short',
           })}

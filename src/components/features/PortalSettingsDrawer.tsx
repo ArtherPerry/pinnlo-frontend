@@ -7,9 +7,10 @@ import {
   useDeletePortal,
   useRegeneratePortalLink,
 } from '@/hooks/useCompetitors'
+import { useLocale } from 'next-intl'
 import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import type { PortalStatus, PortalSection } from '@/lib/types'
 import styles from './PortalSettingsDrawer.module.css'
 
@@ -39,6 +40,7 @@ interface PortalSettingsDrawerProps {
 }
 
 export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawerProps) {
+  const locale = useLocale()
   const { data: portal, isLoading } = usePortal(portalId)
   const updatePortal   = useUpdatePortal(portalId)
   const deletePortal   = useDeletePortal()
@@ -277,7 +279,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
                 }}>
                   Viewed {portal.viewCount} times.
                   {portal.lastViewedAt && (
-                    <> Last viewed {new Date(portal.lastViewedAt).toLocaleDateString('th-TH')}.</>
+                    <> Last viewed {formatDate(portal.lastViewedAt, locale)}.</>
                   )}
                 </p>
               </div>

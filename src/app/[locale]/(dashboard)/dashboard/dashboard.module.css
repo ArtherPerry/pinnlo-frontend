@@ -1,7 +1,36 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.heading {
+  margin-bottom: 0;
+}
+
+/* ── Stat cards ─────────────────────────────────────────── */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: var(--space-4);
+}
+
+.cardLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.cardLink:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .statLabel {
@@ -14,4 +43,169 @@
   font-size: var(--text-h1);
   font-weight: 600;
   color: var(--color-ink);
+  min-height: 1.2em;
+}
+
+.skeleton {
+  display: inline-block;
+  width: 48px;
+  height: 0.9em;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-bg) 50%, var(--color-bg-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+.stateMsg {
+  color: var(--color-muted);
+  font-size: var(--text-body);
+  padding: var(--space-6);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Two-column panels ──────────────────────────────────── */
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.panelHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.panelTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.panelLink {
+  font-size: var(--text-small);
+  color: var(--color-teal-600);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.panelLink:hover {
+  text-decoration: underline;
+}
+
+.emptyPanel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-8) var(--space-4);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+/* ── Attention list ─────────────────────────────────────── */
+.attentionList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.attentionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--transition-fast);
+}
+
+.attentionRow:hover {
+  background: var(--color-teal-50);
+}
+
+.attentionIcon {
+  color: var(--color-teal-600);
+  display: flex;
+  flex-shrink: 0;
+}
+
+.attentionText {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  flex: 1;
+}
+
+.attentionArrow {
+  color: var(--color-muted);
+  flex-shrink: 0;
+}
+
+/* ── Upcoming list ──────────────────────────────────────── */
+.upcomingList {
+  display: flex;
+  flex-direction: column;
+}
+
+.upcomingRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.upcomingRow:last-child {
+  border-bottom: none;
+}
+
+.upcomingRow:hover .upcomingContent {
+  color: var(--color-teal-600);
+}
+
+.upcomingMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.upcomingContent {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition-fast);
+}
+
+.upcomingMeta {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+.upcomingDay {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }

@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
 import styles from './PostCard.module.css'
 import { AlertTriangle, Clock, Check } from 'lucide-react'
+import { EditPostModal } from './EditPostModal'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
   DRAFT:          'draft',
@@ -41,7 +42,7 @@ export function PostCard({ post }: PostCardProps) {
   const [rejectModal,    setRejectModal   ] = useState(false)
   const [rejectComment,  setRejectComment ] = useState('')
 
-  const [, setEditModal] = useState(false)
+  const [editModal, setEditModal] = useState(false)
   const toast      = useToast()
   const locale     = useLocale()
   const approve    = useApprovePost()
@@ -249,6 +250,9 @@ export function PostCard({ post }: PostCardProps) {
             </div>
           </div>
         </div>
+      )}
+      {editModal && (
+        <EditPostModal post={post} onClose={() => setEditModal(false)} />
       )}
     </>
   )

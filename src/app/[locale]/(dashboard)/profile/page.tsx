@@ -45,6 +45,7 @@ export default function ProfilePage() {
   const [currentPw, setCurrentPw] = useState('')
   const [newPw,     setNewPw    ] = useState('')
   const [confirmPw, setConfirmPw] = useState('')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const handleSaveProfile = async () => {
     if (!name.trim())  { toast.show('Name cannot be empty', 'warning');         return }
@@ -55,7 +56,7 @@ export default function ProfilePage() {
       // Mock save — will call PATCH /api/v1/users/me when backend is ready
       await new Promise((r) => setTimeout(r, 600))
       setUser({ ...user!, name, email })
-      toast.show('Profile updated ✓', 'success')
+      toast.show('Profile updated', 'success')
     } catch {
       toast.show('Failed to update profile', 'error')
     } finally {
@@ -74,7 +75,7 @@ export default function ProfilePage() {
       setCurrentPw('')
       setNewPw('')
       setConfirmPw('')
-      toast.show('Password changed ✓', 'success')
+      toast.show('Password changed', 'success')
     } catch {
       toast.show('Failed to change password', 'error')
     } finally {
@@ -312,11 +313,62 @@ export default function ProfilePage() {
         <Button
           variant="danger"
           size="sm"
-          onClick={() => alert('Contact support to delete your account.')}
+          onClick={() => setShowDeleteDialog(true)}
         >
           Delete account
         </Button>
       </div>
+
+      {/* Delete confirmation dialog */}
+      {showDeleteDialog && (
+        <div
+          style={{
+            position: 'fixed', inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            zIndex: 100, padding: 'var(--space-4)',
+          }}
+          onClick={() => setShowDeleteDialog(false)}
+        >
+          <div
+            style={{
+              background: 'var(--color-white)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 'var(--space-6)',
+              maxWidth: 440, width: '100%',
+              boxShadow: 'var(--shadow-lg)',
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 style={{ fontSize: 'var(--text-h3)', fontWeight: 600, marginBottom: 'var(--space-3)' }}>
+              Delete your account?
+            </h3>
+            <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-muted)', lineHeight: 1.6, marginBottom: 'var(--space-5)' }}>
+              This permanently deletes your account and all associated data, and can&apos;t be undone.
+              To protect against accidental deletion, our team processes deletions manually — we&apos;ll
+              action your request within 2 business days.
+            </p>
+            <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', alignItems: 'center' }}>
+              <Button variant="secondary" size="sm" onClick={() => setShowDeleteDialog(false)}>
+                Cancel
+              </Button>
+              <a
+                href="mailto:support@pinnalo.com?subject=Account%20deletion%20request"
+                style={{
+                  fontSize: 'var(--text-small)', fontWeight: 600,
+                  color: 'var(--color-danger)', textDecoration: 'none',
+                  padding: 'var(--space-2) var(--space-4)',
+                  border: '1px solid var(--color-danger)',
+                  borderRadius: 'var(--radius-md)',
+                }}
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Request deletion
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

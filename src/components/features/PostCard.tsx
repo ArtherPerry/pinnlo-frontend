@@ -8,29 +8,33 @@ import { useApprovePost, useRejectPost, useDeletePost } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
 import styles from './PostCard.module.css'
-import { AlertTriangle, Clock, Check } from 'lucide-react'
+import { AlertTriangle, Clock, Check, MessageSquare } from 'lucide-react'
 import { EditPostModal } from './EditPostModal'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
-  DRAFT:          'draft',
-  PENDING_REVIEW: 'warning',
-  APPROVED:       'info',
-  SCHEDULED:      'scheduled',
-  PUBLISHING:     'publishing',
-  PUBLISHED:      'published',
-  FAILED:         'failed',
-  CANCELLED:      'cancelled',
+  DRAFT:             'draft',
+  PENDING_REVIEW:    'warning',
+  PENDING_CLIENT:    'info',
+  CHANGES_REQUESTED: 'danger',
+  APPROVED:          'info',
+  SCHEDULED:         'scheduled',
+  PUBLISHING:        'publishing',
+  PUBLISHED:         'published',
+  FAILED:            'failed',
+  CANCELLED:         'cancelled',
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  DRAFT:          'Draft',
-  PENDING_REVIEW: 'Pending review',
-  APPROVED:       'Approved',
-  SCHEDULED:      'Scheduled',
-  PUBLISHING:     'Publishing...',
-  PUBLISHED:      'Published',
-  FAILED:         'Failed',
-  CANCELLED:      'Cancelled',
+  DRAFT:             'Draft',
+  PENDING_REVIEW:    'Pending review',
+  PENDING_CLIENT:    'With client',
+  CHANGES_REQUESTED: 'Changes requested',
+  APPROVED:          'Approved',
+  SCHEDULED:         'Scheduled',
+  PUBLISHING:        'Publishing...',
+  PUBLISHED:         'Published',
+  FAILED:            'Failed',
+  CANCELLED:         'Cancelled',
 }
 
 interface PostCardProps {
@@ -53,13 +57,14 @@ export function PostCard({ post }: PostCardProps) {
   const isDraft     = post.status === 'DRAFT'
   const isFailed    = post.status === 'FAILED'
   const isScheduled = post.status === 'SCHEDULED'
-  const canEdit     = isDraft || isFailed || isScheduled
+  const isChanges   = post.status === 'CHANGES_REQUESTED'
+  const canEdit     = isDraft || isFailed || isScheduled || isChanges
   const canDelete   = isDraft || isFailed || post.status === 'CANCELLED'
 
   const handleApprove = async () => {
     try {
       await approve.mutateAsync(post.id)
-      toast.show('Post approved ✓', 'success')
+      toast.show('Post approved', 'success')
     } catch {
       toast.show('Failed to approve post', 'error')
     }
@@ -123,6 +128,17 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         )}
 
+        {/* Client change request */}
+        {isChanges && post.approval?.clientComment && (
+          <div className={styles.clientFeedback}>
+            <MessageSquare size={14} />
+            <div>
+              <span className={styles.clientFeedbackLabel}>Client requested changes:</span>{' '}
+              {post.approval.clientComment}
+            </div>
+          </div>
+        )}
+
         {/* Labels */}
         {post.labels.length > 0 && (
           <div className={styles.labels}>
@@ -162,20 +178,20 @@ export function PostCard({ post }: PostCardProps) {
                   className={cn(styles.actionBtn, styles.rejectBtn)}
                   onClick={() => setRejectModal(true)}
                 >
-                  ✕ Reject
+                  Reject
                 </button>
               </>
             )}
 
             {/* Edit */}
             {canEdit && (
-  <button
-    className={cn(styles.actionBtn, styles.editBtn)}
-    onClick={() => setEditModal(true)}
-  >
-    Edit
-  </button>
-)}
+              <button
+                className={cn(styles.actionBtn, styles.editBtn)}
+                onClick={() => setEditModal(true)}
+              >
+                Edit
+              </button>
+            )}
 
             {/* Delete */}
             {canDelete && (
@@ -251,6 +267,7 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         </div>
       )}
+
       {editModal && (
         <EditPostModal post={post} onClose={() => setEditModal(false)} />
       )}

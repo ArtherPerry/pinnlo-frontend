@@ -45,6 +45,8 @@ export type Platform =
 export type PostStatus =
   | 'DRAFT'
   | 'PENDING_REVIEW'
+  | 'PENDING_CLIENT'
+  | 'CHANGES_REQUESTED'
   | 'APPROVED'
   | 'SCHEDULED'
   | 'PUBLISHING'
@@ -64,11 +66,13 @@ export interface PostTarget {
 }
 
 export interface PostApproval {
-  id:          string
-  status:      ApprovalStatus
-  approvedBy?: string
-  comment?:    string
-  decidedAt?:  string
+  id:              string
+  status:          ApprovalStatus
+  approvedBy?:     string
+  comment?:        string
+  decidedAt?:      string
+  clientComment?:  string
+  clientDecidedAt?: string
 }
 
 export interface MediaAsset {

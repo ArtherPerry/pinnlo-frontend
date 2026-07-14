@@ -10,12 +10,14 @@ import { cn } from '@/lib/utils'
 import styles from './posts.module.css'
 
 const TABS = [
-  { label: 'All',            value: undefined        },
-  { label: 'Draft',          value: 'DRAFT'          },
-  { label: 'Pending review', value: 'PENDING_REVIEW' },
-  { label: 'Scheduled',      value: 'SCHEDULED'      },
-  { label: 'Published',      value: 'PUBLISHED'      },
-  { label: 'Failed',         value: 'FAILED'         },
+  { label: 'All',               value: undefined            },
+  { label: 'Draft',             value: 'DRAFT'              },
+  { label: 'Pending review',    value: 'PENDING_REVIEW'     },
+  { label: 'With client',       value: 'PENDING_CLIENT'     },
+  { label: 'Changes requested', value: 'CHANGES_REQUESTED'  },
+  { label: 'Scheduled',         value: 'SCHEDULED'          },
+  { label: 'Published',         value: 'PUBLISHED'          },
+  { label: 'Failed',            value: 'FAILED'             },
 ] as const
 
 type StatusFilter = (typeof TABS)[number]['value']

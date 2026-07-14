@@ -68,3 +68,19 @@
   border: 1.5px solid white;
   line-height: 1;
 }
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink);
+  padding: var(--space-2);
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex;
+    align-items: center;
+  }
+}

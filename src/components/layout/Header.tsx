@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import styles from './Header.module.css'
+import { Menu } from 'lucide-react'
+import { useMobileNav } from '@/hooks/useMobileNav'
 
 const LOCALES = [
   { code: 'th', label: 'ภาษาไทย',  flag: '🇹🇭' },
@@ -376,10 +378,14 @@ export function Header() {
   const pathname = usePathname()
   const segment  = pathname.split('/')[2] ?? 'dashboard'
   const title    = segment.charAt(0).toUpperCase() + segment.slice(1)
+  const toggleMobileNav = useMobileNav((s) => s.toggle)
 
   return (
     <header className={styles.header}>
       <div className={styles.left}>
+        <button className={styles.hamburger} onClick={toggleMobileNav} aria-label="Menu">
+          <Menu size={22} />
+        </button>
         <h1 className={styles.pageTitle}>{title}</h1>
       </div>
 

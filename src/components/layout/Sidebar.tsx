@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import styles from './Sidebar.module.css'
+import { useMobileNav } from '@/hooks/useMobileNav'
 import {
   LayoutDashboard, Building2, FileText, CheckCircle, Users,
   MessageSquare, LayoutTemplate, Send, Mail, Workflow,
@@ -104,6 +105,8 @@ export function Sidebar() {
   const pathname = usePathname()
   const router   = useRouter()
   const { user, logout } = useAuth()
+  const mobileNavOpen = useMobileNav((s) => s.open)
+  const closeMobileNav = useMobileNav((s) => s.close)
 
   const locale = pathname.split('/')[1] || 'th'
 
@@ -119,7 +122,7 @@ export function Sidebar() {
   }
 
   return (
-    <aside className={styles.sidebar}>
+    <aside className={cn(styles.sidebar, mobileNavOpen && styles.open)}>
       {/* Logo */}
       <div className={styles.logo}>
         <span className={styles.logoMark}>Pinnalo</span>
@@ -142,6 +145,7 @@ export function Sidebar() {
                   key={key}
                   href={fullHref}
                   className={cn(styles.navItem, isActive && styles.active)}
+                  onClick={closeMobileNav}
                 >
                   <span className={styles.navIcon}>{icon}</span>
                   <span className={styles.navLabel}>{t(key)}</span>

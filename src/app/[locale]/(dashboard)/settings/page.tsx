@@ -113,7 +113,14 @@ function AgencyTab() {
 
   if (isLoading) return (
     <div className={styles.loadingState}>
-      Loading...
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
     </div>
   )
 
@@ -277,7 +284,14 @@ function TeamTab() {
 
   if (isLoading) return (
     <div className={styles.loadingState}>
-      Loading...
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
     </div>
   )
 
@@ -399,7 +413,14 @@ function PlatformsTab() {
 
   if (isLoading) return (
     <div className={styles.loadingState}>
-      Loading...
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
     </div>
   )
 
@@ -490,7 +511,14 @@ function NotificationsTab() {
 
   if (isLoading) return (
     <div className={styles.loadingState}>
-      Loading...
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
+      <div className={styles.skelRow}>
+        <div className={styles.skelField} />
+        <div className={styles.skelField} />
+      </div>
     </div>
   )
 

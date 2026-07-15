@@ -396,3 +396,8 @@
   padding: var(--space-2) var(--space-3);
   margin-top: var(--space-1);
 }
+.fieldLoading {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  padding: var(--space-2) 0;
+}

@@ -235,9 +235,7 @@ function CreateBenchmarkModal({ onClose }: { onClose: () => void }) {
             <div>
               <span className={styles.sectionLabel}>Client workspace</span>
               {clientsLoading ? (
-                <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
-                  Loading...
-                </p>
+                <p className={styles.fieldLoading}>Loading clients…</p>
               ) : (
                 <Controller
                   name="clientId"

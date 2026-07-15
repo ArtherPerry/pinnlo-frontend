@@ -57,7 +57,18 @@ function InfluencerCard({
   }
 
   return (
-    <div className={styles.infCard} onClick={onClick}>
+    <div
+      className={styles.infCard}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+    >
       <div className={styles.cardHeader}>
         <div className={styles.avatar}>{initials}</div>
         <div className={styles.identity}>

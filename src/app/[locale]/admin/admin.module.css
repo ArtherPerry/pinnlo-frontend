@@ -55,6 +55,17 @@
   font-size: var(--text-body-lg);
   font-weight: 600;
   color: var(--color-ink);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  text-align: inherit;
+}
+
+.name:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .meta {
@@ -161,6 +172,11 @@
   cursor: pointer;
   color: var(--color-muted);
   line-height: 1;
+}
+
+.closeBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .section {

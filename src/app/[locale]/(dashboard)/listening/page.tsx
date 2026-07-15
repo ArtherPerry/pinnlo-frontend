@@ -103,7 +103,7 @@ function AddQueryModal({ onClose }: { onClose: () => void }) {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <span className={styles.modalTitle}>Monitor a keyword</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={styles.modalBody}>
@@ -296,6 +296,14 @@ function QueryCard({
     <div
       className={cn(styles.queryCard, isActive && styles.queryCardActive)}
       onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
     >
       <div className={styles.queryTop}>
         <span className={styles.keyword}>{query.keyword}</span>
@@ -304,6 +312,7 @@ function QueryCard({
             className={styles.iconBtn}
             onClick={handleToggleAlert}
             title={query.alertEnabled ? 'Disable alerts' : 'Enable alerts'}
+            aria-label={query.alertEnabled ? 'Disable alerts' : 'Enable alerts'}
           >
             🔔
           </button>
@@ -311,6 +320,7 @@ function QueryCard({
             className={cn(styles.iconBtn, styles.iconBtnDanger)}
             onClick={handleDelete}
             title="Remove keyword"
+            aria-label="Remove keyword"
           >
             ×
           </button>

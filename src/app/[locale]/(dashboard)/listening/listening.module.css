@@ -40,6 +40,10 @@
 }
 
 .queryCard:hover       { border-color: var(--color-teal-200); }
+.queryCard:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 .queryCardActive       { border-color: var(--color-teal-500); background: var(--color-teal-50); }
 
 .queryTop {
@@ -78,6 +82,10 @@
 
 .iconBtn:hover       { background: var(--color-bg-2); color: var(--color-ink); }
 .iconBtnDanger:hover { color: var(--color-danger); }
+.iconBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 .queryMeta {
   font-size: var(--text-small);
@@ -369,6 +377,10 @@
 }
 
 .closeBtn:hover { background: var(--color-bg-2); }
+.closeBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 .modalBody {
   padding: var(--space-6);

@@ -107,6 +107,20 @@
   cursor: pointer;
   transition: background var(--transition-fast);
   position: relative;
+  width: 100%;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+
+.threadItem:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: -2px;
 }
 
 .threadItem:last-child { border-bottom: none; }

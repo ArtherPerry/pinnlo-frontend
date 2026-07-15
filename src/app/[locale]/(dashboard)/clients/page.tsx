@@ -150,7 +150,7 @@ function ClientDrawer({
             <div className={styles.drawerTitle}>{client.name}</div>
             <Badge variant={client.status === 'ACTIVE' ? 'success' : 'neutral'}>{client.status}</Badge>
           </div>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
         <div className={styles.drawerSection}>

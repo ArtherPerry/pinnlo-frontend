@@ -64,7 +64,7 @@ function CreateKeyModal({
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <span className={styles.modalTitle}>Create API key</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
         <div className={styles.modalBody}>
           <Input
@@ -131,7 +131,7 @@ function NewKeyReveal({ fullKey, onClose }: { fullKey: string; onClose: () => vo
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <span className={styles.modalTitle}>API key created</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
         <div className={styles.modalBody}>
           <div className={styles.newKeyBox}>

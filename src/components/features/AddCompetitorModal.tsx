@@ -66,7 +66,7 @@ export function AddCompetitorModal({ onClose }: AddCompetitorModalProps) {
 
         <div className={styles.header}>
           <span className={styles.headerTitle}>Track competitor</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

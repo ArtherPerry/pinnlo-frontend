@@ -65,7 +65,7 @@ export function ImageGenerator({ platform, onUse, onClose }: ImageGeneratorProps
         <span>🎨</span>
         <span className={styles.headerTitle}>AI image generation</span>
         <span className={styles.aiBadge}>Agency+</span>
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
       </div>
 
       <div className={styles.body}>
@@ -142,13 +142,16 @@ export function ImageGenerator({ platform, onUse, onClose }: ImageGeneratorProps
           <>
             <div className={styles.imageGrid}>
               {generate.data.images.map((img, i) => (
-                <div
+                <button
                   key={img.id}
+                  type="button"
                   className={cn(
                     styles.imageOption,
                     selectedIdx === i && styles.imageOptionSelected
                   )}
                   onClick={() => setSelectedIdx(i)}
+                  aria-label={`Select generated image ${i + 1}`}
+                  aria-pressed={selectedIdx === i}
                 >
                   <img
                     src={img.url}
@@ -158,7 +161,7 @@ export function ImageGenerator({ platform, onUse, onClose }: ImageGeneratorProps
                   <div className={styles.imageOverlay}>
                     <div className={styles.selectedTick}><Check size={14} /></div>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
 

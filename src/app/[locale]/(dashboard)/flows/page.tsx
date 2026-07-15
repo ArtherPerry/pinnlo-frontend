@@ -84,7 +84,7 @@ function CreateFlowModal({ onClose }: { onClose: () => void }) {
           <span className={styles.modalTitle}>
             New bot flow
           </span>
-          <button onClick={onClose} className={styles.modalClose}>×</button>
+          <button onClick={onClose} className={styles.modalClose} aria-label="Close">×</button>
         </div>
 
         <div className={styles.modalBody}>
@@ -213,6 +213,14 @@ function FlowCard({ flow }: { flow: BotFlow }) {
     <div
       className={styles.card}
       onClick={() => router.push(`/${locale}/flows/${flow.id}`)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          router.push(`/${locale}/flows/${flow.id}`)
+        }
+      }}
     >
       {/* Header */}
       <div className={styles.cardHeader}>

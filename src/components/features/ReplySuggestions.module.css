@@ -26,6 +26,11 @@
   font-weight: 600;
 }
 
+.dismissBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
+
 /* ── Loading ── */
 .loading {
   display: flex;

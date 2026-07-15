@@ -147,7 +147,7 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
           <span className={styles.modalTitle}>
             New email campaign
           </span>
-          <button onClick={onClose} className={styles.modalClose}>×</button>
+          <button onClick={onClose} className={styles.modalClose} aria-label="Close">×</button>
         </div>
 
         {/* Body */}

@@ -98,6 +98,10 @@
 }
 
 .infCard:hover { border-color: var(--color-teal-200); }
+.infCard:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 .cardHeader {
   padding: var(--space-4);

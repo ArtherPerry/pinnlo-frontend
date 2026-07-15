@@ -44,6 +44,10 @@
 }
 
 .closeBtn:hover { background: rgba(255,255,255,0.3); }
+.closeBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 .body {
   padding: var(--space-4);
@@ -165,11 +169,21 @@
   cursor: pointer;
   transition: border-color var(--transition-fast),
               transform var(--transition-fast);
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  text-align: inherit;
 }
 
 .imageOption:hover {
   border-color: #7F77DD;
   transform: scale(1.02);
+}
+
+.imageOption:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .imageOptionSelected {

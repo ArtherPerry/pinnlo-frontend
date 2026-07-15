@@ -18,6 +18,10 @@
   transition: border-color var(--transition-fast);
 }
 .clickable:hover { border-color: var(--color-teal-200); }
+.clickable:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 /* ── Parts ── */
 .header {

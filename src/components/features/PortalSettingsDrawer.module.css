@@ -56,6 +56,10 @@
 }
 
 .closeBtn:hover { background: var(--color-bg-2); }
+.closeBtn:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
 
 .body {
   flex: 1;
@@ -122,6 +126,13 @@
   border: 2px solid transparent;
   transition: border-color var(--transition-fast);
   flex-shrink: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.colorSwatch:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .colorSwatchActive { border-color: var(--color-ink); }

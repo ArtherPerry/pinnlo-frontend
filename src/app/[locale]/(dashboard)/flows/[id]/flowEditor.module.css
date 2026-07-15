@@ -201,6 +201,14 @@
   cursor: grab;
   user-select: none;
   transition: box-shadow 0.15s;
+  margin: 0;
+  font-family: inherit;
+  text-align: inherit;
+}
+
+.nodeBox:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .nodeIconRow {
@@ -278,6 +286,11 @@
   cursor: pointer;
   font-size: 14px;
   border-radius: 4px;
+}
+
+.configPanelClose:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .configBody {

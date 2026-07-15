@@ -93,6 +93,7 @@ export function ReportExporter({
               <button
                 className={styles.closeBtn}
                 onClick={() => setShowModal(false)}
+                aria-label="Close"
               >
                 ×
               </button>

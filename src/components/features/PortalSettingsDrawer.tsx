@@ -132,7 +132,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
           <span className={styles.headerTitle}>
             {portal ? `${portal.clientName} — Portal settings` : 'Portal settings'}
           </span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
         {isLoading ? (
@@ -189,8 +189,9 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
                   </span>
                   <div className={styles.colorRow}>
                     {PRESET_COLORS.map((color) => (
-                      <div
+                      <button
                         key={color}
+                        type="button"
                         className={cn(
                           styles.colorSwatch,
                           portal.branding.primaryColor === color && styles.colorSwatchActive
@@ -198,6 +199,8 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
                         style={{ background: color }}
                         onClick={() => handleColorChange(color)}
                         title={color}
+                        aria-label={`Set brand color to ${color}`}
+                        aria-pressed={portal.branding.primaryColor === color}
                       />
                     ))}
                     <input

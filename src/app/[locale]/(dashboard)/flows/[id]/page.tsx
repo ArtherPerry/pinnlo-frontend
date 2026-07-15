@@ -95,7 +95,8 @@ function FlowNodeBox({
   }
 
   return (
-    <div
+    <button
+      type="button"
       className={styles.nodeBox}
       style={{
         left:       node.position.x,
@@ -123,7 +124,7 @@ function FlowNodeBox({
       <div className={styles.nodePreview} style={{ color: cfg.color }}>
         {getPreview()}
       </div>
-    </div>
+    </button>
   )
 }
 
@@ -162,7 +163,7 @@ function NodeConfigPanel({
             {cfg.label}
           </span>
         </div>
-        <button onClick={onClose} className={styles.configPanelClose} style={{ color: cfg.color }}>×</button>
+        <button onClick={onClose} className={styles.configPanelClose} style={{ color: cfg.color }} aria-label="Close">×</button>
       </div>
 
       {/* Config */}

@@ -62,7 +62,12 @@ export function ContactRow({ contact, isActive, onClick }: ContactRowProps) {
         onClick={onClick}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && onClick()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            onClick()
+          }
+        }}
       >
         {/* Contact info */}
         <div className={styles.contactCell}>

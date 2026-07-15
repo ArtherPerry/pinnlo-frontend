@@ -158,6 +158,11 @@
   border-radius: var(--radius-md);
 }
 
+.modalClose:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
+}
+
 .modalBody {
   padding: var(--space-6);
   display: flex;
@@ -235,6 +240,11 @@
   overflow: hidden;
   transition: border-color var(--transition-fast);
   cursor: pointer;
+}
+
+.card:focus-visible {
+  outline: 2px solid var(--color-teal-500);
+  outline-offset: 2px;
 }
 
 .cardHeader {

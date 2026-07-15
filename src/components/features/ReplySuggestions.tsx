@@ -59,6 +59,7 @@ export function ReplySuggestions({
           </button>
         )}
         <button
+    className={styles.dismissBtn}
     onClick={() => generate.reset()}
     style={{
       width: 22,
@@ -75,6 +76,7 @@ export function ReplySuggestions({
       flexShrink: 0,
     }}
     title="Dismiss suggestions"
+    aria-label="Dismiss suggestions"
   >
     ×
   </button>

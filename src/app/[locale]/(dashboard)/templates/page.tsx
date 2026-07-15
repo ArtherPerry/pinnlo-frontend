@@ -116,6 +116,7 @@ function TemplateModal({
           <button
             onClick={onClose}
             className={styles.modalClose}
+            aria-label="Close"
           >
             ×
           </button>
@@ -301,6 +302,7 @@ function TemplateCard({
             <button
               onClick={handleDelete}
               className={styles.cardActionBtn}
+              aria-label={`Delete ${template.name}`}
             >
               ×
             </button>

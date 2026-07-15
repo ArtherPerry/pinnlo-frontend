@@ -162,7 +162,12 @@ export function MediaUpload({
           onDrop={handleDrop}
           role="button"
           tabIndex={0}
-          onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              inputRef.current?.click()
+            }
+          }}
           aria-label="Upload media files"
         >
           <svg

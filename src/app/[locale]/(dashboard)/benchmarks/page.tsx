@@ -218,7 +218,7 @@ function CreateBenchmarkModal({ onClose }: { onClose: () => void }) {
 
         <div className={styles.modalHeader}>
           <span className={styles.modalTitle}>Create benchmark group</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>

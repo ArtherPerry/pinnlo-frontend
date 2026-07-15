@@ -202,6 +202,14 @@ export default function CompetitorsPage() {
               className={styles.compCard}
               onClick={() => setActiveCompetitor(comp.id)}
               style={{ cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault()
+                  setActiveCompetitor(comp.id)
+                }
+              }}
             >
               {/* Header */}
               <div className={styles.compHeader}>
@@ -221,6 +229,7 @@ export default function CompetitorsPage() {
                     className={cn(styles.iconBtn)}
                     onClick={(e) => handleSync(e, comp.id)}
                     title="Sync now"
+                    aria-label="Sync now"
                     disabled={syncCompetitor.isPending}
                   >
                     ↻
@@ -229,6 +238,7 @@ export default function CompetitorsPage() {
                     className={cn(styles.iconBtn, styles.iconBtnDanger)}
                     onClick={(e) => handleRemove(e, comp.id, comp.name)}
                     title="Remove"
+                    aria-label={`Remove ${comp.name}`}
                   >
                     ×
                   </button>

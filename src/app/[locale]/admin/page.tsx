@@ -311,13 +311,14 @@ function AgenciesSection() {
             {filtered.map((a) => (
               <div key={a.id} className={styles.card}>
                 <div className={styles.info}>
-                  <span
+                  <button
+                    type="button"
                     className={styles.name}
                     style={{ cursor: 'pointer' }}
                     onClick={() => setSelectedId(a.id)}
                   >
                     {a.name}
-                  </span>
+                  </button>
                   <span className={styles.meta}>
                     <Badge variant={statusVariant(a.status)}>{a.status}</Badge>
                     <span>·</span>
@@ -375,7 +376,7 @@ function AgenciesSection() {
                   <span>{detail.userCount} users, {detail.clientCount} clients</span>
                 </div>
               </div>
-              <button className={styles.closeBtn} onClick={() => setSelectedId(null)}>×</button>
+              <button className={styles.closeBtn} onClick={() => setSelectedId(null)} aria-label="Close">×</button>
             </div>
 
             <div className={styles.section}>

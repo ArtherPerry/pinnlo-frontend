@@ -56,6 +56,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
           <button
             onClick={onClose}
             className={styles.closeBtn}
+            aria-label="Close"
           >
             ×
           </button>

@@ -110,7 +110,7 @@ function CreateBroadcastModal({ onClose }: { onClose: () => void }) {
           <span className={styles.modalTitle}>
             New broadcast campaign
           </span>
-          <button onClick={onClose} className={styles.modalClose}>×</button>
+          <button onClick={onClose} className={styles.modalClose} aria-label="Close">×</button>
         </div>
 
         {/* Body */}

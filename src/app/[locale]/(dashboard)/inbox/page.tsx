@@ -43,7 +43,8 @@ function ThreadItem({
   const hasUnread = thread.unreadCount > 0
 
   return (
-    <div
+    <button
+      type="button"
       className={cn(
         styles.threadItem,
         isActive   && styles.threadItemActive,
@@ -87,7 +88,7 @@ function ThreadItem({
       {hasUnread && (
         <div className={styles.unreadDot} />
       )}
-    </div>
+    </button>
   )
 }
 

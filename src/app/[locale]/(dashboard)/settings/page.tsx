@@ -219,7 +219,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
           <span className={styles.modalTitle}>Invite team member</span>
-          <button className={styles.closeBtn} onClick={onClose}>×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
         <div className={styles.modalBody}>
           <Input

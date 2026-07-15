@@ -65,7 +65,7 @@ export function CaptionGenerator({
         <span>✨</span>
         <span className={styles.headerTitle}>AI caption generator</span>
         <span className={styles.aiBadge}>Claude AI</span>
-        <button className={styles.closeBtn} onClick={onClose}>×</button>
+        <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
       </div>
 
       <div className={styles.body}>

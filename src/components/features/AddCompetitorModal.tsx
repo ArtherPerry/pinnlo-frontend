@@ -53,7 +53,7 @@ export function AddCompetitorModal({ onClose }: AddCompetitorModalProps) {
   const onSubmit = async (values: FormValues) => {
     try {
       await addCompetitor.mutateAsync(values)
-      toast.show('Competitor added ✓', 'success')
+      toast.show('Competitor added', 'success')
       onClose()
     } catch {
       toast.show('Failed to add competitor', 'error')

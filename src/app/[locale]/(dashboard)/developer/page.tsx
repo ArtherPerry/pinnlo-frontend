@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
+import { Check } from 'lucide-react'
 import {
   useApiKeys,
   useApiUsage,
@@ -140,7 +141,7 @@ function NewKeyReveal({ fullKey, onClose }: { fullKey: string; onClose: () => vo
             <div className={styles.newKeyValue}>{fullKey}</div>
             <div className={styles.newKeyActions}>
               <Button variant="primary" size="sm" onClick={handleCopy}>
-                {copied ? '✓ Copied' : 'Copy key'}
+                {copied ? <><Check size={14} /> Copied</> : 'Copy key'}
               </Button>
             </div>
           </div>

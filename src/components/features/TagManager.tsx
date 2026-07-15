@@ -53,7 +53,7 @@ export function TagManager({ contactId, tags }: TagManagerProps) {
       await addTag.mutateAsync(clean)
       setInput('')
       setShowSuggest(false)
-      toast.show(`Tag "${clean}" added ✓`, 'success')
+      toast.show(`Tag "${clean}" added`, 'success')
     } catch {
       toast.show('Failed to add tag', 'error')
     }

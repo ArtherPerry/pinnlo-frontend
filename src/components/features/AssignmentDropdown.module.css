@@ -126,7 +126,7 @@
 .checkmark {
   margin-left: auto;
   color: var(--color-teal-500);
-  font-size: 13px;
+  display: inline-flex;
 }
 
 .divider {

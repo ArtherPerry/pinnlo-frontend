@@ -15,6 +15,7 @@ import type {
   TemplateCategory,
   TemplatePlatform,
 } from '@/lib/types'
+import styles from './templates.module.css'
 
 const CATEGORIES: { value: TemplateCategory | ''; label: string }[] = [
   { value: '',          label: 'All categories' },
@@ -35,16 +36,16 @@ const PLATFORMS: { value: TemplatePlatform | ''; label: string }[] = [
 ]
 
 const CATEGORY_COLORS: Record<TemplateCategory, string> = {
-  GREETING:  '#E1F5EE',
-  FAQ:       '#E6F1FB',
-  PROMOTION: '#FAEEDA',
+  GREETING:  'var(--color-teal-50)',
+  FAQ:       'var(--color-info-light)',
+  PROMOTION: 'var(--color-warning-light)',
   FOLLOW_UP: '#EEEDFE',
-  CLOSING:   '#F1EFE8',
+  CLOSING:   'var(--color-bg-2)',
   CUSTOM:    '#FBEAF0',
 }
 
 const CATEGORY_TEXT: Record<TemplateCategory, string> = {
-  GREETING:  '#0F6E56',
+  GREETING:  'var(--color-teal-600)',
   FAQ:       '#185FA5',
   PROMOTION: '#633806',
   FOLLOW_UP: '#26215C',
@@ -85,10 +86,10 @@ function TemplateModal({
       const input: CreateTemplateInput = { name, content, category, platform }
       if (isEdit) {
         await updateTemplate.mutateAsync(input)
-        toast.show('Template updated ✓', 'success')
+        toast.show('Template updated', 'success')
       } else {
         await createTemplate.mutateAsync(input)
-        toast.show('Template created ✓', 'success')
+        toast.show('Template created', 'success')
       }
       onClose()
     } catch {
@@ -100,54 +101,28 @@ function TemplateModal({
 
   return (
     <div
-      style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.45)',
-        display: 'flex', alignItems: 'flex-start',
-        justifyContent: 'center',
-        zIndex: 200, padding: 'var(--space-6) var(--space-4)',
-        overflowY: 'auto',
-      }}
+      className={styles.modalOverlay}
       onClick={onClose}
     >
       <div
-        style={{
-          background: 'var(--color-white)',
-          borderRadius: 'var(--radius-lg)',
-          width: '100%', maxWidth: '560px',
-          boxShadow: 'var(--shadow-lg)',
-          margin: 'auto',
-        }}
+        className={styles.modalBox}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--space-4) var(--space-6)',
-          borderBottom: '0.5px solid var(--color-border)',
-        }}>
-          <span style={{ fontSize: 'var(--text-h3)', fontWeight: 600 }}>
+        <div className={styles.modalHeader}>
+          <span className={styles.modalTitle}>
             {isEdit ? 'Edit template' : 'New template'}
           </span>
           <button
             onClick={onClose}
-            style={{
-              width: 28, height: 28, border: 'none',
-              background: 'transparent', borderRadius: 'var(--radius-md)',
-              cursor: 'pointer', fontSize: 18, color: 'var(--color-muted)',
-            }}
+            className={styles.modalClose}
           >
             ×
           </button>
         </div>
 
         {/* Body */}
-        <div style={{
-          padding: 'var(--space-6)',
-          display: 'flex', flexDirection: 'column',
-          gap: 'var(--space-4)',
-        }}>
+        <div className={styles.modalBody}>
           <Input
             label="Template name"
             placeholder="Welcome greeting"
@@ -155,28 +130,15 @@ function TemplateModal({
             onChange={(e) => setName(e.target.value)}
           />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className={styles.fieldGrid}>
             <div>
-              <span style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block',
-                marginBottom: 'var(--space-1)',
-              }}>
+              <span className={styles.fieldLabel}>
                 Category
               </span>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as TemplateCategory)}
-                style={{
-                  width: '100%', height: '36px',
-                  padding: '0 var(--space-3)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: 'var(--text-body)',
-                  background: 'var(--color-white)',
-                  color: 'var(--color-ink)',
-                  fontFamily: 'var(--font-sans)',
-                }}
+                className={styles.fieldSelect}
               >
                 {CATEGORIES.filter((c) => c.value !== '').map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -184,26 +146,13 @@ function TemplateModal({
               </select>
             </div>
             <div>
-              <span style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block',
-                marginBottom: 'var(--space-1)',
-              }}>
+              <span className={styles.fieldLabel}>
                 Platform
               </span>
               <select
                 value={platform}
                 onChange={(e) => setPlatform(e.target.value as TemplatePlatform)}
-                style={{
-                  width: '100%', height: '36px',
-                  padding: '0 var(--space-3)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-md)',
-                  fontSize: 'var(--text-body)',
-                  background: 'var(--color-white)',
-                  color: 'var(--color-ink)',
-                  fontFamily: 'var(--font-sans)',
-                }}
+                className={styles.fieldSelect}
               >
                 {PLATFORMS.filter((p) => p.value !== '').map((p) => (
                   <option key={p.value} value={p.value}>{p.label}</option>
@@ -213,11 +162,7 @@ function TemplateModal({
           </div>
 
           <div>
-            <span style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block',
-              marginBottom: 'var(--space-1)',
-            }}>
+            <span className={styles.fieldLabel}>
               Content
             </span>
             <textarea
@@ -225,26 +170,10 @@ function TemplateModal({
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write your template... Use {{name}}, {{product}} etc. for dynamic variables"
               rows={6}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                fontFamily: 'var(--font-sans)',
-                fontSize: 'var(--text-body)',
-                color: 'var(--color-ink)',
-                resize: 'vertical',
-                outline: 'none',
-                lineHeight: 1.65,
-              }}
+              className={styles.contentTextarea}
             />
-            <p style={{
-              fontSize: 'var(--text-small)',
-              color: 'var(--color-muted)',
-              marginTop: 'var(--space-1)',
-              lineHeight: 1.5,
-            }}>
-              Use <code style={{ background: 'var(--color-bg-2)', padding: '1px 4px', borderRadius: 3 }}>
+            <p className={styles.contentHelp}>
+              Use <code className={styles.inlineCode}>
                 {'{{variable}}'}
               </code> syntax for dynamic content that gets filled in when sending.
             </p>
@@ -252,30 +181,13 @@ function TemplateModal({
 
           {/* Detected variables */}
           {detectedVars.length > 0 && (
-            <div style={{
-              background: 'var(--color-teal-50)',
-              border: '0.5px solid var(--color-teal-200)',
-              borderRadius: 'var(--radius-md)',
-              padding: 'var(--space-3) var(--space-4)',
-            }}>
-              <span style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-teal-700)', display: 'block',
-                marginBottom: 'var(--space-1)',
-              }}>
+            <div className={styles.varsBox}>
+              <span className={styles.varsLabel}>
                 Detected variables
               </span>
-              <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+              <div className={styles.varsWrap}>
                 {detectedVars.map((v) => (
-                  <span key={v} style={{
-                    fontSize: 'var(--text-small)',
-                    padding: '2px 8px',
-                    borderRadius: 'var(--radius-full)',
-                    background: 'var(--color-teal-500)',
-                    color: 'white',
-                    fontFamily: 'var(--font-mono)',
-                    fontWeight: 500,
-                  }}>
+                  <span key={v} className={styles.varChip}>
                     {v}
                   </span>
                 ))}
@@ -285,12 +197,7 @@ function TemplateModal({
         </div>
 
         {/* Footer */}
-        <div style={{
-          display: 'flex', justifyContent: 'flex-end',
-          gap: 'var(--space-2)',
-          padding: 'var(--space-4) var(--space-6)',
-          borderTop: '0.5px solid var(--color-border)',
-        }}>
+        <div className={styles.modalFooter}>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
           <Button variant="primary" onClick={handleSave} loading={saving}>
             {isEdit ? 'Save changes' : 'Create template'}
@@ -324,46 +231,33 @@ function TemplateCard({
 
   const handleCopy = () => {
     navigator.clipboard.writeText(template.content)
-    toast.show('Template content copied ✓', 'success')
+    toast.show('Template content copied', 'success')
   }
 
   return (
-    <div style={{
-      background: 'var(--color-white)',
-      border: '0.5px solid var(--color-border)',
-      borderRadius: 'var(--radius-lg)',
-      display: 'flex', flexDirection: 'column',
-      overflow: 'hidden',
-      transition: 'border-color var(--transition-fast)',
-    }}>
+    <div className={styles.card}>
       {/* Color top strip */}
-      <div style={{
-        height: 4,
-        background: CATEGORY_COLORS[template.category],
-      }} />
+      <div className={styles.colorStrip} style={{ background: CATEGORY_COLORS[template.category] }} />
 
-      <div style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', flex: 1 }}>
+      <div className={styles.cardBody}>
 
         {/* Top row */}
-        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 'var(--space-2)' }}>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: 'var(--color-ink)', marginBottom: 4 }}>
+        <div className={styles.cardTopRow}>
+          <div className={styles.cardNameWrap}>
+            <div className={styles.cardName}>
               {template.name}
             </div>
-            <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
-              <span style={{
-                fontSize: 'var(--text-caption)', padding: '2px 8px',
-                borderRadius: 'var(--radius-full)', fontWeight: 500,
-                background: CATEGORY_COLORS[template.category],
-                color: CATEGORY_TEXT[template.category],
-              }}>
+            <div className={styles.badgeRow}>
+              <span
+                className={styles.categoryBadge}
+                style={{
+                  background: CATEGORY_COLORS[template.category],
+                  color: CATEGORY_TEXT[template.category],
+                }}
+              >
                 {template.category.replace('_', ' ')}
               </span>
-              <span style={{
-                fontSize: 'var(--text-caption)', padding: '2px 8px',
-                borderRadius: 'var(--radius-full)', fontWeight: 500,
-                background: 'var(--color-bg-2)', color: 'var(--color-muted)',
-              }}>
+              <span className={styles.platformBadge}>
                 {template.platform}
               </span>
             </div>
@@ -371,34 +265,15 @@ function TemplateCard({
         </div>
 
         {/* Content preview */}
-        <div style={{
-          fontSize: 'var(--text-small)',
-          color: 'var(--color-ink)',
-          background: 'var(--color-bg)',
-          borderRadius: 'var(--radius-md)',
-          padding: 'var(--space-3)',
-          lineHeight: 1.6,
-          flex: 1,
-          whiteSpace: 'pre-wrap',
-          wordBreak: 'break-word',
-          minHeight: '80px',
-        }}>
+        <div className={styles.contentPreview}>
           {template.content}
         </div>
 
         {/* Variables */}
         {template.variables.length > 0 && (
-          <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+          <div className={styles.cardVarsWrap}>
             {template.variables.map((v) => (
-              <span key={v} style={{
-                fontSize: 'var(--text-caption)',
-                padding: '1px 6px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--color-teal-50)',
-                color: 'var(--color-teal-600)',
-                border: '0.5px solid var(--color-teal-200)',
-                fontFamily: 'var(--font-mono)',
-              }}>
+              <span key={v} className={styles.cardVarChip}>
                 {v}
               </span>
             ))}
@@ -406,55 +281,26 @@ function TemplateCard({
         )}
 
         {/* Footer */}
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingTop: 'var(--space-2)',
-          borderTop: '0.5px solid var(--color-border)',
-        }}>
-          <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+        <div className={styles.cardFooter}>
+          <div className={styles.cardUsage}>
             Used {template.usageCount}× · {template.createdBy}
           </div>
-          <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+          <div className={styles.cardActionsWrap}>
             <button
               onClick={handleCopy}
-              style={{
-                height: 26, padding: '0 10px',
-                borderRadius: 'var(--radius-sm)',
-                border: '0.5px solid var(--color-border)',
-                background: 'transparent', color: 'var(--color-muted)',
-                fontSize: 'var(--text-small)', cursor: 'pointer',
-                fontFamily: 'var(--font-sans)',
-                transition: 'all var(--transition-fast)',
-              }}
+              className={styles.cardActionBtn}
             >
               Copy
             </button>
             <button
               onClick={() => onEdit(template)}
-              style={{
-                height: 26, padding: '0 10px',
-                borderRadius: 'var(--radius-sm)',
-                border: '0.5px solid var(--color-border)',
-                background: 'transparent', color: 'var(--color-muted)',
-                fontSize: 'var(--text-small)', cursor: 'pointer',
-                fontFamily: 'var(--font-sans)',
-                transition: 'all var(--transition-fast)',
-              }}
+              className={styles.cardActionBtn}
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
-              style={{
-                height: 26, padding: '0 10px',
-                borderRadius: 'var(--radius-sm)',
-                border: '0.5px solid var(--color-border)',
-                background: 'transparent', color: 'var(--color-muted)',
-                fontSize: 'var(--text-small)', cursor: 'pointer',
-                fontFamily: 'var(--font-sans)',
-                transition: 'all var(--transition-fast)',
-              }}
+              className={styles.cardActionBtn}
             >
               ×
             </button>
@@ -499,13 +345,13 @@ export default function TemplatesPage() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+    <div className={styles.page}>
 
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 'var(--space-4)', flexWrap: 'wrap' }}>
+      <div className={styles.pageHeader}>
         <div>
-          <h2 style={{ fontSize: 'var(--text-h2)', fontWeight: 600 }}>Message templates</h2>
-          <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: '2px' }}>
+          <h2 className={styles.pageTitle}>Message templates</h2>
+          <p className={styles.pageSub}>
             Reusable messages for CRM replies, bot flows, and broadcasts.
           </p>
         </div>
@@ -515,14 +361,10 @@ export default function TemplatesPage() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', alignItems: 'center' }}>
+      <div className={styles.filtersRow}>
         {/* Search */}
-        <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 320 }}>
-          <span style={{
-            position: 'absolute', left: 10, top: '50%',
-            transform: 'translateY(-50%)',
-            color: 'var(--color-muted)', pointerEvents: 'none',
-          }}>
+        <div className={styles.searchWrap}>
+          <span className={styles.searchIcon}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
               <circle cx="6" cy="6" r="4.5"/>
               <path d="M9.5 9.5L13 13"/>
@@ -533,17 +375,7 @@ export default function TemplatesPage() {
             placeholder="Search templates..."
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            style={{
-              width: '100%', height: '34px',
-              padding: '0 var(--space-3) 0 34px',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              fontFamily: 'var(--font-sans)',
-              fontSize: 'var(--text-body)',
-              color: 'var(--color-ink)',
-              background: 'var(--color-white)',
-              outline: 'none',
-            }}
+            className={styles.searchInput}
           />
         </div>
 
@@ -551,16 +383,7 @@ export default function TemplatesPage() {
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value as TemplateCategory | '')}
-          style={{
-            height: '34px', padding: '0 var(--space-3)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
-            fontSize: 'var(--text-small)',
-            background: 'var(--color-white)',
-            color: 'var(--color-ink)',
-            fontFamily: 'var(--font-sans)',
-            cursor: 'pointer',
-          }}
+          className={styles.filterSelect}
         >
           {CATEGORIES.map((c) => (
             <option key={c.value} value={c.value}>{c.label}</option>
@@ -571,16 +394,7 @@ export default function TemplatesPage() {
         <select
           value={platformFilter}
           onChange={(e) => setPlatformFilter(e.target.value as TemplatePlatform | '')}
-          style={{
-            height: '34px', padding: '0 var(--space-3)',
-            border: '1px solid var(--color-border)',
-            borderRadius: 'var(--radius-md)',
-            fontSize: 'var(--text-small)',
-            background: 'var(--color-white)',
-            color: 'var(--color-ink)',
-            fontFamily: 'var(--font-sans)',
-            cursor: 'pointer',
-          }}
+          className={styles.filterSelect}
         >
           {PLATFORMS.map((p) => (
             <option key={p.value} value={p.value}>{p.label}</option>
@@ -588,7 +402,7 @@ export default function TemplatesPage() {
         </select>
 
         {templates && (
-          <span style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginLeft: 'auto' }}>
+          <span className={styles.resultCount}>
             {templates.length} template{templates.length !== 1 ? 's' : ''}
           </span>
         )}
@@ -596,36 +410,24 @@ export default function TemplatesPage() {
 
       {/* Loading */}
       {isLoading && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
+        <div className={styles.cardsGrid}>
           {[1,2,3].map((n) => (
-            <div key={n} style={{
-              height: 240, borderRadius: 'var(--radius-lg)',
-              background: 'linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-border) 50%, var(--color-bg-2) 75%)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 1.4s infinite',
-            }} />
+            <div key={n} className={styles.skeletonCard} />
           ))}
         </div>
       )}
 
       {/* Empty */}
       {!isLoading && templates?.length === 0 && (
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 'var(--space-3)', padding: 'var(--space-12) var(--space-6)',
-          background: 'var(--color-white)',
-          border: '0.5px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)', textAlign: 'center',
-        }}>
+        <div className={styles.emptyState}>
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none" stroke="var(--color-border)" strokeWidth="1.5">
             <rect x="4" y="4" width="40" height="40" rx="4"/>
             <path d="M12 16h24M12 24h18M12 32h12"/>
           </svg>
-          <div style={{ fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--color-ink)' }}>
+          <div className={styles.emptyTitle}>
             {debouncedSearch || categoryFilter || platformFilter ? 'No templates found' : 'No templates yet'}
           </div>
-          <div style={{ fontSize: 'var(--text-body)', color: 'var(--color-muted)', maxWidth: 280, lineHeight: 1.6 }}>
+          <div className={styles.emptySub}>
             {debouncedSearch || categoryFilter || platformFilter
               ? 'Try a different search or filter.'
               : 'Create reusable message templates for your team to use in replies, bot flows and broadcasts.'
@@ -641,11 +443,7 @@ export default function TemplatesPage() {
 
       {/* Grid */}
       {!isLoading && templates && templates.length > 0 && (
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-          gap: 'var(--space-4)',
-        }}>
+        <div className={styles.cardsGrid}>
           {templates.map((template) => (
             <TemplateCard
               key={template.id}

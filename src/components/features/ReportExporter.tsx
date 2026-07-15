@@ -102,51 +102,25 @@ export function ReportExporter({
             <div className={styles.optionsPanel}>
 
               {/* Company name */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+              <div className={styles.fieldGrid}>
                 <div>
-                  <label style={{
-                    fontSize: 'var(--text-small)', fontWeight: 600,
-                    color: 'var(--color-ink)', display: 'block',
-                    marginBottom: 'var(--space-1)',
-                  }}>
+                  <label className={styles.fieldLabel}>
                     Agency / company name
                   </label>
                   <input
                     value={options.companyName}
                     onChange={(e) => setOptions((prev) => ({ ...prev, companyName: e.target.value }))}
-                    style={{
-                      width: '100%', height: 34,
-                      padding: '0 var(--space-3)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-md)',
-                      fontSize: 'var(--text-body)',
-                      fontFamily: 'var(--font-sans)',
-                      color: 'var(--color-ink)',
-                      outline: 'none',
-                    }}
+                    className={styles.fieldInput}
                   />
                 </div>
                 <div>
-                  <label style={{
-                    fontSize: 'var(--text-small)', fontWeight: 600,
-                    color: 'var(--color-ink)', display: 'block',
-                    marginBottom: 'var(--space-1)',
-                  }}>
+                  <label className={styles.fieldLabel}>
                     Date range
                   </label>
                   <select
                     value={options.dateRange}
                     onChange={(e) => setOptions((prev) => ({ ...prev, dateRange: e.target.value }))}
-                    style={{
-                      width: '100%', height: 34,
-                      padding: '0 var(--space-3)',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-md)',
-                      fontSize: 'var(--text-body)',
-                      fontFamily: 'var(--font-sans)',
-                      background: 'var(--color-white)',
-                      color: 'var(--color-ink)',
-                    }}
+                    className={styles.fieldSelect}
                   >
                     <option>Last 7 days</option>
                     <option>Last 30 days</option>
@@ -157,57 +131,31 @@ export function ReportExporter({
               </div>
 
               {/* Brand color */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+              <div className={styles.brandColorRow}>
                 <div>
-                  <label style={{
-                    fontSize: 'var(--text-small)', fontWeight: 600,
-                    color: 'var(--color-ink)', display: 'block',
-                    marginBottom: 'var(--space-1)',
-                  }}>
+                  <label className={styles.fieldLabel}>
                     Accent color
                   </label>
                   <input
                     type="color"
                     value={options.brandColor}
                     onChange={(e) => setOptions((prev) => ({ ...prev, brandColor: e.target.value }))}
-                    style={{
-                      width: 44, height: 34,
-                      border: '1px solid var(--color-border)',
-                      borderRadius: 'var(--radius-md)',
-                      cursor: 'pointer',
-                      padding: 2,
-                    }}
+                    className={styles.colorInput}
                   />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <label style={{
-                    fontSize: 'var(--text-small)', fontWeight: 600,
-                    color: 'var(--color-ink)', display: 'block',
-                    marginBottom: 'var(--space-1)',
-                  }}>
+                <div className={styles.reportForWrap}>
+                  <label className={styles.fieldLabel}>
                     Report for
                   </label>
-                  <div style={{
-                    height: 34, display: 'flex', alignItems: 'center',
-                    padding: '0 var(--space-3)',
-                    background: 'var(--color-bg)',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--color-border)',
-                    fontSize: 'var(--text-body)',
-                    fontWeight: 500,
-                    color: 'var(--color-ink)',
-                  }}>
+                  <div className={styles.reportForValue}>
                     {clientName}
                   </div>
                 </div>
               </div>
 
               {/* Section toggles */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
-                <span style={{
-                  fontSize: 'var(--text-small)', fontWeight: 600,
-                  color: 'var(--color-ink)',
-                }}>
+              <div className={styles.sectionTogglesWrap}>
+                <span className={styles.sectionTogglesLabel}>
                   Include sections
                 </span>
                 {[
@@ -250,20 +198,12 @@ export function ReportExporter({
                   >
                     <div>
                       <div className={styles.reportBrandName}>{clientName}</div>
-                      <div style={{
-                        fontSize: 'var(--text-small)',
-                        color: options.brandColor,
-                        fontWeight: 500,
-                      }}>
+                      <div className={styles.reportTagline} style={{ color: options.brandColor }}>
                         Performance Report — {options.dateRange}
                       </div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{
-                        fontSize: 'var(--text-small)',
-                        fontWeight: 600,
-                        color: 'var(--color-muted)',
-                      }}>
+                    <div className={styles.reportBrandRight}>
+                      <div className={styles.reportCompanyName}>
                         {options.companyName}
                       </div>
                       <div className={styles.reportDate}>
@@ -299,11 +239,7 @@ export function ReportExporter({
                             </div>
                             <div className={styles.reportMetricLabel}>{label}</div>
                             {change && (
-                              <div style={{
-                                fontSize: 'var(--text-caption)',
-                                color: 'var(--color-success)',
-                                fontWeight: 500,
-                              }}>
+                              <div className={styles.reportMetricChange}>
                                 {change}
                               </div>
                             )}
@@ -335,29 +271,26 @@ export function ReportExporter({
                           <tbody>
                             {posts.slice(0, 5).map((post) => (
                               <tr key={post.id}>
-                                <td style={{
-                                  maxWidth: 240,
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                }}>
+                                <td className={styles.reportTablePostCell}>
                                   {post.content.slice(0, 60)}{post.content.length > 60 ? '...' : ''}
                                 </td>
                                 <td>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <div className={styles.reportTablePlatform}>
                                     <PlatformIcon platform={post.platform as 'FACEBOOK' | 'INSTAGRAM' | 'WHATSAPP' | 'LINE'} size={12} />
                                     {post.platform}
                                   </div>
                                 </td>
                                 <td>{formatNum(post.reach)}</td>
-                                <td style={{
-                                  fontWeight: 600,
-                                  color: post.engagementRate >= 7
-                                    ? 'var(--color-success)'
-                                    : post.engagementRate >= 4
-                                      ? 'var(--color-warning)'
-                                      : 'var(--color-muted)',
-                                }}>
+                                <td
+                                  className={styles.reportTableEngagement}
+                                  style={{
+                                    color: post.engagementRate >= 7
+                                      ? 'var(--color-success)'
+                                      : post.engagementRate >= 4
+                                        ? 'var(--color-warning)'
+                                        : 'var(--color-muted)',
+                                  }}
+                                >
                                   {post.engagementRate.toFixed(1)}%
                                 </td>
                               </tr>
@@ -377,14 +310,7 @@ export function ReportExporter({
                       >
                         Best posting times
                       </div>
-                      <div style={{
-                        padding: 'var(--space-4)',
-                        background: 'var(--color-bg)',
-                        borderRadius: 'var(--radius-md)',
-                        fontSize: 'var(--text-small)',
-                        color: 'var(--color-muted)',
-                        textAlign: 'center',
-                      }}>
+                      <div className={styles.reportPlaceholder}>
                         Peak engagement: Wednesday & Friday, 7–9 PM (ICT)
                       </div>
                     </div>
@@ -398,14 +324,7 @@ export function ReportExporter({
                       >
                         Competitor comparison
                       </div>
-                      <div style={{
-                        padding: 'var(--space-4)',
-                        background: 'var(--color-bg)',
-                        borderRadius: 'var(--radius-md)',
-                        fontSize: 'var(--text-small)',
-                        color: 'var(--color-muted)',
-                        textAlign: 'center',
-                      }}>
+                      <div className={styles.reportPlaceholder}>
                         Your page: 28,450 followers — Industry avg: 391,000 followers
                       </div>
                     </div>

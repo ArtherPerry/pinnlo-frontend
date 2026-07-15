@@ -7,6 +7,7 @@ import { useFlow, useSaveFlow, useUpdateFlowStatus } from '@/hooks/useFlows'
 import { Button, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import type {  FlowNode, FlowNodeType, FlowNodeData } from '@/lib/types'
+import styles from './flowEditor.module.css'
 
 // ── Node config ────────────────────────────────────────────────────
 const NODE_CONFIG: Record<FlowNodeType, {
@@ -16,14 +17,14 @@ const NODE_CONFIG: Record<FlowNodeType, {
   icon:   string
   label:  string
 }> = {
-  TRIGGER:   { color: '#0F6E56', bg: '#E1F5EE', border: '#5DCAA5', icon: '⚡', label: 'Trigger'   },
-  MESSAGE:   { color: '#185FA5', bg: '#E6F1FB', border: '#85B7EB', icon: '💬', label: 'Message'   },
-  CONDITION: { color: '#633806', bg: '#FAEEDA', border: '#EF9F27', icon: '🔀', label: 'Condition' },
-  ACTION:    { color: '#26215C', bg: '#EEEDFE', border: '#AFA9EC', icon: '⚙️', label: 'Action'    },
-  DELAY:     { color: '#444441', bg: '#F1EFE8', border: '#B4B2A9', icon: '⏱', label: 'Delay'     },
-  TAG:       { color: '#72243E', bg: '#FBEAF0', border: '#ED93B1', icon: '🏷', label: 'Tag'       },
-  ASSIGN:    { color: '#3B6D11', bg: '#EAF3DE', border: '#97C459', icon: '👤', label: 'Assign'    },
-  END:       { color: '#5F5E5A', bg: '#F1EFE8', border: '#888780', icon: '🔚', label: 'End'       },
+  TRIGGER:   { color: 'var(--color-teal-600)', bg: 'var(--color-teal-50)',       border: '#5DCAA5', icon: '⚡', label: 'Trigger'   },
+  MESSAGE:   { color: '#185FA5',                bg: 'var(--color-info-light)',    border: '#85B7EB', icon: '💬', label: 'Message'   },
+  CONDITION: { color: '#633806',                bg: 'var(--color-warning-light)', border: 'var(--color-warning)', icon: '🔀', label: 'Condition' },
+  ACTION:    { color: '#26215C',                bg: '#EEEDFE',                    border: '#AFA9EC', icon: '⚙️', label: 'Action'    },
+  DELAY:     { color: '#444441',                bg: 'var(--color-bg-2)',          border: '#B4B2A9', icon: '⏱', label: 'Delay'     },
+  TAG:       { color: '#72243E',                bg: '#FBEAF0',                    border: '#ED93B1', icon: '🏷', label: 'Tag'       },
+  ASSIGN:    { color: '#3B6D11',                bg: 'var(--color-success-light)', border: '#97C459', icon: '👤', label: 'Assign'    },
+  END:       { color: '#5F5E5A',                bg: 'var(--color-bg-2)',          border: 'var(--color-muted-light)', icon: '🔚', label: 'End'       },
 }
 
 const ADD_NODE_TYPES: FlowNodeType[] = [
@@ -95,51 +96,31 @@ function FlowNodeBox({
 
   return (
     <div
+      className={styles.nodeBox}
       style={{
-        position:     'absolute',
-        left:         node.position.x,
-        top:          node.position.y,
-        width:        NODE_W,
-        minHeight:    NODE_H,
-        background:   cfg.bg,
-        border:       `2px solid ${isSelected ? cfg.color : cfg.border}`,
-        borderRadius: 10,
-        padding:      '10px 12px',
-        cursor:       'grab',
-        userSelect:   'none',
-        boxShadow:    isSelected
+        left:       node.position.x,
+        top:        node.position.y,
+        width:      NODE_W,
+        minHeight:  NODE_H,
+        background: cfg.bg,
+        border:     `2px solid ${isSelected ? cfg.color : cfg.border}`,
+        boxShadow:  isSelected
           ? `0 0 0 3px ${cfg.bg}, 0 0 0 5px ${cfg.border}`
           : '0 2px 6px rgba(0,0,0,0.08)',
-        transition: 'box-shadow 0.15s',
       }}
       onClick={() => onSelect(node.id)}
       onMouseDown={(e) => onDragStart(node.id, e)}
     >
-      <div style={{
-        display: 'flex', alignItems: 'center',
-        gap: 6, marginBottom: 4,
-      }}>
-        <span style={{ fontSize: 13 }}>{cfg.icon}</span>
-        <span style={{
-          fontSize: 10, fontWeight: 700,
-          color: cfg.color, letterSpacing: '0.06em',
-          textTransform: 'uppercase',
-        }}>
+      <div className={styles.nodeIconRow}>
+        <span className={styles.nodeIcon}>{cfg.icon}</span>
+        <span className={styles.nodeTypeLabel} style={{ color: cfg.color }}>
           {cfg.label}
         </span>
       </div>
-      <div style={{
-        fontSize: 12, color: cfg.color,
-        lineHeight: 1.4, wordBreak: 'break-word',
-        fontWeight: 500,
-      }}>
+      <div className={styles.nodeLabel} style={{ color: cfg.color }}>
         {node.label}
       </div>
-      <div style={{
-        fontSize: 11, color: cfg.color,
-        opacity: 0.65, marginTop: 2,
-        lineHeight: 1.4, wordBreak: 'break-word',
-      }}>
+      <div className={styles.nodePreview} style={{ color: cfg.color }}>
         {getPreview()}
       </div>
     </div>
@@ -172,63 +153,28 @@ function NodeConfigPanel({
   }
 
   return (
-    <div style={{
-      position: 'absolute', top: 0, right: 0,
-      width: 280, height: '100%',
-      background: 'var(--color-white)',
-      borderLeft: '0.5px solid var(--color-border)',
-      display: 'flex', flexDirection: 'column',
-      zIndex: 10,
-      boxShadow: '-4px 0 16px rgba(0,0,0,0.06)',
-    }}>
+    <div className={styles.configPanel}>
       {/* Header */}
-      <div style={{
-        padding: 'var(--space-3) var(--space-4)',
-        borderBottom: '0.5px solid var(--color-border)',
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between',
-        background: cfg.bg,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div className={styles.configPanelHeader} style={{ background: cfg.bg }}>
+        <div className={styles.configPanelHeaderLeft}>
           <span>{cfg.icon}</span>
-          <span style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: cfg.color }}>
+          <span className={styles.configPanelLabel} style={{ color: cfg.color }}>
             {cfg.label}
           </span>
         </div>
-        <button onClick={onClose} style={{
-          width: 22, height: 22, border: 'none',
-          background: 'transparent', cursor: 'pointer',
-          fontSize: 14, color: cfg.color,
-          borderRadius: 4,
-        }}>×</button>
+        <button onClick={onClose} className={styles.configPanelClose} style={{ color: cfg.color }}>×</button>
       </div>
 
       {/* Config */}
-      <div style={{
-        flex: 1, overflowY: 'auto',
-        padding: 'var(--space-4)',
-        display: 'flex', flexDirection: 'column',
-        gap: 'var(--space-3)',
-      }}>
+      <div className={styles.configBody}>
 
         {/* Label */}
         <div>
-          <label style={{
-            fontSize: 'var(--text-small)', fontWeight: 600,
-            color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-          }}>Node label</label>
+          <label className={styles.fieldLabel}>Node label</label>
           <input
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            style={{
-              width: '100%', height: 34,
-              padding: '0 10px',
-              border: '1px solid var(--color-border)',
-              borderRadius: 6, fontSize: 13,
-              fontFamily: 'var(--font-sans)',
-              color: 'var(--color-ink)',
-              outline: 'none',
-            }}
+            className={styles.fieldInput}
           />
         </div>
 
@@ -236,22 +182,11 @@ function NodeConfigPanel({
         {node.type === 'TRIGGER' && (
           <>
             <div>
-              <label style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-              }}>Trigger type</label>
+              <label className={styles.fieldLabel}>Trigger type</label>
               <select
                 value={data.triggerType ?? 'KEYWORD'}
                 onChange={(e) => updateData('tagAction', e.target.value as 'ADD' | 'REMOVE')}
-                style={{
-                  width: '100%', height: 34,
-                  padding: '0 8px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 6, fontSize: 13,
-                  fontFamily: 'var(--font-sans)',
-                  background: 'var(--color-white)',
-                  color: 'var(--color-ink)',
-                }}
+                className={styles.fieldSelect}
               >
                 <option value="KEYWORD">Keyword match</option>
                 <option value="FIRST_MESSAGE">First message</option>
@@ -261,25 +196,14 @@ function NodeConfigPanel({
             </div>
             {(data.triggerType ?? 'KEYWORD') === 'KEYWORD' && (
               <div>
-                <label style={{
-                  fontSize: 'var(--text-small)', fontWeight: 600,
-                  color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-                }}>Keywords (comma separated)</label>
+                <label className={styles.fieldLabel}>Keywords (comma separated)</label>
                 <input
                   value={(data.keywords ?? []).join(', ')}
                   onChange={(e) =>
                     updateData('keywords', e.target.value.split(',').map((k) => k.trim()).filter(Boolean))
                   }
                   placeholder="hello, สวัสดี, hi"
-                  style={{
-                    width: '100%', height: 34,
-                    padding: '0 10px',
-                    border: '1px solid var(--color-border)',
-                    borderRadius: 6, fontSize: 13,
-                    fontFamily: 'var(--font-sans)',
-                    color: 'var(--color-ink)',
-                    outline: 'none',
-                  }}
+                  className={styles.fieldInput}
                 />
               </div>
             )}
@@ -288,25 +212,13 @@ function NodeConfigPanel({
 
         {node.type === 'MESSAGE' && (
           <div>
-            <label style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-            }}>Message content</label>
+            <label className={styles.fieldLabel}>Message content</label>
             <textarea
               value={data.message ?? ''}
               onChange={(e) => updateData('message', e.target.value)}
               placeholder="Type your message... Use {{name}} for personalisation"
               rows={5}
-              style={{
-                width: '100%',
-                padding: 10,
-                border: '1px solid var(--color-border)',
-                borderRadius: 6, fontSize: 13,
-                fontFamily: 'var(--font-sans)',
-                color: 'var(--color-ink)',
-                resize: 'vertical', outline: 'none',
-                lineHeight: 1.6,
-              }}
+              className={styles.fieldTextarea}
             />
           </div>
         )}
@@ -314,21 +226,11 @@ function NodeConfigPanel({
         {node.type === 'CONDITION' && (
           <>
             <div>
-              <label style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-              }}>Condition field</label>
+              <label className={styles.fieldLabel}>Condition field</label>
               <select
                 value={data.conditionField ?? 'tag'}
                 onChange={(e) => updateData('conditionField', e.target.value)}
-                style={{
-                  width: '100%', height: 34, padding: '0 8px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 6, fontSize: 13,
-                  fontFamily: 'var(--font-sans)',
-                  background: 'var(--color-white)',
-                  color: 'var(--color-ink)',
-                }}
+                className={styles.fieldSelect}
               >
                 <option value="tag">Has tag</option>
                 <option value="assignedTo">Assigned to</option>
@@ -336,30 +238,15 @@ function NodeConfigPanel({
               </select>
             </div>
             <div>
-              <label style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-              }}>Value</label>
+              <label className={styles.fieldLabel}>Value</label>
               <input
                 value={data.conditionValue ?? ''}
                 onChange={(e) => updateData('conditionValue', e.target.value)}
                 placeholder="e.g. vip"
-                style={{
-                  width: '100%', height: 34, padding: '0 10px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 6, fontSize: 13,
-                  fontFamily: 'var(--font-sans)',
-                  color: 'var(--color-ink)', outline: 'none',
-                }}
+                className={styles.fieldInput}
               />
             </div>
-            <div style={{
-              padding: '8px 10px',
-              background: 'var(--color-bg)',
-              borderRadius: 6,
-              fontSize: 12, color: 'var(--color-muted)',
-              lineHeight: 1.5,
-            }}>
+            <div className={styles.conditionInfo}>
               ✅ YES path continues to next connected node<br/>
               ❌ NO path goes to the alternative branch
             </div>
@@ -368,28 +255,16 @@ function NodeConfigPanel({
 
         {node.type === 'DELAY' && (
           <div>
-            <label style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-            }}>Delay (minutes)</label>
+            <label className={styles.fieldLabel}>Delay (minutes)</label>
             <input
               type="number"
               value={data.delayMinutes ?? 60}
               onChange={(e) => updateData('delayMinutes', parseInt(e.target.value))}
               min={1}
               max={10080}
-              style={{
-                width: '100%', height: 34, padding: '0 10px',
-                border: '1px solid var(--color-border)',
-                borderRadius: 6, fontSize: 13,
-                fontFamily: 'var(--font-sans)',
-                color: 'var(--color-ink)', outline: 'none',
-              }}
+              className={styles.fieldInput}
             />
-            <p style={{
-              fontSize: 11, color: 'var(--color-muted)',
-              marginTop: 4,
-            }}>
+            <p className={styles.delayHint}>
               {data.delayMinutes && data.delayMinutes >= 60
                 ? `${(data.delayMinutes / 60).toFixed(1)} hours`
                 : `${data.delayMinutes ?? 60} minutes`
@@ -401,32 +276,25 @@ function NodeConfigPanel({
         {node.type === 'TAG' && (
           <>
             <div>
-              <label style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-              }}>Action</label>
-              <div style={{ display: 'flex', gap: 6 }}>
+              <label className={styles.fieldLabel}>Action</label>
+              <div className={styles.tagActionRow}>
                 {(['ADD', 'REMOVE'] as const).map((a) => (
                   <button
                     key={a}
                     type="button"
                     onClick={() => updateData('tagAction', a)}
+                    className={styles.tagActionBtn}
                     style={{
-                      flex: 1, height: 32,
                       border: `1px solid ${data.tagAction === a
                         ? 'var(--color-teal-500)'
                         : 'var(--color-border)'
                       }`,
-                      borderRadius: 6,
                       background: data.tagAction === a
                         ? 'var(--color-teal-50)'
                         : 'var(--color-white)',
                       color: data.tagAction === a
                         ? 'var(--color-teal-600)'
                         : 'var(--color-muted)',
-                      fontSize: 12, fontWeight: 500,
-                      cursor: 'pointer',
-                      fontFamily: 'var(--font-sans)',
                     }}
                   >
                     {a === 'ADD' ? '+ Add tag' : '− Remove tag'}
@@ -435,21 +303,12 @@ function NodeConfigPanel({
               </div>
             </div>
             <div>
-              <label style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-              }}>Tag name</label>
+              <label className={styles.fieldLabel}>Tag name</label>
               <input
                 value={data.tag ?? ''}
                 onChange={(e) => updateData('tag', e.target.value)}
                 placeholder="e.g. vip, interested"
-                style={{
-                  width: '100%', height: 34, padding: '0 10px',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 6, fontSize: 13,
-                  fontFamily: 'var(--font-sans)',
-                  color: 'var(--color-ink)', outline: 'none',
-                }}
+                className={styles.fieldInput}
               />
             </div>
           </>
@@ -457,21 +316,11 @@ function NodeConfigPanel({
 
         {node.type === 'ASSIGN' && (
           <div>
-            <label style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block', marginBottom: 4,
-            }}>Assign to</label>
+            <label className={styles.fieldLabel}>Assign to</label>
             <select
               value={data.assignTo ?? ''}
               onChange={(e) => updateData('assignTo', e.target.value)}
-              style={{
-                width: '100%', height: 34, padding: '0 8px',
-                border: '1px solid var(--color-border)',
-                borderRadius: 6, fontSize: 13,
-                fontFamily: 'var(--font-sans)',
-                background: 'var(--color-white)',
-                color: 'var(--color-ink)',
-              }}
+              className={styles.fieldSelect}
             >
               <option value="">— Select team member —</option>
               <option value="Nattawut C.">Nattawut C. (Owner)</option>
@@ -484,38 +333,18 @@ function NodeConfigPanel({
       </div>
 
       {/* Footer */}
-      <div style={{
-        padding: 'var(--space-3) var(--space-4)',
-        borderTop: '0.5px solid var(--color-border)',
-        display: 'flex', gap: 'var(--space-2)',
-      }}>
+      <div className={styles.configFooter}>
         {node.type !== 'TRIGGER' && (
           <button
             onClick={() => { onDelete(node.id); onClose() }}
-            style={{
-              height: 30, padding: '0 12px',
-              borderRadius: 6,
-              border: '0.5px solid var(--color-danger)',
-              background: 'var(--color-danger-light)',
-              color: 'var(--color-danger)',
-              fontSize: 12, cursor: 'pointer',
-              fontFamily: 'var(--font-sans)',
-              fontWeight: 500,
-            }}
+            className={styles.deleteNodeBtn}
           >
             Delete node
           </button>
         )}
         <button
           onClick={handleSave}
-          style={{
-            flex: 1, height: 30,
-            borderRadius: 6, border: 'none',
-            background: 'var(--color-teal-500)',
-            color: 'white', fontSize: 12,
-            fontWeight: 600, cursor: 'pointer',
-            fontFamily: 'var(--font-sans)',
-          }}
+          className={styles.applyBtn}
         >
           Apply changes
         </button>
@@ -652,7 +481,7 @@ export default function FlowEditorPage() {
     try {
       await saveFlow.mutateAsync({ ...flow, nodes })
       setIsDirty(false)
-      toast.show('Flow saved ✓', 'success')
+      toast.show('Flow saved', 'success')
     } catch {
       toast.show('Failed to save flow', 'error')
     }
@@ -664,7 +493,7 @@ export default function FlowEditorPage() {
     const next = flow.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'
     try {
       await updateStatus.mutateAsync(next)
-      toast.show(next === 'ACTIVE' ? 'Flow activated ✓' : 'Flow paused', 'success')
+      toast.show(next === 'ACTIVE' ? 'Flow activated' : 'Flow paused', 'success')
     } catch {
       toast.show('Failed to update status', 'error')
     }
@@ -677,78 +506,39 @@ export default function FlowEditorPage() {
   const selectedNode = nodes.find((n) => n.id === selectedId) ?? null
 
   if (isLoading) return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      height: '60vh', color: 'var(--color-muted)',
-    }}>
+    <div className={styles.centerMessage}>
       Loading flow...
     </div>
   )
 
   if (!flow) return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      height: '60vh', color: 'var(--color-muted)',
-    }}>
+    <div className={styles.centerMessage}>
       Flow not found
     </div>
   )
 
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      gap: 0,
-      height: 'calc(100vh - var(--header-height))',
-      margin: 'calc(-1 * var(--space-6))',
-      overflow: 'hidden',
-    }}>
+    <div className={styles.editorRoot}>
 
       {/* Editor toolbar */}
-      <div style={{
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 'var(--space-3) var(--space-5)',
-        borderBottom: '0.5px solid var(--color-border)',
-        background: 'var(--color-white)',
-        gap: 'var(--space-3)',
-        flexShrink: 0,
-        zIndex: 5,
-      }}>
+      <div className={styles.toolbar}>
         {/* Back + title */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+        <div className={styles.toolbarLeft}>
           <button
             onClick={() => router.push(`/${locale}/flows`)}
-            style={{
-              height: 30, padding: '0 10px',
-              borderRadius: 'var(--radius-md)',
-              border: '0.5px solid var(--color-border)',
-              background: 'transparent',
-              color: 'var(--color-muted)',
-              fontSize: 'var(--text-small)',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-sans)',
-            }}
+            className={styles.backBtn}
           >
             ← Flows
           </button>
           <div>
-            <div style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: 'var(--color-ink)' }}>
+            <div className={styles.flowName}>
               {flow.name}
             </div>
-            <div style={{
-              fontSize: 'var(--text-small)',
-              color: 'var(--color-muted)',
-              display: 'flex', alignItems: 'center', gap: 4,
-            }}>
+            <div className={styles.flowMeta}>
               <PlatformIcon platform={flow.platform} size={11} />
               {flow.clientName}
               {isDirty && (
-                <span style={{
-                  marginLeft: 4,
-                  color: 'var(--color-warning)',
-                  fontSize: 'var(--text-caption)',
-                  fontWeight: 500,
-                }}>
+                <span className={styles.dirtyIndicator}>
                   · Unsaved changes
                 </span>
               )}
@@ -757,57 +547,24 @@ export default function FlowEditorPage() {
         </div>
 
         {/* Actions */}
-        <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
+        <div className={styles.toolbarActions}>
           {/* Add node */}
-          <div style={{ position: 'relative' }}>
+          <div className={styles.addNodeWrap}>
             <button
               onClick={() => setShowAddMenu((v) => !v)}
-              style={{
-                height: 32, padding: '0 12px',
-                borderRadius: 'var(--radius-md)',
-                border: '0.5px solid var(--color-teal-500)',
-                background: 'var(--color-teal-50)',
-                color: 'var(--color-teal-600)',
-                fontSize: 'var(--text-small)',
-                fontWeight: 500,
-                cursor: 'pointer',
-                fontFamily: 'var(--font-sans)',
-              }}
+              className={styles.addNodeBtn}
             >
               + Add node
             </button>
             {showAddMenu && (
-              <div style={{
-                position: 'absolute', top: '100%', left: 0,
-                marginTop: 4,
-                background: 'var(--color-white)',
-                border: '0.5px solid var(--color-border)',
-                borderRadius: 'var(--radius-lg)',
-                boxShadow: 'var(--shadow-md)',
-                overflow: 'hidden',
-                zIndex: 100,
-                minWidth: 160,
-              }}>
+              <div className={styles.addMenu}>
                 {ADD_NODE_TYPES.map((type) => {
                   const cfg = NODE_CONFIG[type]
                   return (
                     <button
                       key={type}
                       onClick={() => handleAddNode(type)}
-                      style={{
-                        display: 'flex', alignItems: 'center',
-                        gap: 8,
-                        width: '100%',
-                        padding: '8px 14px',
-                        border: 'none',
-                        background: 'transparent',
-                        color: 'var(--color-ink)',
-                        fontSize: 'var(--text-small)',
-                        cursor: 'pointer',
-                        fontFamily: 'var(--font-sans)',
-                        textAlign: 'left',
-                        transition: 'background var(--transition-fast)',
-                      }}
+                      className={styles.addMenuItem}
                       onMouseEnter={(e) => {
                         (e.currentTarget as HTMLButtonElement).style.background = cfg.bg
                       }}
@@ -827,17 +584,7 @@ export default function FlowEditorPage() {
           <button
             onClick={handleToggleStatus}
             disabled={updateStatus.isPending}
-            style={{
-              height: 32, padding: '0 12px',
-              borderRadius: 'var(--radius-md)',
-              border: '0.5px solid var(--color-border)',
-              background: 'var(--color-white)',
-              color: 'var(--color-muted)',
-              fontSize: 'var(--text-small)',
-              fontWeight: 500,
-              cursor: 'pointer',
-              fontFamily: 'var(--font-sans)',
-            }}
+            className={styles.statusBtn}
           >
             {flow.status === 'ACTIVE' ? '⏸ Pause' : '▶ Activate'}
           </button>
@@ -855,20 +602,12 @@ export default function FlowEditorPage() {
       </div>
 
       {/* Canvas + config panel */}
-      <div style={{
-        flex: 1, display: 'flex',
-        overflow: 'hidden',
-        background: '#F7F6F3',
-        position: 'relative',
-      }}>
+      <div className={styles.canvasArea}>
 
         {/* Canvas */}
         <div
           ref={canvasRef}
-          style={{
-            flex: 1, overflow: 'auto',
-            position: 'relative',
-          }}
+          className={styles.canvas}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -878,23 +617,12 @@ export default function FlowEditorPage() {
           }}
         >
           {/* Grid background */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            backgroundImage: `
-              radial-gradient(circle, #D3D1C7 1px, transparent 1px)
-            `,
-            backgroundSize: '24px 24px',
-            pointerEvents: 'none',
-          }} />
+          <div className={styles.gridBg} />
 
           {/* SVG arrows */}
           <svg
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              width: canvasW, height: canvasH,
-              pointerEvents: 'none',
-              overflow: 'visible',
-            }}
+            className={styles.arrowsSvg}
+            style={{ width: canvasW, height: canvasH }}
           >
             <defs>
               <marker
@@ -949,10 +677,7 @@ export default function FlowEditorPage() {
           </svg>
 
           {/* Nodes */}
-          <div style={{
-            position: 'relative',
-            width: canvasW, height: canvasH,
-          }}>
+          <div className={styles.nodesLayer} style={{ width: canvasW, height: canvasH }}>
             {nodes.map((node) => (
               <FlowNodeBox
                 key={node.id}
@@ -969,18 +694,12 @@ export default function FlowEditorPage() {
 
           {/* Empty state */}
           {nodes.length === 0 && (
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column', gap: 8,
-              color: 'var(--color-muted)',
-            }}>
-              <div style={{ fontSize: 32 }}>⚡</div>
-              <div style={{ fontWeight: 600, fontSize: 'var(--text-body)' }}>
+            <div className={styles.canvasEmpty}>
+              <div className={styles.canvasEmptyIcon}>⚡</div>
+              <div className={styles.canvasEmptyTitle}>
                 No nodes yet
               </div>
-              <div style={{ fontSize: 'var(--text-small)' }}>
+              <div className={styles.canvasEmptySub}>
                 Click &quot;+ Add node&quot; to build your flow
               </div>
             </div>

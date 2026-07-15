@@ -7,6 +7,7 @@ import {
 } from '@/hooks/useCompetitors'
 import { useClients } from '@/hooks/useClients'
 import { Button } from '@/components/ui'
+import { Check } from 'lucide-react'
 import { PortalSettingsDrawer } from '@/components/features/PortalSettingsDrawer'
 import { useToast } from '@/hooks/useToast'
 import { useLocale } from 'next-intl'
@@ -101,7 +102,7 @@ function PortalCard({
         <div className={styles.shareUrlRow}>
           <span className={styles.shareUrl}>{portal.shareUrl}</span>
           <button className={styles.copyBtn} onClick={handleCopy}>
-            {copied ? '✓' : 'Copy'}
+            {copied ? <Check size={14} /> : 'Copy'}
           </button>
         </div>
 
@@ -168,7 +169,7 @@ export default function PortalsPage() {
     setCreating(true)
     try {
       await createPortal.mutateAsync(selectedClient)
-      toast.show('Report portal created ✓', 'success')
+      toast.show('Report portal created', 'success')
       setShowCreate(false)
       setSelectedClient('')
     } catch {

@@ -1,0 +1,224 @@
+/* ── Overlay ── */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 150;
+}
+
+/* ── Drawer ── */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 460px;
+  background: var(--color-white);
+  border-left: 0.5px solid var(--color-border);
+  z-index: 151;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.2s ease;
+  overflow-y: auto;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0);    }
+}
+
+/* ── Header ── */
+.header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-bg-2);
+  border: 0.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.name {
+  font-weight: 600;
+  font-size: var(--text-h3);
+}
+
+.handle {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.closeBtn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-muted);
+}
+
+/* ── States ── */
+.stateMessage {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--color-muted);
+}
+
+.targetingWrap {
+  padding: var(--space-5);
+}
+
+.detail {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* ── Metrics ── */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.metricBox {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.metricValue {
+  font-weight: 600;
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+.metricLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+/* ── Info grid ── */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.infoLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-bottom: 2px;
+}
+
+.infoLink {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-teal-600);
+}
+
+.infoValue {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+/* ── Section labels ── */
+.categoriesLabel {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
+.recentPostsLabel {
+  font-size: var(--text-label);
+  font-weight: 600;
+  color: var(--color-muted);
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-3);
+}
+
+/* ── Categories ── */
+.categoriesWrap {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.categoryChip {
+  font-size: var(--text-small);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  border: 0.5px solid var(--color-teal-200);
+  font-weight: 500;
+}
+
+/* ── Recent posts ── */
+.postsWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.postCard {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.postContent {
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.postMeta {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.postStat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.postDate {
+  margin-left: auto;
+}

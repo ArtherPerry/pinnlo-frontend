@@ -1,0 +1,468 @@
+/* ── Page ── */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: var(--text-h2);
+  font-weight: 600;
+}
+
+.pageSub {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+}
+
+.filterRow {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.filterTab {
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.skeletonCard {
+  height: 220px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-2) 25%,
+    var(--color-border) 50%,
+    var(--color-bg-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  padding: var(--space-12) var(--space-6);
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.emptySub {
+  font-size: var(--text-body);
+  color: var(--color-muted);
+  max-width: 300px;
+  line-height: 1.6;
+}
+
+.campaignList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Stat card ── */
+.statCard {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.statCardValue {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.statCardLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* ── Metric bar ── */
+.metricBarRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: var(--text-small);
+}
+
+.metricBarLabel {
+  color: var(--color-muted);
+}
+
+.metricBarValue {
+  font-weight: 600;
+}
+
+.metricBarTrack {
+  height: 6px;
+  background: var(--color-bg-2);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.metricBarFill {
+  height: 100%;
+  border-radius: var(--radius-full);
+}
+
+/* ── Create modal ── */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 200;
+  padding: var(--space-6) var(--space-4);
+  overflow-y: auto;
+}
+
+.modalBox {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 600px;
+  box-shadow: var(--shadow-lg);
+  margin: auto;
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.modalTitle {
+  font-size: var(--text-h3);
+  font-weight: 600;
+}
+
+.modalClose {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-muted);
+  border-radius: var(--radius-md);
+}
+
+.modalBody {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fieldLabel {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.clientList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.clientOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+}
+
+.clientDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-teal-500);
+  flex-shrink: 0;
+}
+
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.bodyLabelRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.bodyLabelText {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.bodyLabelHint {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.bodyTextarea {
+  width: 100%;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--color-ink);
+  resize: vertical;
+  outline: none;
+  line-height: 1.65;
+}
+
+.bodyHelp {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: var(--space-1);
+  line-height: 1.5;
+}
+
+.inlineCode {
+  background: var(--color-bg-2);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.tagsWrap {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.tagOption {
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-6);
+  border-top: 0.5px solid var(--color-border);
+}
+
+/* ── Campaign card ── */
+.card {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.cardHeader {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-bg);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.cardHeaderMain {
+  flex: 1;
+  min-width: 0;
+}
+
+.cardName {
+  font-weight: 600;
+  font-size: var(--text-body);
+  color: var(--color-ink);
+  margin-bottom: 4px;
+}
+
+.cardMetaRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardFrom {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.statusBadge {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.cardActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.deleteBtn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+
+.cardBody {
+  padding: var(--space-4) var(--space-5);
+}
+
+.cardSubject {
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+  margin-bottom: var(--space-1);
+}
+
+.cardPreview {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-bottom: var(--space-4);
+}
+
+.metricsGrid {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.metricBox {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.metricValue {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.metricValueSent {
+  font-size: var(--text-h3);
+  font-weight: 600;
+}
+
+.metricValueInfo {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-info);
+}
+
+.metricValueTeal {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-teal-600);
+}
+
+.metricLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+.rateBars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 0.5px solid var(--color-border);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.cardTags {
+  display: flex;
+  gap: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.cardTag {
+  font-size: var(--text-caption);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-2);
+  color: var(--color-muted);
+}

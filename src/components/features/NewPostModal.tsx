@@ -97,7 +97,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
           : [],
         mediaIds: mediaFiles.map((f) => f.id),
       })
-      toast.show('Post scheduled ✓', 'success')
+      toast.show('Post scheduled', 'success')
       onClose()
     } catch {
       toast.show('Failed to create post', 'error')
@@ -333,7 +333,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
             },
           ])
           setShowImageAI(false)
-          toast.show('AI image added to post ✓', 'success')
+          toast.show('AI image added to post', 'success')
         }}
         onClose={() => setShowImageAI(false)}
       />

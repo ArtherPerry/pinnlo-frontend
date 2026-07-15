@@ -74,7 +74,7 @@ export function AddContactModal({ onClose }: AddContactModalProps) {
           : [],
         notes:     values.notes || undefined,
       })
-      toast.show('Contact added ✓', 'success')
+      toast.show('Contact added', 'success')
       onClose()
     } catch {
       toast.show('Failed to add contact', 'error')

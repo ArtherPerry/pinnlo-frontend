@@ -205,7 +205,7 @@ function CreateBenchmarkModal({ onClose }: { onClose: () => void }) {
         clientId:      values.clientId,
         competitorIds: [],
       })
-      toast.show('Benchmark group created ✓', 'success')
+      toast.show('Benchmark group created', 'success')
       onClose()
     } catch {
       toast.show('Failed to create benchmark group', 'error')

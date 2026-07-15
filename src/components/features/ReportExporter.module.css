@@ -268,3 +268,134 @@
 }
 
 .printBtn:hover { background: var(--color-teal-600); }
+
+/* ── Option fields ── */
+.fieldGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.fieldLabel {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+  display: block;
+  margin-bottom: var(--space-1);
+}
+
+.fieldInput {
+  width: 100%;
+  height: 34px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  outline: none;
+}
+
+.fieldSelect {
+  width: 100%;
+  height: 34px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  font-family: var(--font-sans);
+  background: var(--color-white);
+  color: var(--color-ink);
+}
+
+.brandColorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.colorInput {
+  width: 44px;
+  height: 34px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.reportForWrap {
+  flex: 1;
+}
+
+.reportForValue {
+  height: 34px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--space-3);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.sectionTogglesWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.sectionTogglesLabel {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* ── Report preview extras ── */
+.reportTagline {
+  font-size: var(--text-small);
+  font-weight: 500;
+}
+
+.reportBrandRight {
+  text-align: right;
+}
+
+.reportCompanyName {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-muted);
+}
+
+.reportMetricChange {
+  font-size: var(--text-caption);
+  color: var(--color-success);
+  font-weight: 500;
+}
+
+.reportTablePostCell {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reportTablePlatform {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.reportTableEngagement {
+  font-weight: 600;
+}
+
+.reportPlaceholder {
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  text-align: center;
+}

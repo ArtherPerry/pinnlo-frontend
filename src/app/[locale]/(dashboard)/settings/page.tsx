@@ -105,14 +105,14 @@ function AgencyTab() {
     try {
       await api.patch('/api/settings/agency', values)
       qc.setQueryData(['settings', 'agency'], values)
-      toast.show('Agency settings saved ✓', 'success')
+      toast.show('Agency settings saved', 'success')
     } catch {
       toast.show('Failed to save settings', 'error')
     }
   }
 
   if (isLoading) return (
-    <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+    <div className={styles.loadingState}>
       Loading...
     </div>
   )
@@ -130,16 +130,11 @@ function AgencyTab() {
         </div>
         <div className={styles.formRow}>
           <div>
-            <span style={{ fontSize: 'var(--text-small)', fontWeight: 500, color: 'var(--color-ink)', display: 'block', marginBottom: 'var(--space-1)' }}>
+            <span className={styles.fieldLabel}>
               Timezone
             </span>
             <select
-              style={{
-                width: '100%', height: '36px', padding: '0 var(--space-3)',
-                border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)',
-                fontSize: 'var(--text-body)', background: 'var(--color-white)',
-                color: 'var(--color-ink)', fontFamily: 'var(--font-sans)',
-              }}
+              className={styles.fieldSelect}
               {...register('timezone')}
               defaultValue={agency?.timezone}
             >
@@ -149,16 +144,11 @@ function AgencyTab() {
             </select>
           </div>
           <div>
-            <span style={{ fontSize: 'var(--text-small)', fontWeight: 500, color: 'var(--color-ink)', display: 'block', marginBottom: 'var(--space-1)' }}>
+            <span className={styles.fieldLabel}>
               Default language
             </span>
             <select
-              style={{
-                width: '100%', height: '36px', padding: '0 var(--space-3)',
-                border: '1px solid var(--color-border)', borderRadius: 'var(--radius-md)',
-                fontSize: 'var(--text-body)', background: 'var(--color-white)',
-                color: 'var(--color-ink)', fontFamily: 'var(--font-sans)',
-              }}
+              className={styles.fieldSelect}
               {...register('language')}
               defaultValue={agency?.language}
             >
@@ -246,7 +236,7 @@ function InviteModal({ onClose }: { onClose: () => void }) {
                 </button>
               ))}
             </div>
-            <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: 'var(--space-2)', lineHeight: 1.5 }}>
+            <p className={styles.roleHint}>
               {role === 'MANAGER'
                 ? 'Can manage all content, clients and staff. Cannot manage billing.'
                 : 'Can create and submit posts. Cannot manage clients or billing.'
@@ -286,7 +276,7 @@ function TeamTab() {
   }
 
   if (isLoading) return (
-    <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+    <div className={styles.loadingState}>
       Loading...
     </div>
   )
@@ -339,7 +329,7 @@ function TeamTab() {
                     {isPending ? 'Pending' : 'Active'}
                   </span>
                 </td>
-                <td style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
+                <td className={styles.mutedCell}>
                   {member.lastActiveAt
                     ? formatDate(member.lastActiveAt, locale, { dateStyle: 'medium' })
                     : '—'
@@ -361,7 +351,7 @@ function TeamTab() {
         </tbody>
       </table>
 
-      <div style={{ padding: 'var(--space-4) var(--space-5)', borderTop: '0.5px solid var(--color-border)' }}>
+      <div className={styles.tabFooter}>
         <Button variant="secondary" size="sm" onClick={() => setShowInvite(true)}>
           + Invite team member
         </Button>
@@ -408,7 +398,7 @@ function PlatformsTab() {
   }
 
   if (isLoading) return (
-    <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+    <div className={styles.loadingState}>
       Loading...
     </div>
   )
@@ -432,7 +422,7 @@ function PlatformsTab() {
                     <> · Token expires {formatDate(platform.tokenExpiresAt, locale, { dateStyle: 'medium' })}</>
                   )}
                   {isExpired && (
-                    <span style={{ color: 'var(--color-danger)', fontWeight: 500 }}>
+                    <span className={styles.expiredNote}>
                       {' '}· Expired — reconnect to resume publishing
                     </span>
                   )}
@@ -460,14 +450,7 @@ function PlatformsTab() {
         })}
       </div>
 
-      <div style={{
-        padding: 'var(--space-4)',
-        background: 'var(--color-bg)',
-        borderRadius: 'var(--radius-md)',
-        fontSize: 'var(--text-small)',
-        color: 'var(--color-muted)',
-        lineHeight: 1.6,
-      }}>
+      <div className={styles.infoBox}>
         ℹ To connect a new platform, go to the client workspace settings and use the
         &quot;Connect platform&quot; button. Platforms are connected per client, not agency-wide.
       </div>
@@ -489,7 +472,7 @@ function NotificationsTab() {
     setLocal((prev) => ({ ...prev, [key]: next }))
     try {
       await api.patch('/api/settings/notifications', { [key]: next })
-      toast.show('Notification settings saved ✓', 'success')
+      toast.show('Notification settings saved', 'success')
     } catch {
       toast.show('Failed to save', 'error')
       setLocal((prev) => ({ ...prev, [key]: !next }))
@@ -506,7 +489,7 @@ function NotificationsTab() {
   ]
 
   if (isLoading) return (
-    <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+    <div className={styles.loadingState}>
       Loading...
     </div>
   )
@@ -573,15 +556,8 @@ function BillingTab() {
       </div>
 
       {/* Plan comparison hint */}
-      <div style={{
-        background: 'var(--color-bg)',
-        borderRadius: 'var(--radius-md)',
-        padding: 'var(--space-4)',
-        fontSize: 'var(--text-small)',
-        color: 'var(--color-muted)',
-        lineHeight: 1.6,
-      }}>
-        <strong style={{ color: 'var(--color-ink)' }}>
+      <div className={styles.infoBox}>
+        <strong className={styles.infoBoxStrong}>
           Want to upgrade or downgrade?
         </strong>
         <br />
@@ -596,30 +572,22 @@ function BillingTab() {
         return (
           <div
             key={plan}
+            className={styles.planOptionRow}
             style={{
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 'var(--space-3) var(--space-4)',
               border: `1px solid ${isCurrent ? 'var(--color-teal-500)' : 'var(--color-border)'}`,
-              borderRadius: 'var(--radius-lg)',
               background: isCurrent ? 'var(--color-teal-50)' : 'var(--color-white)',
             }}
           >
             <div>
-              <div style={{ fontWeight: 600, color: isCurrent ? 'var(--color-teal-700)' : 'var(--color-ink)' }}>
+              <div className={styles.planOptionName} style={{ color: isCurrent ? 'var(--color-teal-700)' : 'var(--color-ink)' }}>
                 {PLAN_NAMES[plan]}
                 {isCurrent && (
-                  <span style={{
-                    fontSize: 'var(--text-caption)', marginLeft: 8,
-                    padding: '1px 6px', borderRadius: 'var(--radius-full)',
-                    background: 'var(--color-teal-500)', color: 'white',
-                    fontWeight: 500,
-                  }}>
+                  <span className={styles.currentBadge}>
                     Current
                   </span>
                 )}
               </div>
-              <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: 2 }}>
+              <div className={styles.planOptionPrice}>
                 {PLAN_PRICES[plan]}
               </div>
             </div>
@@ -678,8 +646,8 @@ export default function SettingsPage() {
     <div className={styles.page}>
 
       <div>
-        <h2 style={{ fontSize: 'var(--text-h2)', fontWeight: 600 }}>Settings</h2>
-        <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: '2px' }}>
+        <h2 className={styles.pageTitle}>Settings</h2>
+        <p className={styles.pageSub}>
           Manage your agency, team, and account preferences.
         </p>
       </div>

@@ -91,7 +91,7 @@ function AddQueryModal({ onClose }: { onClose: () => void }) {
         alertEnabled:   values.alertEnabled,
         alertFrequency: values.alertFrequency as AlertFrequency,
       })
-      toast.show('Keyword added ✓', 'success')
+      toast.show('Keyword added', 'success')
       onClose()
     } catch {
       toast.show('Failed to add keyword', 'error')

@@ -45,7 +45,7 @@ export default function CRMPage() {
     }
     try {
       await exportContactsCSV()
-      toast.show('Contacts exported ✓', 'success')
+      toast.show('Contacts exported', 'success')
     } catch {
       toast.show('Export failed', 'error')
     }

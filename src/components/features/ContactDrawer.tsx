@@ -44,7 +44,7 @@ export function ContactDrawer({ contactId, onClose }: ContactDrawerProps) {
     try {
       await addNote.mutateAsync(note.trim())
       setNote('')
-      toast.show('Note added ✓', 'success')
+      toast.show('Note added', 'success')
     } catch {
       toast.show('Failed to add note', 'error')
     }

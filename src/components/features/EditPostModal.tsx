@@ -90,7 +90,7 @@ export function EditPostModal({ post, onClose }: EditPostModalProps) {
           ? values.labels.split(',').map((l) => l.trim()).filter(Boolean)
           : [],
       })
-      toast.show('Post updated ✓', 'success')
+      toast.show('Post updated', 'success')
       onClose()
     } catch {
       toast.show('Failed to update post', 'error')

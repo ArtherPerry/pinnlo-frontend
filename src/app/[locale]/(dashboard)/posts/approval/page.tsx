@@ -2,6 +2,7 @@
 
 import { usePosts, useApprovePost, useRejectPost } from '@/hooks/usePosts'
 import { PlatformIcons } from '@/components/ui'
+import { Check, CheckCircle } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
 import { formatDate, cn } from '@/lib/utils'
 import { useState } from 'react'
@@ -22,7 +23,7 @@ export default function ApprovalPage() {
   const handleApprove = async (id: string) => {
     try {
       await approve.mutateAsync(id)
-      toast.show('Post approved ✓', 'success')
+      toast.show('Post approved', 'success')
     } catch {
       toast.show('Failed to approve', 'error')
     }
@@ -70,7 +71,7 @@ export default function ApprovalPage() {
       {/* Empty */}
       {!isLoading && posts?.length === 0 && (
         <div className={styles.empty}>
-          <div className={styles.emptyIcon}>✓</div>
+          <div className={styles.emptyIcon}><CheckCircle size={28} /></div>
           <div className={styles.emptyTitle}>All clear</div>
           <div className={styles.emptySub}>
             No posts waiting for approval right now.
@@ -157,7 +158,7 @@ export default function ApprovalPage() {
                   onClick={() => handleApprove(post.id)}
                   disabled={approve.isPending}
                 >
-                  {approve.isPending ? 'Approving...' : '✓ Approve & send to client'}
+                  {approve.isPending ? 'Approving...' : <><Check size={14} /> Approve & send to client</>}
                 </button>
               </div>
 

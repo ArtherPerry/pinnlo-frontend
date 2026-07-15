@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useTeam, useAssignContact } from '@/hooks/useContacts'
 import { useToast } from '@/hooks/useToast'
 import { cn } from '@/lib/utils'
+import { Check } from 'lucide-react'
 import styles from './AssignmentDropdown.module.css'
 
 interface AssignmentDropdownProps {
@@ -49,9 +50,9 @@ export function AssignmentDropdown({
     try {
       await assign.mutateAsync(name)
       if (name) {
-        toast.show(`Assigned to ${name} ✓`, 'success')
+        toast.show(`Assigned to ${name}`, 'success')
       } else {
-        toast.show('Unassigned ✓', 'info')
+        toast.show('Unassigned', 'info')
       }
     } catch {
       toast.show('Failed to update assignment', 'error')
@@ -101,7 +102,7 @@ export function AssignmentDropdown({
                 </div>
                 {member.name}
                 <span className={styles.optionRole}>{member.role}</span>
-                {isActive && <span className={styles.checkmark}>✓</span>}
+                {isActive && <span className={styles.checkmark}><Check size={14} /></span>}
               </button>
             )
           })}

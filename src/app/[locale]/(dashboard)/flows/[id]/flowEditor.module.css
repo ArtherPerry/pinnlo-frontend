@@ -1,0 +1,398 @@
+/* ── Page shell ── */
+.editorRoot {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  height: calc(100vh - var(--header-height));
+  margin: calc(-1 * var(--space-6));
+  overflow: hidden;
+}
+
+.centerMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: var(--color-muted);
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  gap: var(--space-3);
+  flex-shrink: 0;
+  z-index: 5;
+}
+
+.toolbarLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.backBtn {
+  height: 30px;
+  padding: 0 10px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: transparent;
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.flowName {
+  font-weight: 600;
+  font-size: var(--text-body);
+  color: var(--color-ink);
+}
+
+.flowMeta {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dirtyIndicator {
+  margin-left: 4px;
+  color: var(--color-warning);
+  font-size: var(--text-caption);
+  font-weight: 500;
+}
+
+.toolbarActions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.addNodeWrap {
+  position: relative;
+}
+
+.addNodeBtn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-teal-500);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.addMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  z-index: 100;
+  min-width: 160px;
+}
+
+.addMenuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  color: var(--color-ink);
+  font-size: var(--text-small);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.statusBtn {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-muted);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+/* ── Canvas ── */
+.canvasArea {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  background: #F7F6F3;
+  position: relative;
+}
+
+.canvas {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+}
+
+.gridBg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #D3D1C7 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+.arrowsSvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.nodesLayer {
+  position: relative;
+}
+
+.canvasEmpty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--color-muted);
+}
+
+.canvasEmptyIcon {
+  font-size: 32px;
+}
+
+.canvasEmptyTitle {
+  font-weight: 600;
+  font-size: var(--text-body);
+}
+
+.canvasEmptySub {
+  font-size: var(--text-small);
+}
+
+/* ── Node box ── */
+.nodeBox {
+  position: absolute;
+  border-radius: 10px;
+  padding: 10px 12px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 0.15s;
+}
+
+.nodeIconRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.nodeIcon {
+  font-size: 13px;
+}
+
+.nodeTypeLabel {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.nodeLabel {
+  font-size: 12px;
+  line-height: 1.4;
+  word-break: break-word;
+  font-weight: 500;
+}
+
+.nodePreview {
+  font-size: 11px;
+  opacity: 0.65;
+  margin-top: 2px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* ── Config panel ── */
+.configPanel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 280px;
+  height: 100%;
+  background: var(--color-white);
+  border-left: 0.5px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.06);
+}
+
+.configPanelHeader {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 0.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.configPanelHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.configPanelLabel {
+  font-weight: 600;
+  font-size: var(--text-body);
+}
+
+.configPanelClose {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.configBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fieldLabel {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.fieldInput {
+  width: 100%;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  outline: none;
+}
+
+.fieldSelect {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  background: var(--color-white);
+  color: var(--color-ink);
+}
+
+.fieldTextarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+  color: var(--color-ink);
+  resize: vertical;
+  outline: none;
+  line-height: 1.6;
+}
+
+.conditionInfo {
+  padding: 8px 10px;
+  background: var(--color-bg);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.delayHint {
+  font-size: 11px;
+  color: var(--color-muted);
+  margin-top: 4px;
+}
+
+.tagActionRow {
+  display: flex;
+  gap: 6px;
+}
+
+.tagActionBtn {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.configFooter {
+  padding: var(--space-3) var(--space-4);
+  border-top: 0.5px solid var(--color-border);
+  display: flex;
+  gap: var(--space-2);
+}
+
+.deleteNodeBtn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 0.5px solid var(--color-danger);
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+
+.applyBtn {
+  flex: 1;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  background: var(--color-teal-500);
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}

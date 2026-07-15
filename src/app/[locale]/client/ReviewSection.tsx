@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Button } from '@/components/ui'
+import { CheckCircle } from 'lucide-react'
 import styles from './client.module.css'
 
 interface ReviewPost {
@@ -67,7 +68,7 @@ export function ReviewSection({ onCountChange }: { onCountChange: (n: number) =>
   if (pending.length === 0) {
     return (
       <div className={styles.emptyState}>
-        <div className={styles.emptyIcon}>✓</div>
+        <div className={styles.emptyIcon}><CheckCircle size={28} /></div>
         <div className={styles.emptyTitle}>All caught up!</div>
         <div className={styles.emptyText}>
           There are no posts waiting for your review right now.

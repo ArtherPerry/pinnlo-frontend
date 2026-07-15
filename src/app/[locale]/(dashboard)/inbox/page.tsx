@@ -151,7 +151,7 @@ function ThreadDetail({
     try {
       await reply.mutateAsync(replyText.trim())
       setReplyText('')
-      toast.show('Reply sent ✓', 'success')
+      toast.show('Reply sent', 'success')
     } catch {
       toast.show('Failed to send reply', 'error')
     }
@@ -180,7 +180,7 @@ function ThreadDetail({
     if (!confirm('Hide this comment from the post?')) return
     try {
       await hideComment.mutateAsync()
-      toast.show('Comment hidden ✓', 'success')
+      toast.show('Comment hidden', 'success')
       onClose()
     } catch {
       toast.show('Failed to hide comment', 'error')

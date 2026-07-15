@@ -7,6 +7,7 @@ import { formatDate } from '@/lib/utils'
 import { MessageCircle, ThumbsUp, Share2 } from 'lucide-react'
 import { AudienceInsight } from './AudienceInsight'
 import { TargetingPlan } from './TargetingPlan'
+import styles from './InfluencerDrawer.module.css'
 
 interface InfluencerDrawerProps {
   influencerId: string
@@ -30,54 +31,22 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
   return (
     <>
       <div
-        style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.3)',
-          zIndex: 150,
-        }}
+        className={styles.overlay}
         onClick={onClose}
       />
-      <div style={{
-        position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: '460px',
-        background: 'var(--color-white)',
-        borderLeft: '0.5px solid var(--color-border)',
-        zIndex: 151,
-        boxShadow: 'var(--shadow-lg)',
-        display: 'flex',
-        flexDirection: 'column',
-        animation: 'slideIn 0.2s ease',
-        overflowY: 'auto',
-      }}>
+      <div className={styles.drawer}>
         {/* Header */}
-        <div style={{
-          padding: 'var(--space-4) var(--space-5)',
-          borderBottom: '0.5px solid var(--color-border)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-            <div style={{
-              width: 40, height: 40,
-              borderRadius: '50%',
-              background: 'var(--color-bg-2)',
-              border: '0.5px solid var(--color-border)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontWeight: 600, color: 'var(--color-muted)',
-            }}>
+        <div className={styles.header}>
+          <div className={styles.headerLeft}>
+            <div className={styles.avatar}>
               {inf?.name.slice(0, 2).toUpperCase() ?? '..'}
             </div>
             {inf && (
               <div>
-                <div style={{ fontWeight: 600, fontSize: 'var(--text-h3)' }}>
+                <div className={styles.name}>
                   {inf.name}
                 </div>
-                <div style={{
-                  fontSize: 'var(--text-small)',
-                  color: 'var(--color-muted)',
-                  display: 'flex', alignItems: 'center', gap: 4,
-                }}>
+                <div className={styles.handle}>
                   <PlatformIcon platform={inf.platform} size={12} />
                   {inf.handle}
                 </div>
@@ -86,26 +55,20 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
           </div>
           <button
             onClick={onClose}
-            style={{
-              width: 28, height: 28,
-              border: 'none', background: 'transparent',
-              borderRadius: 'var(--radius-md)',
-              cursor: 'pointer', fontSize: 18,
-              color: 'var(--color-muted)',
-            }}
+            className={styles.closeBtn}
           >
             ×
           </button>
         </div>
 
         {isLoading ? (
-          <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+          <div className={styles.stateMessage}>
             Loading influencer data...
           </div>
         ) : inf ? (
           showTargeting ? (
             /* ── TARGETING STEP (replaces audience view) ── */
-            <div style={{ padding: 'var(--space-5)' }}>
+            <div className={styles.targetingWrap}>
               <TargetingPlan
                 influencerName={inf.name}
                 engagedAudience={engagedAudience}
@@ -114,10 +77,10 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
             </div>
           ) : (
             /* ── DETAIL + AUDIENCE VIEW ── */
-            <div style={{ padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+            <div className={styles.detail}>
 
               {/* Metrics */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-3)' }}>
+              <div className={styles.metricsGrid}>
                 {[
                   { value: formatFollowers(inf.followers), label: 'Followers' },
                   { value: `${inf.engagementRate.toFixed(1)}%`, label: 'Engagement' },
@@ -126,16 +89,11 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
                   { value: inf.avgComments.toLocaleString(), label: 'Avg comments' },
                   { value: `${inf.score}/100`, label: 'Relevance score' },
                 ].map(({ value, label }) => (
-                  <div key={label} style={{
-                    background: 'var(--color-bg)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: 'var(--space-3)',
-                    textAlign: 'center',
-                  }}>
-                    <div style={{ fontWeight: 600, fontSize: 'var(--text-body)', color: 'var(--color-ink)' }}>
+                  <div key={label} className={styles.metricBox}>
+                    <div className={styles.metricValue}>
                       {value}
                     </div>
-                    <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+                    <div className={styles.metricLabel}>
                       {label}
                     </div>
                   </div>
@@ -143,7 +101,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
               </div>
 
               {/* Info */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+              <div className={styles.infoGrid}>
                 {[
                   { label: 'Location', value: inf.location },
                   { label: 'Language', value: inf.language.toUpperCase() },
@@ -153,7 +111,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
                   { label: 'Profile', value: 'View ↗', href: inf.profileUrl },
                 ].map(({ label, value, href }) => (
                   <div key={label}>
-                    <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginBottom: 2 }}>
+                    <div className={styles.infoLabel}>
                       {label}
                     </div>
                     {href ? (
@@ -161,12 +119,12 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
                         href={href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-teal-600)' }}
+                        className={styles.infoLink}
                       >
                         {value}
                       </a>
                     ) : (
-                      <div style={{ fontSize: 'var(--text-body)', fontWeight: 500, color: 'var(--color-ink)' }}>
+                      <div className={styles.infoValue}>
                         {value}
                       </div>
                     )}
@@ -176,24 +134,12 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
 
               {/* Categories */}
               <div>
-                <div style={{
-                  fontSize: 'var(--text-label)', fontWeight: 600,
-                  color: 'var(--color-muted)', letterSpacing: '0.04em',
-                  marginBottom: 'var(--space-2)',
-                }}>
+                <div className={styles.categoriesLabel}>
                   CATEGORIES
                 </div>
-                <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+                <div className={styles.categoriesWrap}>
                   {inf.categories.map((cat) => (
-                    <span key={cat} style={{
-                      fontSize: 'var(--text-small)',
-                      padding: '3px 10px',
-                      borderRadius: 'var(--radius-full)',
-                      background: 'var(--color-teal-50)',
-                      color: 'var(--color-teal-600)',
-                      border: '0.5px solid var(--color-teal-200)',
-                      fontWeight: 500,
-                    }}>
+                    <span key={cat} className={styles.categoryChip}>
                       {cat}
                     </span>
                   ))}
@@ -203,45 +149,26 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
               {/* Recent posts */}
               {inf.recentPosts.length > 0 && (
                 <div>
-                  <div style={{
-                    fontSize: 'var(--text-label)', fontWeight: 600,
-                    color: 'var(--color-muted)', letterSpacing: '0.04em',
-                    marginBottom: 'var(--space-3)',
-                  }}>
+                  <div className={styles.recentPostsLabel}>
                     RECENT POSTS
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+                  <div className={styles.postsWrap}>
                     {inf.recentPosts.map((post) => (
-                      <div key={post.id} style={{
-                        background: 'var(--color-bg)',
-                        borderRadius: 'var(--radius-md)',
-                        padding: 'var(--space-3) var(--space-4)',
-                        display: 'flex', flexDirection: 'column',
-                        gap: 'var(--space-2)',
-                      }}>
-                        <p style={{
-                          fontSize: 'var(--text-body)',
-                          color: 'var(--color-ink)',
-                          lineHeight: 1.55,
-                          margin: 0,
-                        }}>
+                      <div key={post.id} className={styles.postCard}>
+                        <p className={styles.postContent}>
                           {post.content}
                         </p>
-                        <div style={{
-                          display: 'flex', gap: 'var(--space-4)', alignItems: 'center',
-                          fontSize: 'var(--text-small)',
-                          color: 'var(--color-muted)',
-                        }}>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                        <div className={styles.postMeta}>
+                          <span className={styles.postStat}>
                             <ThumbsUp size={13} /> {post.likes.toLocaleString()}
                           </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <span className={styles.postStat}>
                             <MessageCircle size={13} /> {post.comments.toLocaleString()}
                           </span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                          <span className={styles.postStat}>
                             <Share2 size={13} /> {post.shares.toLocaleString()}
                           </span>
-                          <span style={{ marginLeft: 'auto' }}>
+                          <span className={styles.postDate}>
                             {formatDate(post.postedAt, 'en', {
                               dateStyle: 'medium',
                             })}
@@ -263,7 +190,7 @@ export function InfluencerDrawer({ influencerId, onClose }: InfluencerDrawerProp
             </div>
           )
         ) : (
-          <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-muted)' }}>
+          <div className={styles.stateMessage}>
             Influencer not found
           </div>
         )}

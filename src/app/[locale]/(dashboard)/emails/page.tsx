@@ -16,6 +16,7 @@ import type {
   EmailCampaign,
   EmailCampaignStatus,
 } from '@/lib/types'
+import styles from './emails.module.css'
 
 const STATUS_COLORS: Record<EmailCampaignStatus, { bg: string; text: string }> = {
   DRAFT:     { bg: 'var(--color-bg-2)',          text: 'var(--color-muted)'   },
@@ -40,16 +41,11 @@ function StatCard({
   suffix?: string
 }) {
   return (
-    <div style={{
-      background: 'var(--color-white)',
-      border: '0.5px solid var(--color-border)',
-      borderRadius: 'var(--radius-lg)',
-      padding: 'var(--space-4)',
-    }}>
-      <div style={{ fontSize: 'var(--text-h2)', fontWeight: 600, color, marginBottom: 2 }}>
+    <div className={styles.statCard}>
+      <div className={styles.statCardValue} style={{ color }}>
         {value}{suffix}
       </div>
-      <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
+      <div className={styles.statCardLabel}>
         {label}
       </div>
     </div>
@@ -62,26 +58,15 @@ function MetricBar({ value, label, color }: {
 }) {
   return (
     <div>
-      <div style={{
-        display: 'flex', justifyContent: 'space-between',
-        marginBottom: 4,
-        fontSize: 'var(--text-small)',
-      }}>
-        <span style={{ color: 'var(--color-muted)' }}>{label}</span>
-        <span style={{ fontWeight: 600, color }}>{value.toFixed(1)}%</span>
+      <div className={styles.metricBarRow}>
+        <span className={styles.metricBarLabel}>{label}</span>
+        <span className={styles.metricBarValue} style={{ color }}>{value.toFixed(1)}%</span>
       </div>
-      <div style={{
-        height: 6,
-        background: 'var(--color-bg-2)',
-        borderRadius: 'var(--radius-full)',
-        overflow: 'hidden',
-      }}>
-        <div style={{
-          width: `${Math.min(value, 100)}%`,
-          height: '100%',
-          background: color,
-          borderRadius: 'var(--radius-full)',
-        }} />
+      <div className={styles.metricBarTrack}>
+        <div
+          className={styles.metricBarFill}
+          style={{ width: `${Math.min(value, 100)}%`, background: color }}
+        />
       </div>
     </div>
   )
@@ -137,7 +122,7 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
         scheduledAt: scheduledAt || undefined,
       })
       toast.show(
-        sendNow ? 'Campaign queued for sending ✓' : 'Campaign saved ✓',
+        sendNow ? 'Campaign queued for sending' : 'Campaign saved',
         'success'
       )
       onClose()
@@ -150,51 +135,23 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      style={{
-        position: 'fixed', inset: 0,
-        background: 'rgba(0,0,0,0.45)',
-        display: 'flex', alignItems: 'flex-start',
-        justifyContent: 'center',
-        zIndex: 200,
-        padding: 'var(--space-6) var(--space-4)',
-        overflowY: 'auto',
-      }}
+      className={styles.modalOverlay}
       onClick={onClose}
     >
       <div
-        style={{
-          background: 'var(--color-white)',
-          borderRadius: 'var(--radius-lg)',
-          width: '100%', maxWidth: '600px',
-          boxShadow: 'var(--shadow-lg)',
-          margin: 'auto',
-        }}
+        className={styles.modalBox}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: 'var(--space-4) var(--space-6)',
-          borderBottom: '0.5px solid var(--color-border)',
-        }}>
-          <span style={{ fontSize: 'var(--text-h3)', fontWeight: 600 }}>
+        <div className={styles.modalHeader}>
+          <span className={styles.modalTitle}>
             New email campaign
           </span>
-          <button onClick={onClose} style={{
-            width: 28, height: 28, border: 'none',
-            background: 'transparent', cursor: 'pointer',
-            fontSize: 18, color: 'var(--color-muted)',
-            borderRadius: 'var(--radius-md)',
-          }}>×</button>
+          <button onClick={onClose} className={styles.modalClose}>×</button>
         </div>
 
         {/* Body */}
-        <div style={{
-          padding: 'var(--space-6)',
-          display: 'flex', flexDirection: 'column',
-          gap: 'var(--space-4)',
-        }}>
+        <div className={styles.modalBody}>
 
           <Input
             label="Campaign name"
@@ -205,14 +162,10 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
 
           {/* Client */}
           <div>
-            <span style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block',
-              marginBottom: 'var(--space-2)',
-            }}>
+            <span className={styles.fieldLabel}>
               Client workspace
             </span>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+            <div className={styles.clientList}>
               {clients?.map((c) => (
                 <button
                   key={c.id}
@@ -221,11 +174,8 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
                     setClientId(c.id)
                     if (!fromName) setFromName(c.name)
                   }}
+                  className={styles.clientOption}
                   style={{
-                    display: 'flex', alignItems: 'center',
-                    gap: 'var(--space-2)',
-                    padding: 'var(--space-2) var(--space-3)',
-                    borderRadius: 'var(--radius-md)',
                     border: `1px solid ${clientId === c.id
                       ? 'var(--color-teal-500)'
                       : 'var(--color-border)'
@@ -236,20 +186,9 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
                     color: clientId === c.id
                       ? 'var(--color-teal-600)'
                       : 'var(--color-ink)',
-                    fontFamily: 'var(--font-sans)',
-                    fontSize: 'var(--text-small)',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all var(--transition-fast)',
                   }}
                 >
-                  <span style={{
-                    width: 8, height: 8,
-                    borderRadius: '50%',
-                    background: 'var(--color-teal-500)',
-                    flexShrink: 0,
-                  }} />
+                  <span className={styles.clientDot} />
                   {c.name}
                 </button>
               ))}
@@ -257,7 +196,7 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
           </div>
 
           {/* From */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className={styles.fieldGrid}>
             <Input
               label="From name"
               placeholder="Somjai Coffee"
@@ -293,20 +232,11 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
 
           {/* Body */}
           <div>
-            <div style={{
-              display: 'flex', justifyContent: 'space-between',
-              marginBottom: 'var(--space-1)',
-            }}>
-              <span style={{
-                fontSize: 'var(--text-small)', fontWeight: 600,
-                color: 'var(--color-ink)',
-              }}>
+            <div className={styles.bodyLabelRow}>
+              <span className={styles.bodyLabelText}>
                 Email body
               </span>
-              <span style={{
-                fontSize: 'var(--text-small)',
-                color: 'var(--color-muted)',
-              }}>
+              <span className={styles.bodyLabelHint}>
                 HTML supported
               </span>
             </div>
@@ -315,29 +245,13 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
               onChange={(e) => setBody(e.target.value)}
               placeholder={`<h2>สวัสดีค่ะ {{name}}</h2>\n<p>เดือนนี้เรามีโปรโมชั่นสุดพิเศษ...</p>\n\n<a href="{{cta_url}}">คลิกที่นี่</a>`}
               rows={8}
-              style={{
-                width: '100%',
-                padding: 'var(--space-3)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '13px',
-                color: 'var(--color-ink)',
-                resize: 'vertical',
-                outline: 'none',
-                lineHeight: 1.65,
-              }}
+              className={styles.bodyTextarea}
             />
-            <p style={{
-              fontSize: 'var(--text-small)',
-              color: 'var(--color-muted)',
-              marginTop: 'var(--space-1)',
-              lineHeight: 1.5,
-            }}>
-              Use <code style={{ background: 'var(--color-bg-2)', padding: '1px 4px', borderRadius: 3 }}>
+            <p className={styles.bodyHelp}>
+              Use <code className={styles.inlineCode}>
                 {'{{name}}'}
               </code> for contact name,{' '}
-              <code style={{ background: 'var(--color-bg-2)', padding: '1px 4px', borderRadius: 3 }}>
+              <code className={styles.inlineCode}>
                 {'{{unsubscribe_url}}'}
               </code> for unsubscribe link.
             </p>
@@ -345,14 +259,10 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
 
           {/* Tags */}
           <div>
-            <span style={{
-              fontSize: 'var(--text-small)', fontWeight: 600,
-              color: 'var(--color-ink)', display: 'block',
-              marginBottom: 'var(--space-2)',
-            }}>
+            <span className={styles.fieldLabel}>
               Send to contacts tagged with
             </span>
-            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+            <div className={styles.tagsWrap}>
               {KNOWN_TAGS.map((tag) => {
                 const active = selectedTags.includes(tag)
                 return (
@@ -360,9 +270,8 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
                     key={tag}
                     type="button"
                     onClick={() => toggleTag(tag)}
+                    className={styles.tagOption}
                     style={{
-                      padding: '4px 12px',
-                      borderRadius: 'var(--radius-full)',
                       border: `1px solid ${active
                         ? 'var(--color-teal-500)'
                         : 'var(--color-border)'
@@ -373,11 +282,6 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
                       color: active
                         ? 'var(--color-teal-600)'
                         : 'var(--color-muted)',
-                      fontFamily: 'var(--font-sans)',
-                      fontSize: 'var(--text-small)',
-                      fontWeight: 500,
-                      cursor: 'pointer',
-                      transition: 'all var(--transition-fast)',
                     }}
                   >
                     {tag}
@@ -399,12 +303,7 @@ function CreateEmailModal({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Footer */}
-        <div style={{
-          display: 'flex', justifyContent: 'flex-end',
-          gap: 'var(--space-2)',
-          padding: 'var(--space-4) var(--space-6)',
-          borderTop: '0.5px solid var(--color-border)',
-        }}>
+        <div className={styles.modalFooter}>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
           <Button
             variant="secondary"
@@ -447,7 +346,7 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
     if (!confirm(`Send "${campaign.name}" to ${campaign.recipientCount} contacts now?`)) return
     try {
       await sendCampaign.mutateAsync(campaign.id)
-      toast.show('Campaign queued for sending ✓', 'success')
+      toast.show('Campaign queued for sending', 'success')
     } catch {
       toast.show('Failed to send campaign', 'error')
     }
@@ -456,50 +355,28 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
   const statusColor = STATUS_COLORS[campaign.status]
 
   return (
-    <div style={{
-      background: 'var(--color-white)',
-      border: '0.5px solid var(--color-border)',
-      borderRadius: 'var(--radius-lg)',
-      overflow: 'hidden',
-    }}>
+    <div className={styles.card}>
 
       {/* Header */}
-      <div style={{
-        padding: 'var(--space-4) var(--space-5)',
-        borderBottom: '0.5px solid var(--color-border)',
-        background: 'var(--color-bg)',
-        display: 'flex', alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 'var(--space-3)',
-      }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{
-            fontWeight: 600, fontSize: 'var(--text-body)',
-            color: 'var(--color-ink)', marginBottom: 4,
-          }}>
+      <div className={styles.cardHeader}>
+        <div className={styles.cardHeaderMain}>
+          <div className={styles.cardName}>
             {campaign.name}
           </div>
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            gap: 'var(--space-2)', flexWrap: 'wrap',
-          }}>
-            <span style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)' }}>
+          <div className={styles.cardMetaRow}>
+            <span className={styles.cardFrom}>
               ✉ {campaign.fromName} &lt;{campaign.fromEmail}&gt;
             </span>
-            <span style={{
-              fontSize: 'var(--text-caption)',
-              padding: '2px 8px',
-              borderRadius: 'var(--radius-full)',
-              background: statusColor.bg,
-              color: statusColor.text,
-              fontWeight: 500,
-            }}>
+            <span
+              className={styles.statusBadge}
+              style={{ background: statusColor.bg, color: statusColor.text }}
+            >
               {campaign.status}
             </span>
           </div>
         </div>
 
-        <div style={{ display: 'flex', gap: 'var(--space-2)', flexShrink: 0 }}>
+        <div className={styles.cardActions}>
           {campaign.status === 'DRAFT' && (
             <Button
               variant="primary"
@@ -513,17 +390,7 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
           {(campaign.status === 'DRAFT' || campaign.status === 'SCHEDULED') && (
             <button
               onClick={handleDelete}
-              style={{
-                height: 30, padding: '0 12px',
-                borderRadius: 'var(--radius-md)',
-                border: '0.5px solid var(--color-border)',
-                background: 'transparent',
-                color: 'var(--color-muted)',
-                fontSize: 'var(--text-small)',
-                cursor: 'pointer',
-                fontFamily: 'var(--font-sans)',
-                transition: 'all var(--transition-fast)',
-              }}
+              className={styles.deleteBtn}
             >
               Delete
             </button>
@@ -532,98 +399,66 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
       </div>
 
       {/* Body */}
-      <div style={{ padding: 'var(--space-4) var(--space-5)' }}>
+      <div className={styles.cardBody}>
 
         {/* Subject */}
-        <div style={{
-          fontSize: 'var(--text-body)',
-          fontWeight: 500,
-          color: 'var(--color-ink)',
-          marginBottom: 'var(--space-1)',
-        }}>
+        <div className={styles.cardSubject}>
           {campaign.subject}
         </div>
         {campaign.previewText && (
-          <div style={{
-            fontSize: 'var(--text-small)',
-            color: 'var(--color-muted)',
-            marginBottom: 'var(--space-4)',
-          }}>
+          <div className={styles.cardPreview}>
             {campaign.previewText}
           </div>
         )}
 
         {/* Metrics */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: campaign.status === 'SENT'
-            ? 'repeat(4, 1fr)'
-            : 'repeat(2, 1fr)',
-          gap: 'var(--space-3)',
-          marginBottom: campaign.status === 'SENT' ? 'var(--space-4)' : 0,
-        }}>
-          <div style={{
-            background: 'var(--color-bg)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-3)',
-            textAlign: 'center',
-          }}>
-            <div style={{ fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--color-ink)' }}>
+        <div
+          className={styles.metricsGrid}
+          style={{
+            gridTemplateColumns: campaign.status === 'SENT'
+              ? 'repeat(4, 1fr)'
+              : 'repeat(2, 1fr)',
+            marginBottom: campaign.status === 'SENT' ? 'var(--space-4)' : 0,
+          }}
+        >
+          <div className={styles.metricBox}>
+            <div className={styles.metricValue}>
               {campaign.recipientCount}
             </div>
-            <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+            <div className={styles.metricLabel}>
               Recipients
             </div>
           </div>
-          <div style={{
-            background: 'var(--color-bg)',
-            borderRadius: 'var(--radius-md)',
-            padding: 'var(--space-3)',
-            textAlign: 'center',
-          }}>
-            <div style={{
-              fontSize: 'var(--text-h3)', fontWeight: 600,
-              color: campaign.sentCount > 0
-                ? 'var(--color-success)'
-                : 'var(--color-muted)',
-            }}>
+          <div className={styles.metricBox}>
+            <div
+              className={styles.metricValueSent}
+              style={{
+                color: campaign.sentCount > 0
+                  ? 'var(--color-success)'
+                  : 'var(--color-muted)',
+              }}
+            >
               {campaign.sentCount}
             </div>
-            <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+            <div className={styles.metricLabel}>
               Delivered
             </div>
           </div>
           {campaign.status === 'SENT' && (
             <>
-              <div style={{
-                background: 'var(--color-bg)',
-                borderRadius: 'var(--radius-md)',
-                padding: 'var(--space-3)',
-                textAlign: 'center',
-              }}>
-                <div style={{
-                  fontSize: 'var(--text-h3)', fontWeight: 600,
-                  color: 'var(--color-info)',
-                }}>
+              <div className={styles.metricBox}>
+                <div className={styles.metricValueInfo}>
                   {campaign.openCount}
                 </div>
-                <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+                <div className={styles.metricLabel}>
                   Opened
                 </div>
               </div>
-              <div style={{
-                background: 'var(--color-bg)',
-                borderRadius: 'var(--radius-md)',
-                padding: 'var(--space-3)',
-                textAlign: 'center',
-              }}>
-                <div style={{
-                  fontSize: 'var(--text-h3)', fontWeight: 600,
-                  color: 'var(--color-teal-600)',
-                }}>
+              <div className={styles.metricBox}>
+                <div className={styles.metricValueTeal}>
                   {campaign.clickCount}
                 </div>
-                <div style={{ fontSize: 'var(--text-caption)', color: 'var(--color-muted)' }}>
+                <div className={styles.metricLabel}>
                   Clicked
                 </div>
               </div>
@@ -635,7 +470,7 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
         {campaign.status === 'SENT' &&
           campaign.openRate !== null &&
           campaign.clickRate !== null && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)' }}>
+          <div className={styles.rateBars}>
             <MetricBar
               value={campaign.openRate}
               label="Open rate"
@@ -650,24 +485,10 @@ function EmailCampaignCard({ campaign }: { campaign: EmailCampaign }) {
         )}
 
         {/* Footer */}
-        <div style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between',
-          marginTop: 'var(--space-3)',
-          paddingTop: 'var(--space-3)',
-          borderTop: '0.5px solid var(--color-border)',
-          fontSize: 'var(--text-small)',
-          color: 'var(--color-muted)',
-        }}>
-          <div style={{ display: 'flex', gap: 'var(--space-1)', flexWrap: 'wrap' }}>
+        <div className={styles.cardFooter}>
+          <div className={styles.cardTags}>
             {campaign.tags.map((tag) => (
-              <span key={tag} style={{
-                fontSize: 'var(--text-caption)',
-                padding: '1px 6px',
-                borderRadius: 'var(--radius-full)',
-                background: 'var(--color-bg-2)',
-                color: 'var(--color-muted)',
-              }}>
+              <span key={tag} className={styles.cardTag}>
                 {tag}
               </span>
             ))}
@@ -707,22 +528,15 @@ export default function EmailCampaignsPage() {
     : '—'
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-5)' }}>
+    <div className={styles.page}>
 
       {/* Header */}
-      <div style={{
-        display: 'flex', alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 'var(--space-4)', flexWrap: 'wrap',
-      }}>
+      <div className={styles.pageHeader}>
         <div>
-          <h2 style={{ fontSize: 'var(--text-h2)', fontWeight: 600 }}>
+          <h2 className={styles.pageTitle}>
             Email campaigns
           </h2>
-          <p style={{
-            fontSize: 'var(--text-small)',
-            color: 'var(--color-muted)', marginTop: '2px',
-          }}>
+          <p className={styles.pageSub}>
             Send HTML email campaigns to your contact segments.
           </p>
         </div>
@@ -732,11 +546,7 @@ export default function EmailCampaignsPage() {
       </div>
 
       {/* Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
-        gap: 'var(--space-3)',
-      }}>
+      <div className={styles.statsGrid}>
         <StatCard value={totalSent}      label="Campaigns sent"   color="var(--color-success)" />
         <StatCard value={totalScheduled} label="Scheduled"        color="var(--color-info)"    />
         <StatCard value={totalDraft}     label="Drafts"           color="var(--color-muted)"   />
@@ -744,7 +554,7 @@ export default function EmailCampaignsPage() {
       </div>
 
       {/* Status filter */}
-      <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+      <div className={styles.filterRow}>
         {[
           { value: '',          label: 'All'       },
           { value: 'DRAFT',     label: 'Draft'     },
@@ -755,9 +565,8 @@ export default function EmailCampaignsPage() {
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
+            className={styles.filterTab}
             style={{
-              padding: '4px 14px',
-              borderRadius: 'var(--radius-full)',
               border: `1px solid ${statusFilter === tab.value
                 ? 'var(--color-teal-500)'
                 : 'var(--color-border)'
@@ -768,11 +577,6 @@ export default function EmailCampaignsPage() {
               color: statusFilter === tab.value
                 ? 'var(--color-teal-600)'
                 : 'var(--color-muted)',
-              fontFamily: 'var(--font-sans)',
-              fontSize: 'var(--text-small)',
-              fontWeight: 500,
-              cursor: 'pointer',
-              transition: 'all var(--transition-fast)',
             }}
           >
             {tab.label}
@@ -782,42 +586,25 @@ export default function EmailCampaignsPage() {
 
       {/* Loading */}
       {isLoading && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div className={styles.loadingWrap}>
           {[1, 2].map((n) => (
-            <div key={n} style={{
-              height: 220, borderRadius: 'var(--radius-lg)',
-              background: 'linear-gradient(90deg, var(--color-bg-2) 25%, var(--color-border) 50%, var(--color-bg-2) 75%)',
-              backgroundSize: '200% 100%',
-              animation: 'shimmer 1.4s infinite',
-            }} />
+            <div key={n} className={styles.skeletonCard} />
           ))}
         </div>
       )}
 
       {/* Empty */}
       {!isLoading && campaigns?.length === 0 && (
-        <div style={{
-          display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
-          gap: 'var(--space-3)',
-          padding: 'var(--space-12) var(--space-6)',
-          background: 'var(--color-white)',
-          border: '0.5px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          textAlign: 'center',
-        }}>
+        <div className={styles.emptyState}>
           <svg width="48" height="48" viewBox="0 0 48 48" fill="none"
                stroke="var(--color-border)" strokeWidth="1.5">
             <rect x="4" y="8" width="40" height="32" rx="4"/>
             <path d="M4 16l20 13 20-13"/>
           </svg>
-          <div style={{ fontSize: 'var(--text-h3)', fontWeight: 600, color: 'var(--color-ink)' }}>
+          <div className={styles.emptyTitle}>
             {statusFilter ? `No ${statusFilter.toLowerCase()} campaigns` : 'No campaigns yet'}
           </div>
-          <div style={{
-            fontSize: 'var(--text-body)', color: 'var(--color-muted)',
-            maxWidth: 300, lineHeight: 1.6,
-          }}>
+          <div className={styles.emptySub}>
             Create an email campaign to reach your contacts directly in their inbox.
           </div>
           {!statusFilter && (
@@ -830,7 +617,7 @@ export default function EmailCampaignsPage() {
 
       {/* Campaign list */}
       {!isLoading && campaigns && campaigns.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+        <div className={styles.campaignList}>
           {campaigns.map((campaign) => (
             <EmailCampaignCard key={campaign.id} campaign={campaign} />
           ))}

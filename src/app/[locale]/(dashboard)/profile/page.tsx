@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
+import styles from './profile.module.css'
 
 
 function AvatarCircle({ name, size = 80 }: { name: string; size?: number }) {
@@ -15,19 +16,10 @@ function AvatarCircle({ name, size = 80 }: { name: string; size?: number }) {
     .toUpperCase()
 
   return (
-    <div style={{
-      width:  size, height: size,
-      borderRadius: '50%',
-      background: 'var(--color-teal-500)',
-      color: 'white',
-      fontSize: size * 0.32,
-      fontWeight: 600,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexShrink: 0,
-      letterSpacing: '0.02em',
-    }}>
+    <div
+      className={styles.avatarCircle}
+      style={{ width: size, height: size, fontSize: size * 0.32 }}
+    >
       {initials}
     </div>
   )
@@ -96,94 +88,45 @@ export default function ProfilePage() {
     ENTERPRISE: 'Enterprise',
   }
 
-  const sectionCard = {
-    background: 'var(--color-white)',
-    border: '0.5px solid var(--color-border)',
-    borderRadius: 'var(--radius-lg)',
-    overflow: 'hidden' as const,
-  }
-
-  const sectionHeader = {
-    padding: 'var(--space-4) var(--space-5)',
-    borderBottom: '0.5px solid var(--color-border)',
-    background: 'var(--color-bg)',
-    fontWeight: 600,
-    fontSize: 'var(--text-h3)',
-    color: 'var(--color-ink)',
-  }
-
-  const sectionBody = {
-    padding: 'var(--space-5)',
-    display: 'flex' as const,
-    flexDirection: 'column' as const,
-    gap: 'var(--space-4)',
-  }
-
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column',
-      gap: 'var(--space-5)', maxWidth: 600,
-    }}>
+    <div className={styles.page}>
 
       {/* Page title */}
       <div>
-        <h2 style={{ fontSize: 'var(--text-h2)', fontWeight: 600 }}>My profile</h2>
-        <p style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', marginTop: 2 }}>
+        <h2 className={styles.pageTitle}>My profile</h2>
+        <p className={styles.pageSub}>
           Manage your personal account settings.
         </p>
       </div>
 
       {/* Identity card */}
-      <div style={sectionCard}>
-        <div style={sectionHeader}>Account</div>
-        <div style={sectionBody}>
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>Account</div>
+        <div className={styles.sectionBody}>
 
           {/* Avatar + name */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
+          <div className={styles.identityRow}>
             <AvatarCircle name={name || user?.name || 'U'} size={72} />
             <div>
-              <div style={{ fontWeight: 600, fontSize: 'var(--text-h3)', color: 'var(--color-ink)' }}>
+              <div className={styles.userName}>
                 {user?.name}
               </div>
-              <div style={{
-                fontSize: 'var(--text-small)',
-                color: 'var(--color-muted)',
-                marginTop: 2,
-                display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap',
-              }}>
-                <span style={{
-                  padding: '2px 8px',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'var(--color-warning-light)',
-                  color: 'var(--color-warning)',
-                  fontWeight: 500,
-                  fontSize: 'var(--text-caption)',
-                }}>
+              <div className={styles.badgesRow}>
+                <span className={styles.roleBadge}>
                   {ROLE_LABELS[user?.role ?? 'STAFF']}
                 </span>
-                <span style={{
-                  padding: '2px 8px',
-                  borderRadius: 'var(--radius-full)',
-                  background: 'var(--color-teal-50)',
-                  color: 'var(--color-teal-600)',
-                  fontWeight: 500,
-                  fontSize: 'var(--text-caption)',
-                }}>
+                <span className={styles.planBadge}>
                   {PLAN_LABELS[user?.plan ?? 'STARTER']} plan
                 </span>
               </div>
-              <div style={{
-                fontSize: 'var(--text-small)',
-                color: 'var(--color-muted)',
-                marginTop: 4,
-              }}>
+              <div className={styles.agencyName}>
                 {user?.agencyName}
               </div>
             </div>
           </div>
 
           {/* Editable fields */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className={styles.fieldGrid}>
             <Input
               label="Display name"
               value={name}
@@ -197,11 +140,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div style={{
-            display: 'flex', justifyContent: 'flex-end',
-            paddingTop: 'var(--space-2)',
-            borderTop: '0.5px solid var(--color-border)',
-          }}>
+          <div className={styles.saveRow}>
             <Button
               variant="primary"
               onClick={handleSaveProfile}
@@ -215,9 +154,9 @@ export default function ProfilePage() {
       </div>
 
       {/* Change password */}
-      <div style={sectionCard}>
-        <div style={sectionHeader}>Change password</div>
-        <div style={sectionBody}>
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>Change password</div>
+        <div className={styles.sectionBody}>
           <Input
             label="Current password"
             type="password"
@@ -225,7 +164,7 @@ export default function ProfilePage() {
             onChange={(e) => setCurrentPw(e.target.value)}
             placeholder="••••••••"
           />
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-3)' }}>
+          <div className={styles.fieldGrid}>
             <Input
               label="New password"
               type="password"
@@ -244,11 +183,7 @@ export default function ProfilePage() {
             />
           </div>
 
-          <div style={{
-            display: 'flex', justifyContent: 'flex-end',
-            paddingTop: 'var(--space-2)',
-            borderTop: '0.5px solid var(--color-border)',
-          }}>
+          <div className={styles.saveRow}>
             <Button
               variant="primary"
               onClick={handleChangePassword}
@@ -262,30 +197,23 @@ export default function ProfilePage() {
       </div>
 
       {/* Account info */}
-      <div style={sectionCard}>
-        <div style={sectionHeader}>Account info</div>
-        <div style={{ padding: 'var(--space-5)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+      <div className={styles.sectionCard}>
+        <div className={styles.sectionHeader}>Account info</div>
+        <div className={styles.infoBody}>
           {[
             { label: 'User ID',      value: user?.id       ?? '—' },
             { label: 'Agency ID',    value: user?.agencyId ?? '—' },
             { label: 'Role',         value: ROLE_LABELS[user?.role ?? 'STAFF'] },
             { label: 'Plan',         value: PLAN_LABELS[user?.plan ?? 'STARTER'] },
           ].map(({ label, value }) => (
-            <div key={label} style={{
-              display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between',
-              padding: 'var(--space-2) var(--space-3)',
-              background: 'var(--color-bg)',
-              borderRadius: 'var(--radius-md)',
-            }}>
-              <span style={{ fontSize: 'var(--text-small)', color: 'var(--color-muted)', fontWeight: 500 }}>
+            <div key={label} className={styles.infoRow}>
+              <span className={styles.infoLabel}>
                 {label}
               </span>
-              <span style={{
-                fontSize: 'var(--text-small)',
-                color: 'var(--color-ink)',
-                fontFamily: label.includes('ID') ? 'var(--font-mono)' : 'var(--font-sans)',
-              }}>
+              <span
+                className={styles.infoValue}
+                style={{ fontFamily: label.includes('ID') ? 'var(--font-mono)' : 'var(--font-sans)' }}
+              >
                 {value}
               </span>
             </div>
@@ -294,19 +222,12 @@ export default function ProfilePage() {
       </div>
 
       {/* Danger zone */}
-      <div style={{
-        background: 'var(--color-danger-light)',
-        border: '0.5px solid var(--color-danger)',
-        borderRadius: 'var(--radius-lg)',
-        padding: 'var(--space-4) var(--space-5)',
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', gap: 'var(--space-4)',
-      }}>
+      <div className={styles.dangerZone}>
         <div>
-          <div style={{ fontWeight: 600, color: 'var(--color-danger)', marginBottom: 2 }}>
+          <div className={styles.dangerTitle}>
             Delete account
           </div>
-          <div style={{ fontSize: 'var(--text-small)', color: 'var(--color-danger)', opacity: 0.8, lineHeight: 1.5 }}>
+          <div className={styles.dangerDesc}>
             Permanently delete your account and all associated data. This cannot be undone.
           </div>
         </div>
@@ -322,45 +243,28 @@ export default function ProfilePage() {
       {/* Delete confirmation dialog */}
       {showDeleteDialog && (
         <div
-          style={{
-            position: 'fixed', inset: 0,
-            background: 'rgba(0,0,0,0.4)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            zIndex: 100, padding: 'var(--space-4)',
-          }}
+          className={styles.dialogOverlay}
           onClick={() => setShowDeleteDialog(false)}
         >
           <div
-            style={{
-              background: 'var(--color-white)',
-              borderRadius: 'var(--radius-lg)',
-              padding: 'var(--space-6)',
-              maxWidth: 440, width: '100%',
-              boxShadow: 'var(--shadow-lg)',
-            }}
+            className={styles.dialogBox}
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: 'var(--text-h3)', fontWeight: 600, marginBottom: 'var(--space-3)' }}>
+            <h3 className={styles.dialogTitle}>
               Delete your account?
             </h3>
-            <p style={{ fontSize: 'var(--text-body)', color: 'var(--color-muted)', lineHeight: 1.6, marginBottom: 'var(--space-5)' }}>
+            <p className={styles.dialogText}>
               This permanently deletes your account and all associated data, and can&apos;t be undone.
               To protect against accidental deletion, our team processes deletions manually — we&apos;ll
               action your request within 2 business days.
             </p>
-            <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <div className={styles.dialogActions}>
               <Button variant="secondary" size="sm" onClick={() => setShowDeleteDialog(false)}>
                 Cancel
               </Button>
               <a
                 href="mailto:support@pinnalo.com?subject=Account%20deletion%20request"
-                style={{
-                  fontSize: 'var(--text-small)', fontWeight: 600,
-                  color: 'var(--color-danger)', textDecoration: 'none',
-                  padding: 'var(--space-2) var(--space-4)',
-                  border: '1px solid var(--color-danger)',
-                  borderRadius: 'var(--radius-md)',
-                }}
+                className={styles.dialogDangerLink}
                 onClick={() => setShowDeleteDialog(false)}
               >
                 Request deletion

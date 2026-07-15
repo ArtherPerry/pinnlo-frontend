@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import styles from './Header.module.css'
-import { Menu } from 'lucide-react'
+import { Menu, Check } from 'lucide-react'
 import { useMobileNav } from '@/hooks/useMobileNav'
 
 const LOCALES = [
@@ -164,8 +164,10 @@ function LanguageSwitcher() {
                 {isActive && (
                   <span style={{
                     marginLeft: 'auto', color: 'var(--color-teal-500)',
-                    fontSize: 14, fontWeight: 700,
-                  }}>✓</span>
+                    display: 'inline-flex',
+                  }}>
+                    <Check size={14} />
+                  </span>
                 )}
               </button>
             )

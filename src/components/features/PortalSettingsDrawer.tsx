@@ -9,6 +9,7 @@ import {
 } from '@/hooks/useCompetitors'
 import { useLocale } from 'next-intl'
 import { Button, Input } from '@/components/ui'
+import { Check } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
 import type { PortalStatus, PortalSection } from '@/lib/types'
@@ -52,7 +53,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
   const handleStatusChange = async (status: PortalStatus) => {
     try {
       await updatePortal.mutateAsync({ status })
-      toast.show('Portal updated ✓', 'success')
+      toast.show('Portal updated', 'success')
     } catch {
       toast.show('Failed to update portal', 'error')
     }
@@ -63,7 +64,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
       await updatePortal.mutateAsync({
         branding: { ...portal!.branding, primaryColor: color },
       })
-      toast.show('Brand color updated ✓', 'success')
+      toast.show('Brand color updated', 'success')
     } catch {
       toast.show('Failed to update color', 'error')
     }
@@ -75,7 +76,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
       await updatePortal.mutateAsync({
         branding: { ...portal!.branding, companyName },
       })
-      toast.show('Company name updated ✓', 'success')
+      toast.show('Company name updated', 'success')
     } catch {
       toast.show('Failed to update', 'error')
     }
@@ -104,7 +105,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
     if (!confirm('Regenerate link? The old link will stop working immediately.')) return
     try {
       await regenLink.mutateAsync()
-      toast.show('New link generated ✓', 'success')
+      toast.show('New link generated', 'success')
     } catch {
       toast.show('Failed to regenerate link', 'error')
     }
@@ -260,7 +261,7 @@ export function PortalSettingsDrawer({ portalId, onClose }: PortalSettingsDrawer
                       size="sm"
                       onClick={handleCopy}
                     >
-                      {copied ? '✓ Copied' : 'Copy link'}
+                      {copied ? <><Check size={14} /> Copied</> : 'Copy link'}
                     </Button>
                     <Button
                       variant="ghost"

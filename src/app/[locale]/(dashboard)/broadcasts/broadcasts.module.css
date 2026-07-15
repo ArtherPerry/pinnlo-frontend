@@ -24,68 +24,54 @@
   margin-top: 2px;
 }
 
-.filtersRow {
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--space-3);
+}
+
+.statCard {
+  background: var(--color-white);
+  border: 0.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.statCardValue {
+  font-size: var(--text-h2);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.statCardLabel {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.filterRow {
   display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
-  align-items: center;
 }
 
-.searchWrap {
-  position: relative;
-  flex: 1;
-  min-width: 200px;
-  max-width: 320px;
-}
-
-.searchIcon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-muted);
-  pointer-events: none;
-}
-
-.searchInput {
-  width: 100%;
-  height: 34px;
-  padding: 0 var(--space-3) 0 34px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+.filterTab {
+  padding: 4px 14px;
+  border-radius: var(--radius-full);
   font-family: var(--font-sans);
-  font-size: var(--text-body);
-  color: var(--color-ink);
-  background: var(--color-white);
-  outline: none;
-}
-
-.filterSelect {
-  height: 34px;
-  padding: 0 var(--space-3);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
   font-size: var(--text-small);
-  background: var(--color-white);
-  color: var(--color-ink);
-  font-family: var(--font-sans);
+  font-weight: 500;
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
 
-.resultCount {
-  font-size: var(--text-small);
-  color: var(--color-muted);
-  margin-left: auto;
-}
-
-.cardsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+.loadingWrap {
+  display: flex;
+  flex-direction: column;
   gap: var(--space-4);
 }
 
 .skeletonCard {
-  height: 240px;
+  height: 200px;
   border-radius: var(--radius-lg);
   background: linear-gradient(
     90deg,
@@ -124,11 +110,17 @@
 .emptySub {
   font-size: var(--text-body);
   color: var(--color-muted);
-  max-width: 280px;
+  max-width: 300px;
   line-height: 1.6;
 }
 
-/* ── Modal ── */
+.campaignList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ── Create modal ── */
 .modalOverlay {
   position: fixed;
   inset: 0;
@@ -145,7 +137,7 @@
   background: var(--color-white);
   border-radius: var(--radius-lg);
   width: 100%;
-  max-width: 560px;
+  max-width: 580px;
   box-shadow: var(--shadow-lg);
   margin: auto;
 }
@@ -181,21 +173,61 @@
   gap: var(--space-4);
 }
 
-.fieldGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-3);
-}
-
 .fieldLabel {
   font-size: var(--text-small);
   font-weight: 600;
   color: var(--color-ink);
   display: block;
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
 }
 
-.fieldSelect {
+.platformRow {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.platformOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.clientList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.clientOption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+}
+
+.clientDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-teal-500);
+  flex-shrink: 0;
+}
+
+.templateSelect {
   width: 100%;
   height: 36px;
   padding: 0 var(--space-3);
@@ -207,7 +239,23 @@
   font-family: var(--font-sans);
 }
 
-.contentTextarea {
+.messageLabelRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-1);
+}
+
+.messageLabelText {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.messageCharCount {
+  font-size: var(--text-small);
+}
+
+.messageTextarea {
   width: 100%;
   padding: var(--space-3);
   border: 1px solid var(--color-border);
@@ -220,11 +268,10 @@
   line-height: 1.65;
 }
 
-.contentHelp {
+.messageHelp {
   font-size: var(--text-small);
   color: var(--color-muted);
   margin-top: var(--space-1);
-  line-height: 1.5;
 }
 
 .inlineCode {
@@ -233,35 +280,26 @@
   border-radius: 3px;
 }
 
-.varsBox {
-  background: var(--color-teal-50);
-  border: 0.5px solid var(--color-teal-200);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4);
-}
-
-.varsLabel {
-  font-size: var(--text-small);
-  font-weight: 600;
-  color: var(--color-teal-700);
-  display: block;
-  margin-bottom: var(--space-1);
-}
-
-.varsWrap {
+.tagsWrap {
   display: flex;
-  gap: var(--space-1);
+  gap: var(--space-2);
   flex-wrap: wrap;
 }
 
-.varChip {
-  font-size: var(--text-small);
-  padding: 2px 8px;
+.tagOption {
+  padding: 4px 12px;
   border-radius: var(--radius-full);
-  background: var(--color-teal-500);
-  color: white;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
   font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tagsHint {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-top: var(--space-2);
 }
 
 .modalFooter {
@@ -272,37 +310,25 @@
   border-top: 0.5px solid var(--color-border);
 }
 
-/* ── Template card ── */
+/* ── Campaign card ── */
 .card {
   background: var(--color-white);
   border: 0.5px solid var(--color-border);
   border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
   overflow: hidden;
-  transition: border-color var(--transition-fast);
 }
 
-.colorStrip {
-  height: 4px;
-}
-
-.cardBody {
-  padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  flex: 1;
-}
-
-.cardTopRow {
+.cardHeader {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 0.5px solid var(--color-border);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-2);
+  gap: var(--space-3);
+  background: var(--color-bg);
 }
 
-.cardNameWrap {
+.cardHeaderMain {
   flex: 1;
   min-width: 0;
 }
@@ -314,79 +340,35 @@
   margin-bottom: 4px;
 }
 
-.badgeRow {
-  display: flex;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-}
-
-.categoryBadge {
-  font-size: var(--text-caption);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-weight: 500;
-}
-
-.platformBadge {
-  font-size: var(--text-caption);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-weight: 500;
-  background: var(--color-bg-2);
-  color: var(--color-muted);
-}
-
-.contentPreview {
-  font-size: var(--text-small);
-  color: var(--color-ink);
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
-  padding: var(--space-3);
-  line-height: 1.6;
-  flex: 1;
-  white-space: pre-wrap;
-  word-break: break-word;
-  min-height: 80px;
-}
-
-.cardVarsWrap {
-  display: flex;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-}
-
-.cardVarChip {
-  font-size: var(--text-caption);
-  padding: 1px 6px;
-  border-radius: var(--radius-full);
-  background: var(--color-teal-50);
-  color: var(--color-teal-600);
-  border: 0.5px solid var(--color-teal-200);
-  font-family: var(--font-mono);
-}
-
-.cardFooter {
+.cardMetaRow {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-top: var(--space-2);
-  border-top: 0.5px solid var(--color-border);
+  gap: var(--space-2);
+  flex-wrap: wrap;
 }
 
-.cardUsage {
-  font-size: var(--text-caption);
+.cardClientName {
+  font-size: var(--text-small);
   color: var(--color-muted);
 }
 
-.cardActionsWrap {
-  display: flex;
-  gap: var(--space-1);
+.statusBadge {
+  font-size: var(--text-caption);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  font-weight: 500;
 }
 
-.cardActionBtn {
-  height: 26px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
+.cardActions {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.deleteBtn {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
   border: 0.5px solid var(--color-border);
   background: transparent;
   color: var(--color-muted);
@@ -394,4 +376,88 @@
   cursor: pointer;
   font-family: var(--font-sans);
   transition: all var(--transition-fast);
+}
+
+.cardBody {
+  padding: var(--space-4) var(--space-5);
+}
+
+.messagePreview {
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+  max-height: 80px;
+  overflow: hidden;
+  position: relative;
+}
+
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--space-3);
+}
+
+.metricBox {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.metricValue {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.metricValueSuccess {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+.metricValueDanger {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-danger);
+}
+
+.metricValueTeal {
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-teal-600);
+}
+
+.metricLabel {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+.cardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 0.5px solid var(--color-border);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.cardTags {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.cardTag {
+  font-size: var(--text-caption);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-2);
+  color: var(--color-muted);
 }

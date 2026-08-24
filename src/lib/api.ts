@@ -37,7 +37,7 @@ api.interceptors.response.use(
           { withCredentials: true } // refresh token is in HttpOnly cookie
         )
 
-        const newToken = data.accessToken
+         const newToken = data.token
         localStorage.setItem('pinnlo-token', newToken)
         original.headers.Authorization = `Bearer ${newToken}`
 

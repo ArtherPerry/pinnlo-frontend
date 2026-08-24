@@ -16,7 +16,7 @@ export interface AuthUser {
 }
 
 export interface AuthResponse {
-  accessToken: string
+  token: string
   user: AuthUser
 }
 
@@ -39,7 +39,26 @@ export type Platform =
   | 'FACEBOOK'
   | 'INSTAGRAM'
   | 'WHATSAPP'
-  | 'LINE'
+  | 'LINE'  
+export interface MetaPendingPage {
+  pageId:   string
+  name:     string
+  fanCount: number
+  instagram?: {
+    id:                string
+    username:          string
+    profilePictureUrl: string
+  }
+}
+
+export interface PlatformConnectionDto {
+  id:           string
+  platform:     Platform
+  externalId:   string
+  externalName: string
+  active:       boolean
+  connectedAt:  string
+}
 
 // ── Post ──────────────────────────────────────────────────────────
 export type PostStatus =

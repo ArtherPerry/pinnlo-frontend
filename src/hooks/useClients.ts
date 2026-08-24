@@ -8,14 +8,22 @@ export interface Client {
   status:    string
 }
 
-async function fetchClients(): Promise<Client[]> {
-  const { data } = await api.get('/api/clients')
-  return data.content
+interface PagedClients {
+  content:       Client[]
+  totalElements: number
+  totalPages:    number
+  page:          number
+  size:          number
 }
 
 export function useClients() {
   return useQuery({
     queryKey: ['clients', 'list'],
-    queryFn:  fetchClients,
+    queryFn: async () => {
+      const { data } = await api.get<PagedClients>('/api/clients', {
+        params: { size: 100 },
+      })
+      return data.content
+    },
   })
 }

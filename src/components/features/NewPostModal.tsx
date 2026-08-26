@@ -1,35 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Button, Input, PlatformIcon, MediaUpload } from '@/components/ui'
 import { useClients } from '@/hooks/useClients'
-import { useCreatePost } from '@/hooks/usePosts'
+import { useCreatePost, useSubmitPost } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
-import { cn } from '@/lib/utils'
-import type { Platform, MediaAsset } from '@/lib/types'
+import { cn, apiErrorMessage } from '@/lib/utils'
+import { FEATURES, ENABLED_PLATFORMS } from '@/lib/features'
+import type { Platform } from '@/lib/types'
 import styles from './NewPostModal.module.css'
 import { CaptionGenerator } from './CaptionGenerator'
 import { ImageGenerator } from './ImageGenerator'
 import { AIReview } from './AIReview'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Info, Send, FileText } from 'lucide-react'
 
-const PLATFORMS: Platform[] = ['FACEBOOK', 'INSTAGRAM', 'WHATSAPP', 'LINE']
-
-const PLATFORM_CHAR_LIMIT: Record<Platform, number> = {
-  FACEBOOK:  63206,
+/**
+ * Only limits that actually bind are shown. Facebook's 63,206 is never the
+ * constraint in practice, so surfacing it as a countdown on an empty field
+ * was noise.
+ */
+const PLATFORM_CHAR_LIMIT: Partial<Record<Platform, number>> = {
   INSTAGRAM: 2200,
   WHATSAPP:  4096,
   LINE:      5000,
 }
 
+const HARD_MAX = 63206
+
 const schema = z.object({
-  clientId:    z.string().min(1, 'Select a client'),
-  platforms:   z.array(z.string()).min(1, 'Select at least one platform'),
-  content:     z.string().min(1, 'Write some content').max(63206, 'Content too long'),
-  scheduledAt: z.string().min(1, 'Set a schedule date and time'),
+  clientId:  z.string().min(1, 'Select a client'),
+  platforms: z.array(z.string()).min(1, 'Select at least one platform'),
+  content:   z.string().min(1, 'Write some content').max(HARD_MAX, 'Content too long'),
+  // Optional: a draft does not need a time yet. If set, the post schedules
+  // itself the moment the client approves.
+  scheduledAt: z.string().optional(),
   labels:      z.string(),
 })
 
@@ -42,9 +49,19 @@ interface NewPostModalProps {
 export function NewPostModal({ onClose }: NewPostModalProps) {
   const { data: clients, isLoading: clientsLoading } = useClients()
   const createPost = useCreatePost()
+  const submitPost = useSubmitPost()
   const toast      = useToast()
 
-  const [mediaFiles, setMediaFiles] = useState<MediaAsset[]>([])
+  // MediaUpload owns its own file type and does not export it, so infer the
+  // shape from what we actually use: the id, for mediaIds on the request.
+  const [mediaFiles,   setMediaFiles]   = useState<{ id: string }[]>([])
+  const [showCaption,  setShowCaption]  = useState(false)
+  const [showImageAI,  setShowImageAI]  = useState(false)
+  const [showReview,   setShowReview]   = useState(false)
+  // Which button was pressed. A ref, not state: onSubmit is a closure captured
+  // at render time, so a state update from onClick would not be visible to it.
+  const actionRef = useRef<'draft' | 'submit'>('draft')
+  const [activeAction, setActiveAction] = useState<'draft' | 'submit' | null>(null)
 
   const {
     register,
@@ -52,93 +69,74 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
     control,
     watch,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      clientId:    '',
-      platforms:   [],
-      content:     '',
-      scheduledAt: '',
-      labels:      '',
+      clientId: '', platforms: [], content: '', scheduledAt: '', labels: '',
     },
   })
 
-  const content   = watch('content')
-  const platforms = watch('platforms') as Platform[]
-  const currentContent = watch('content') ?? ''
+  const content    = watch('content') ?? ''
+  const platforms  = watch('platforms') as Platform[]
+  const clientId   = watch('clientId')
+  const clientName = clients?.find((c) => c.id === clientId)?.name
 
-  // Smallest limit among selected platforms
-  const charLimit = platforms.length > 0
-    ? Math.min(...platforms.map((p) => PLATFORM_CHAR_LIMIT[p]))
-    : 63206
-
-  const charLeft    = charLimit - content.length
-  const charWarning = charLeft < 100
-  const charError   = charLeft < 0
+  // Only show a counter when a selected platform actually has a tight limit.
+  const limits    = platforms.map((p) => PLATFORM_CHAR_LIMIT[p]).filter(Boolean) as number[]
+  const charLimit = limits.length > 0 ? Math.min(...limits) : null
+  const charLeft  = charLimit !== null ? charLimit - content.length : null
+  const charError = charLeft !== null && charLeft < 0
 
   const togglePlatform = (platform: Platform) => {
-    const current = platforms
-    const next = current.includes(platform)
-      ? current.filter((p) => p !== platform)
-      : [...current, platform]
+    const next = platforms.includes(platform)
+      ? platforms.filter((p) => p !== platform)
+      : [...platforms, platform]
     setValue('platforms', next, { shouldValidate: true })
   }
 
   const onSubmit = async (values: FormValues) => {
+    const action = actionRef.current
     try {
-      await createPost.mutateAsync({
+      const created = await createPost.mutateAsync({
         clientId:    values.clientId,
         content:     values.content,
         platforms:   values.platforms as Platform[],
-        scheduledAt: values.scheduledAt,
-        labels:      values.labels
+        scheduledAt: values.scheduledAt || null,
+        labels: values.labels
           ? values.labels.split(',').map((l) => l.trim()).filter(Boolean)
           : [],
         mediaIds: mediaFiles.map((f) => f.id),
       })
-      toast.show('Post scheduled', 'success')
+
+      if (action === 'submit') {
+        await submitPost.mutateAsync(created.id)
+        toast.show(`Sent for internal review`, 'success')
+      } else {
+        toast.show('Draft saved', 'success')
+      }
       onClose()
-    } catch {
-      toast.show('Failed to create post', 'error')
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not save this post'), 'error')
+    } finally {
+      setActiveAction(null)
     }
   }
-  const [showAI, setShowAI] = useState(false)
-  const [showImageAI, setShowImageAI] = useState(false)
-  const [step, setStep] = useState<'compose' | 'review'>('compose')
 
-  // Min datetime = now + 5 minutes
-  const minDateTime = new Date(Date.now() + 5 * 60 * 1000)
-    .toISOString()
-    .slice(0, 16)
+  const isSaving  = createPost.isPending || submitPost.isPending
+  const minDateTime = new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0, 16)
 
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
 
-        {/* Header */}
         <div className={styles.header}>
           <span className={styles.headerTitle}>New post</span>
-          <button
-            className={styles.closeBtn}
-            onClick={onClose}
-            aria-label="Close"
-          >
-            ×
-          </button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className={styles.body}>
-
-            {step === 'review' ? (
-              <AIReview
-                content={currentContent}
-                clientName={clients?.find((c) => c.id === watch('clientId'))?.name}
-                hasMedia={mediaFiles.length > 0}
-              />
-            ) : (
-            <>
 
             {/* ── Client ── */}
             <div>
@@ -172,7 +170,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                 />
               )}
               {errors.clientId && (
-                <p className={styles.formError} style={{ marginTop: '8px' }}>
+                <p className={styles.formError} style={{ marginTop: 8 }}>
                   {errors.clientId.message}
                 </p>
               )}
@@ -181,230 +179,192 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
             {/* ── Platforms ── */}
             <div>
               <span className={styles.sectionLabel}>Publish to</span>
-              <div className={styles.platformGrid}>
-                {PLATFORMS.map((platform) => {
-                  const selected = platforms.includes(platform)
-                  return (
-                    <button
-                      key={platform}
-                      type="button"
-                      className={cn(
-                        styles.platformOption,
-                        selected && styles.platformOptionActive
-                      )}
-                      onClick={() => togglePlatform(platform)}
-                    >
-                      <PlatformIcon platform={platform} size={16} />
-                      {platform.charAt(0) + platform.slice(1).toLowerCase()}
-                    </button>
-                  )
-                })}
+              <div className={styles.platformRow}>
+                {ENABLED_PLATFORMS.map((platform) => (
+                  <button
+                    key={platform}
+                    type="button"
+                    className={cn(
+                      styles.platformOption,
+                      platforms.includes(platform) && styles.platformOptionActive
+                    )}
+                    onClick={() => togglePlatform(platform)}
+                  >
+                    <PlatformIcon platform={platform} size={16} />
+                    {platform.charAt(0) + platform.slice(1).toLowerCase()}
+                  </button>
+                ))}
               </div>
               {errors.platforms && (
-                <p className={styles.formError} style={{ marginTop: '8px' }}>
+                <p className={styles.formError} style={{ marginTop: 8 }}>
                   {errors.platforms.message}
                 </p>
               )}
             </div>
-            
 
             {/* ── Content ── */}
-<div>
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 'var(--space-2)',
-  }}>
-    <span className={styles.sectionLabel} style={{ margin: 0 }}>
-      Content
-    </span>
-    <button
-      type="button"
-      onClick={() => setShowAI((v) => !v)}
-      style={{
-        fontSize: 'var(--text-small)',
-        fontWeight: 500,
-        color: showAI ? 'var(--color-white)' : 'var(--color-teal-600)',
-        border: '0.5px solid var(--color-teal-500)',
-        background: showAI ? 'var(--color-teal-500)' : 'var(--color-teal-50)',
-        padding: '3px 10px',
-        borderRadius: 'var(--radius-full)',
-        cursor: 'pointer',
-        fontFamily: 'var(--font-sans)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 4,
-        transition: 'all var(--transition-fast)',
-      }}
-    >
-      <Sparkles size={14} /> {showAI ? 'Hide AI' : 'AI caption'}
-    </button>
-  </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                <span className={styles.sectionLabel} style={{ margin: 0 }}>Content</span>
 
-  {/* AI caption generator */}
-  {showAI && (
-    <div style={{ marginBottom: 'var(--space-3)' }}>
-      <CaptionGenerator
-        platform={platforms[0] ?? 'ALL'}
-        clientName={
-          clients?.find((c) => c.id === watch('clientId'))?.name
-        }
-        onUse={(caption) => {
-          setValue('content', caption, { shouldValidate: true })
-          setShowAI(false)
-        }}
-        onClose={() => setShowAI(false)}
-      />
-    </div>
-  )}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {FEATURES.aiCaption && (
+                    <button
+                      type="button"
+                      className={styles.aiToggle}
+                      onClick={() => setShowCaption((v) => !v)}
+                    >
+                      <Sparkles size={14} /> {showCaption ? 'Hide AI' : 'AI caption'}
+                    </button>
+                  )}
 
-  <div className={styles.contentWrapper}>
-    <textarea
-      className={styles.textarea}
-      placeholder="Write your post content here..."
-      {...register('content')}
-    />
-    <span className={cn(
-      styles.charCount,
-      charWarning && styles.charCountWarning,
-      charError   && styles.charCountError,
-    )}>
-      {charLeft.toLocaleString()}
-    </span>
-  </div>
-  {errors.content && (
-    <p className={styles.formError} style={{ marginTop: '8px' }}>
-      {errors.content.message}
-    </p>
-  )}
-</div>
+                  {FEATURES.aiReview && (
+                    <button
+                      type="button"
+                      className={styles.aiToggle}
+                      onClick={() => setShowReview((v) => !v)}
+                      disabled={!content.trim()}
+                      title={!content.trim() ? 'Write some content first' : undefined}
+                    >
+                      <Sparkles size={14} /> {showReview ? 'Hide review' : 'AI review'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {FEATURES.aiCaption && showCaption && (
+                <div style={{ marginBottom: 12 }}>
+                  <CaptionGenerator
+                    platform={platforms[0] ?? 'FACEBOOK'}
+                    clientName={clientName}
+                    onUse={(caption) => {
+                      setValue('content', caption, { shouldValidate: true })
+                      setShowCaption(false)
+                    }}
+                    onClose={() => setShowCaption(false)}
+                  />
+                </div>
+              )}
+
+              <textarea
+                className={styles.textarea}
+                placeholder="Write your post content here..."
+                rows={6}
+                {...register('content')}
+              />
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
+                {errors.content
+                  ? <p className={styles.formError}>{errors.content.message}</p>
+                  : <span />}
+                {charLeft !== null && (
+                  <span style={{
+                    fontSize: 'var(--text-small)',
+                    color: charError ? 'var(--color-danger)' : 'var(--color-muted)',
+                  }}>
+                    {charLeft} left
+                  </span>
+                )}
+              </div>
+
+              {/* Optional AI review — never blocks saving */}
+              {FEATURES.aiReview && showReview && content.trim() && (
+                <div style={{ marginTop: 12 }}>
+                  {FEATURES.aiReviewIsPreview && (
+                    <div className={styles.previewNote}>
+                      <Info size={14} />
+                      <span>
+                        Preview feature — this is sample output to show the format.
+                        Real recommendations arrive with Annovist Intelligence.
+                      </span>
+                    </div>
+                  )}
+                  <AIReview
+                    content={content}
+                    clientName={clientName}
+                    hasMedia={mediaFiles.length > 0}
+                  />
+                </div>
+              )}
+            </div>
 
             {/* ── Media ── */}
-<div>
-  <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 'var(--space-2)',
-  }}>
-    <span className={styles.sectionLabel} style={{ margin: 0 }}>
-      Media (optional)
-    </span>
-    <button
-      type="button"
-      onClick={() => setShowImageAI((v) => !v)}
-      style={{
-        fontSize: 'var(--text-small)',
-        fontWeight: 500,
-        color: showImageAI ? 'white' : '#534AB7',
-        border: '0.5px solid #7F77DD',
-        background: showImageAI ? '#534AB7' : '#EEEDFE',
-        padding: '3px 10px',
-        borderRadius: 'var(--radius-full)',
-        cursor: 'pointer',
-        fontFamily: 'var(--font-sans)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: 4,
-        transition: 'all var(--transition-fast)',
-      }}
-    >
-     <Sparkles size={14} /> {showAI ? 'Hide AI' : 'AI Image'}
-    </button>
-  </div>
-
-  {/* AI image generator */}
-  {showImageAI && (
-    <div style={{ marginBottom: 'var(--space-3)' }}>
-      <ImageGenerator
-        platform={platforms[0] ?? 'ALL'}
-        onUse={(image) => {
-          // Add generated image URL to media files
-          setMediaFiles((prev) => [
-            ...prev,
-            {
-              id:        image.id,
-              url:       image.url,
-              mimeType:  'image/jpeg',
-              sizeBytes: 0,
-              localUrl:  image.url,
-              name:      'AI generated image',
-            },
-          ])
-          setShowImageAI(false)
-          toast.show('AI image added to post', 'success')
-        }}
-        onClose={() => setShowImageAI(false)}
-      />
-    </div>
-  )}
-
-  <MediaUpload
-    label=""
-    maxFiles={4}
-    maxSizeMB={10}
-    onChange={(files) => setMediaFiles(files)}
-  />
-</div>
+            {FEATURES.mediaUpload && (
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span className={styles.sectionLabel} style={{ margin: 0 }}>Media (optional)</span>
+                  {FEATURES.aiImage && (
+                    <button type="button" className={styles.aiToggle} onClick={() => setShowImageAI((v) => !v)}>
+                      <Sparkles size={14} /> {showImageAI ? 'Hide AI' : 'AI image'}
+                    </button>
+                  )}
+                </div>
+                {FEATURES.aiImage && showImageAI && (
+                  <ImageGenerator
+                    platform={platforms[0]}
+                    onUse={() => setShowImageAI(false)}
+                    onClose={() => setShowImageAI(false)}
+                  />
+                )}
+                <MediaUpload label="" onChange={setMediaFiles} />
+              </div>
+            )}
 
             {/* ── Schedule ── */}
             <div>
               <span className={styles.sectionLabel}>Schedule</span>
               <div className={styles.scheduleRow}>
                 <Input
-                  label="Date & time"
+                  label="Date & time (optional)"
                   type="datetime-local"
                   min={minDateTime}
-                  error={errors.scheduledAt?.message}
                   {...register('scheduledAt')}
                 />
                 <Input
                   label="Labels (comma separated)"
-                  type="text"
                   placeholder="promotion, food, sale"
-                  hint="Used for filtering and reporting"
                   {...register('labels')}
                 />
               </div>
+              <p className={styles.fieldHint}>
+                If you set a time now, the post schedules itself as soon as the client
+                approves. You can also add it later.
+              </p>
+            </div>
           </div>
 
-            </>
-            )}
+          {/* ── Footer ── */}
+          <div className={styles.footerColumn}>
+            <p className={styles.workflowHint}>
+              <Info size={13} />
+              {clientName
+                ? <>Drafts go to internal review first, then to <strong>{clientName}</strong> for approval.</>
+                : <>Drafts go to internal review first, then to the client for approval.</>}
+            </p>
 
-          </div>
-
-         {/* Footer */}
-          <div className={styles.footer}>
-            {step === 'compose' ? (
-              <>
-                <Button type="button" variant="secondary" onClick={onClose}>
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  variant="primary"
-                  disabled={charError || !currentContent.trim()}
-                  onClick={() => setStep('review')}
-                >
-                 <Sparkles size={16} /> Get AI Review
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button type="button" variant="secondary" onClick={() => setStep('compose')}>
-                  ← Back to edit
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  loading={isSubmitting}
-                  disabled={charError}
-                >
-                  Schedule post
-                </Button>
-              </>
-            )}
+            <div className={styles.footer}>
+              <Button type="button" variant="secondary" onClick={onClose}>
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="secondary"
+                loading={isSaving && activeAction === 'draft'}
+                disabled={isSaving || charError}
+                onClick={() => { actionRef.current = 'draft'; setActiveAction('draft') }}
+              >
+                <FileText size={15} /> Save as draft
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                loading={isSaving && activeAction === 'submit'}
+                disabled={isSaving || charError}
+                onClick={() => { actionRef.current = 'submit'; setActiveAction('submit') }}
+              >
+                <Send size={15} /> Save &amp; submit for review
+              </Button>
+            </div>
           </div>
         </form>
       </div>

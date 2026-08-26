@@ -72,6 +72,38 @@ export function useUpdatePost(id: string) {
   })
 }
 
+// ── Submit for review ─────────────────────────────────────────────
+export function useSubmitPost() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.post(`/api/posts/${id}/submit`)
+      return data as Post
+    },
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: postKeys.all() })
+      qc.invalidateQueries({ queryKey: postKeys.detail(id) })
+    },
+  })
+}
+
+// ── Cancel post ───────────────────────────────────────────────────
+export function useCancelPost() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.post(`/api/posts/${id}/cancel`)
+      return data as Post
+    },
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: postKeys.all() })
+      qc.invalidateQueries({ queryKey: postKeys.detail(id) })
+    },
+  })
+}
+
 // ── Delete post ───────────────────────────────────────────────────
 export function useDeletePost() {
   const qc = useQueryClient()

@@ -4,11 +4,17 @@ import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import type { Post } from '@/lib/types'
 import { Badge, PlatformIcons } from '@/components/ui'
-import { useApprovePost, useRejectPost, useDeletePost } from '@/hooks/usePosts'
+import {
+  useApprovePost,
+  useRejectPost,
+  useDeletePost,
+  useSubmitPost,
+  useCancelPost,
+} from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
-import { cn, formatDate } from '@/lib/utils'
+import { cn, formatDate, apiErrorMessage } from '@/lib/utils'
 import styles from './PostCard.module.css'
-import { AlertTriangle, Clock, Check, MessageSquare } from 'lucide-react'
+import { AlertTriangle, Clock, Check, MessageSquare, Send, XCircle } from 'lucide-react'
 import { EditPostModal } from './EditPostModal'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
@@ -42,31 +48,47 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
-  const [confirmDelete,  setConfirmDelete ] = useState(false)
-  const [rejectModal,    setRejectModal   ] = useState(false)
-  const [rejectComment,  setRejectComment ] = useState('')
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false)
+  const [rejectModal,   setRejectModal  ] = useState(false)
+  const [rejectComment, setRejectComment] = useState('')
+  const [editModal,     setEditModal    ] = useState(false)
 
-  const [editModal, setEditModal] = useState(false)
   const toast      = useToast()
   const locale     = useLocale()
   const approve    = useApprovePost()
   const reject     = useRejectPost()
   const deletePost = useDeletePost()
+  const submit     = useSubmitPost()
+  const cancel     = useCancelPost()
 
-  const isPending   = post.status === 'PENDING_REVIEW'
-  const isDraft     = post.status === 'DRAFT'
-  const isFailed    = post.status === 'FAILED'
-  const isScheduled = post.status === 'SCHEDULED'
-  const isChanges   = post.status === 'CHANGES_REQUESTED'
-  const canEdit     = isDraft || isFailed || isScheduled || isChanges
-  const canDelete   = isDraft || isFailed || post.status === 'CANCELLED'
+  const isPending = post.status === 'PENDING_REVIEW'
+  const isDraft   = post.status === 'DRAFT'
+  const isFailed  = post.status === 'FAILED'
+  const isChanges = post.status === 'CHANGES_REQUESTED'
+
+  // These mirror PostTransitions on the backend. Keep them in step: offering an
+  // action the server rejects just produces a 409 the user cannot act on.
+  const canSubmit = isDraft || isChanges
+  const canEdit   = isDraft || isChanges
+  const canDelete = isDraft || isPending || isChanges || post.status === 'CANCELLED'
+  const canCancel = ['PENDING_CLIENT', 'APPROVED', 'SCHEDULED', 'FAILED'].includes(post.status)
+
+  const handleSubmit = async () => {
+    try {
+      await submit.mutateAsync(post.id)
+      toast.show('Sent for internal review', 'success')
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not submit this post'), 'error')
+    }
+  }
 
   const handleApprove = async () => {
     try {
       await approve.mutateAsync(post.id)
-      toast.show('Post approved', 'success')
-    } catch {
-      toast.show('Failed to approve post', 'error')
+      toast.show('Approved — now with the client', 'success')
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not approve this post'), 'error')
     }
   }
 
@@ -74,11 +96,21 @@ export function PostCard({ post }: PostCardProps) {
     if (!rejectComment.trim()) return
     try {
       await reject.mutateAsync({ id: post.id, comment: rejectComment })
-      toast.show('Post rejected', 'warning')
+      toast.show('Sent back to draft', 'warning')
       setRejectModal(false)
       setRejectComment('')
-    } catch {
-      toast.show('Failed to reject post', 'error')
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not reject this post'), 'error')
+    }
+  }
+
+  const handleCancel = async () => {
+    try {
+      await cancel.mutateAsync(post.id)
+      toast.show('Post cancelled', 'warning')
+      setConfirmCancel(false)
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not cancel this post'), 'error')
     }
   }
 
@@ -87,8 +119,8 @@ export function PostCard({ post }: PostCardProps) {
       await deletePost.mutateAsync(post.id)
       toast.show('Post deleted', 'success')
       setConfirmDelete(false)
-    } catch {
-      toast.show('Failed to delete post', 'error')
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not delete this post'), 'error')
     }
   }
 
@@ -106,10 +138,7 @@ export function PostCard({ post }: PostCardProps) {
           <div className={styles.topLeft}>
             <span className={styles.client}>{post.clientName}</span>
             <span className={styles.dot}>·</span>
-            <PlatformIcons
-              platforms={post.platforms}
-              size={14}
-            />
+            <PlatformIcons platforms={post.platforms} size={14} />
           </div>
           <div className={styles.topRight}>
             <Badge variant={STATUS_BADGE[post.status] ?? 'neutral'}>
@@ -124,7 +153,7 @@ export function PostCard({ post }: PostCardProps) {
         {/* Failed error */}
         {isFailed && post.targets.some((t) => t.errorMsg) && (
           <div className={styles.errorBar}>
-           <AlertTriangle size={14} /> {post.targets.find((t) => t.errorMsg)?.errorMsg}
+            <AlertTriangle size={14} /> {post.targets.find((t) => t.errorMsg)?.errorMsg}
           </div>
         )}
 
@@ -153,7 +182,7 @@ export function PostCard({ post }: PostCardProps) {
           <div className={styles.bottomMeta}>
             {post.scheduledAt && (
               <span className={styles.schedule}>
-               <Clock size={14} /> {formatDate(post.scheduledAt, locale, {
+                <Clock size={14} /> {formatDate(post.scheduledAt, locale, {
                   dateStyle: 'medium',
                   timeStyle: 'short',
                 })}
@@ -164,7 +193,18 @@ export function PostCard({ post }: PostCardProps) {
 
           {/* Actions */}
           <div className={styles.actions}>
-            {/* Approval actions */}
+            {/* Submit for review — the transition that feeds the approval queue */}
+            {canSubmit && (
+              <button
+                className={cn(styles.actionBtn, styles.approveBtn)}
+                onClick={handleSubmit}
+                disabled={submit.isPending}
+              >
+                {submit.isPending ? '...' : <><Send size={14} /> Submit for review</>}
+              </button>
+            )}
+
+            {/* Internal approval actions */}
             {isPending && (
               <>
                 <button
@@ -202,6 +242,16 @@ export function PostCard({ post }: PostCardProps) {
                 Delete
               </button>
             )}
+
+            {/* Cancel — the way out for anything past DRAFT */}
+            {canCancel && (
+              <button
+                className={cn(styles.actionBtn, styles.rejectBtn)}
+                onClick={() => setConfirmCancel(true)}
+              >
+                <XCircle size={14} /> Cancel
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -219,7 +269,7 @@ export function PostCard({ post }: PostCardProps) {
                 className={cn(styles.actionBtn, styles.editBtn)}
                 onClick={() => setConfirmDelete(false)}
               >
-                Cancel
+                Keep it
               </button>
               <button
                 className={cn(styles.actionBtn, styles.rejectBtn)}
@@ -233,13 +283,41 @@ export function PostCard({ post }: PostCardProps) {
         </div>
       )}
 
+      {/* Cancel confirmation */}
+      {confirmCancel && (
+        <div className={styles.overlay} onClick={() => setConfirmCancel(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>Cancel this post?</h3>
+            <p className={styles.modalSub}>
+              It will not be published. The post stays in the list for reference
+              and can be deleted afterwards.
+            </p>
+            <div className={styles.modalActions}>
+              <button
+                className={cn(styles.actionBtn, styles.editBtn)}
+                onClick={() => setConfirmCancel(false)}
+              >
+                Keep it
+              </button>
+              <button
+                className={cn(styles.actionBtn, styles.rejectBtn)}
+                onClick={handleCancel}
+                disabled={cancel.isPending}
+              >
+                {cancel.isPending ? 'Cancelling...' : 'Yes, cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Reject modal */}
       {rejectModal && (
         <div className={styles.overlay} onClick={() => setRejectModal(false)}>
           <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <h3 className={styles.modalTitle}>Reject post</h3>
             <p className={styles.modalSub}>
-              Tell the team why this post needs changes.
+              Tell the team why this post needs changes. It goes back to draft.
             </p>
             <textarea
               className={styles.textarea}

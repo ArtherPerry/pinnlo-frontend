@@ -52,3 +52,20 @@ export function truncate(text: string, maxLength: number): string {
 export function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
+
+/**
+ * Pull the server's message out of an axios error.
+ * The API returns { message: string } for every handled error, so this
+ * surfaces the real reason (e.g. "A post in SCHEDULED cannot be edited")
+ * instead of a generic failure string.
+ */
+export function apiErrorMessage(error: unknown, fallback: string): string {
+  if (typeof error === 'object' && error !== null && 'response' in error) {
+    const response = (error as { response?: { data?: { message?: unknown } } }).response
+    const message = response?.data?.message
+    if (typeof message === 'string' && message.length > 0) {
+      return message
+    }
+  }
+  return fallback
+}

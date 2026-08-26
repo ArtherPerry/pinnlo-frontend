@@ -112,10 +112,8 @@ export function Sidebar() {
 
   // ← This was the missing function
   const handleLogout = () => {
-   
     if (typeof window !== 'undefined') {
       localStorage.removeItem('pinnlo-token')
-      window.__mswStarted = false
     }
      logout()
     router.push(`/${locale}/login`)

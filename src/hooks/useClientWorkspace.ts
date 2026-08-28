@@ -17,6 +17,44 @@ export interface ClientPost {
   createdAt:       string
 }
 
+export interface ReportMetric {
+  key:            string
+  label:          string
+  /** Null when nothing has been collected — not the same as zero. */
+  value:          number | null
+  changePercent:  number | null
+}
+
+export interface ClientReport {
+  from:      string
+  to:        string
+  /** False when nothing has been collected for this window at all. */
+  hasData:   boolean
+  metrics:   ReportMetric[]
+  trend:     { date: string; value: number }[]
+  topPosts:  {
+    postId:      string
+    content:     string
+    platform:    string
+    value:       number
+    publishedAt: string | null
+  }[]
+  /** Report metrics the platform has stopped providing. */
+  unavailableMetrics: string[]
+}
+
+export function useClientReport(from?: string, to?: string, clientId?: string) {
+  return useQuery({
+    queryKey: ['client-workspace', 'report', from ?? 'default', to ?? 'default', clientId ?? 'all'],
+    queryFn: async () => {
+      const { data } = await api.get<ClientReport>('/api/client/report', {
+        params: { from, to, clientId },
+      })
+      return data
+    },
+  })
+}
+
 export interface ClientWorkspaceSummary {
   id:             string
   name:           string

@@ -1,48 +1,52 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useClientCalendar, type ClientPost } from '@/hooks/useClientWorkspace'
 import styles from './client.module.css'
 
-interface CalendarPost {
-  date: string // YYYY-MM-DD
-  title: string
-  status: 'SCHEDULED' | 'APPROVED'
-}
-
-// Mock: scatter a few posts across the current month
-function buildMockPosts(year: number, month: number): CalendarPost[] {
-  const mk = (day: number, title: string, status: 'SCHEDULED' | 'APPROVED'): CalendarPost => ({
-    date: `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
-    title, status,
-  })
-  return [
-    mk(5, '20% off promo', 'SCHEDULED'),
-    mk(5, 'Weekend vibes', 'APPROVED'),
-    mk(12, 'New menu teaser', 'SCHEDULED'),
-    mk(18, 'Customer story', 'APPROVED'),
-    mk(24, 'Holiday hours', 'SCHEDULED'),
-    mk(24, 'Thank you post', 'APPROVED'),
-    mk(28, 'Month recap', 'SCHEDULED'),
-  ]
-}
-
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+]
+
+/** Local YYYY-MM-DD, so a post lands on the day the client sees it. */
+function localDateKey(iso: string): string {
+  const d = new Date(iso)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
+function dateKey(year: number, month: number, day: number): string {
+  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
 
 export function CalendarSection() {
   const today = new Date()
-  const [year, setYear] = useState(today.getFullYear())
+  const [year, setYear]   = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
 
-  const posts = buildMockPosts(year, month)
-  const postsByDate = posts.reduce<Record<string, CalendarPost[]>>((acc, p) => {
-    (acc[p.date] ??= []).push(p)
-    return acc
-  }, {})
+  // Whole month, past and future. A client looking at their calendar wants to
+  // see what went out as much as what is coming.
+  const from = new Date(Date.UTC(year, month, 1)).toISOString()
+  const to   = new Date(Date.UTC(year, month + 1, 0, 23, 59, 59)).toISOString()
 
-  const firstDay = new Date(year, month, 1).getDay()
+  const { data: posts, isLoading, isError } = useClientCalendar(from, to)
+
+  const postsByDate = useMemo(() => {
+    const map: Record<string, ClientPost[]> = {}
+    for (const post of posts ?? []) {
+      // Published posts sit on the day they went out; everything else on the
+      // day it is due.
+      const anchor = post.publishedAt ?? post.scheduledAt
+      if (!anchor) continue
+      ;(map[localDateKey(anchor)] ??= []).push(post)
+    }
+    return map
+  }, [posts])
+
+  const firstDay    = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+  const todayStr    = dateKey(today.getFullYear(), today.getMonth(), today.getDate())
 
   const cells: (number | null)[] = []
   for (let i = 0; i < firstDay; i++) cells.push(null)
@@ -50,12 +54,18 @@ export function CalendarSection() {
   while (cells.length % 7 !== 0) cells.push(null)
 
   const prev = () => {
-    if (month === 0) { setMonth(11); setYear(year - 1) }
-    else setMonth(month - 1)
+    if (month === 0) { setMonth(11); setYear(year - 1) } else setMonth(month - 1)
   }
   const next = () => {
-    if (month === 11) { setMonth(0); setYear(year + 1) }
-    else setMonth(month + 1)
+    if (month === 11) { setMonth(0); setYear(year + 1) } else setMonth(month + 1)
+  }
+
+  const statusClass = (status: string) => {
+    if (status === 'PUBLISHED')           return styles.calendarPostPublished
+    if (status === 'PARTIALLY_PUBLISHED') return styles.calendarPostPartial
+    if (status === 'FAILED')              return styles.calendarPostFailed
+    if (status === 'SCHEDULED')           return styles.calendarPostScheduled
+    return ''   // PENDING_CLIENT, CHANGES_REQUESTED, APPROVED
   }
 
   return (
@@ -63,34 +73,48 @@ export function CalendarSection() {
       <div className={styles.calendarHeader}>
         <div className={styles.calendarMonth}>{MONTH_NAMES[month]} {year}</div>
         <div className={styles.calendarNav}>
-          <button className={styles.calendarNavBtn} onClick={prev}>‹</button>
-          <button className={styles.calendarNavBtn} onClick={next}>›</button>
+          <button className={styles.calendarNavBtn} onClick={prev} aria-label="Previous month">‹</button>
+          <button className={styles.calendarNavBtn} onClick={next} aria-label="Next month">›</button>
         </div>
       </div>
 
-      <div className={styles.calendarGrid}>
+      {isError && (
+        <div className={styles.calendarNotice}>
+          Could not load your calendar. Please try again shortly.
+        </div>
+      )}
+
+      {!isError && !isLoading && (posts?.length ?? 0) === 0 && (
+        <div className={styles.calendarNotice}>
+          Nothing scheduled or published this month.
+        </div>
+      )}
+
+      <div className={styles.calendarGrid} aria-busy={isLoading}>
         {DAY_NAMES.map((d) => (
           <div key={d} className={styles.calendarDayName}>{d}</div>
         ))}
+
         {cells.map((day, i) => {
           if (day === null) {
             return <div key={i} className={`${styles.calendarCell} ${styles.calendarCellOutside}`} />
           }
-          const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-          const dayPosts = postsByDate[dateStr] ?? []
-          const isToday = dateStr === todayStr
+          const key      = dateKey(year, month, day)
+          const dayPosts = postsByDate[key] ?? []
+          const isToday  = key === todayStr
+
           return (
             <div key={i} className={styles.calendarCell}>
               <div className={`${styles.calendarDate} ${isToday ? styles.calendarToday : ''}`}>
                 {day}
               </div>
-              {dayPosts.map((p, j) => (
+              {dayPosts.map((post) => (
                 <div
-                  key={j}
-                  className={`${styles.calendarPost} ${p.status === 'SCHEDULED' ? styles.calendarPostScheduled : ''}`}
-                  title={p.title}
+                  key={post.id}
+                  className={`${styles.calendarPost} ${statusClass(post.status)}`}
+                  title={`${post.content}\n${post.platforms.join(', ')}`}
                 >
-                  {p.title}
+                  {post.content}
                 </div>
               ))}
             </div>
@@ -101,11 +125,15 @@ export function CalendarSection() {
       <div className={styles.calendarLegend}>
         <div className={styles.legendItem}>
           <span className={styles.legendDot} style={{ background: 'var(--color-teal-500)' }} />
-          Approved
+          Published
         </div>
         <div className={styles.legendItem}>
           <span className={styles.legendDot} style={{ background: 'var(--color-info)' }} />
           Scheduled
+        </div>
+        <div className={styles.legendItem}>
+          <span className={styles.legendDot} style={{ background: 'var(--color-warning, #e8b84b)' }} />
+          Awaiting your review
         </div>
       </div>
     </div>

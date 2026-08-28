@@ -9,17 +9,60 @@ export interface MediaAsset {
   width:        number | null
   height:       number | null
   durationMs:   number | null
-  /** Direct URL when storage serves publicly; null on local disk. */
+  /** Direct URL when storage serves publicly. Null on local disk. */
   publicUrl:    string | null
-  /** Always usable — streams through the API with auth applied. */
+  /** Streams through the API with auth applied. Always present. */
   url:          string
   createdAt:    string
 }
 
 export const mediaKeys = {
   all:      () => ['media'] as const,
+  specs:    () => ['media', 'specs'] as const,
   byClient: (clientId: string) => ['media', 'client', clientId] as const,
 }
+
+// ── Platform specs, served by the backend ─────────────────────────────────
+//
+// Fetched rather than restated in TypeScript: MediaRules on the server is the
+// single source of truth, so adding TikTok or LINE means editing one file.
+
+export interface PlatformSpec {
+  defined:          boolean
+  verified?:        boolean
+  imageTypes?:      string[]
+  videoTypes?:      string[]
+  maxImageBytes?:   number
+  maxVideoBytes?:   number
+  minAspectRatio?:  number | null
+  maxAspectRatio?:  number | null
+  minWidth?:        number | null
+  maxWidth?:        number | null
+  maxItemsPerPost?: number
+  minVideoSeconds?: number | null
+  maxVideoSeconds?: number | null
+}
+
+export interface MediaSpecs {
+  uploadImageTypes:    string[]
+  uploadVideoTypes:    string[]
+  uploadMaxImageBytes: number
+  uploadMaxVideoBytes: number
+  platforms:           Record<string, PlatformSpec>
+}
+
+export function useMediaSpecs() {
+  return useQuery({
+    queryKey:  mediaKeys.specs(),
+    staleTime: 60 * 60 * 1000,   // platform rules change rarely
+    queryFn: async () => {
+      const { data } = await api.get<MediaSpecs>('/api/media/specs')
+      return data
+    },
+  })
+}
+
+// ── Queries and mutations ─────────────────────────────────────────────────
 
 /** Everything previously uploaded for a client workspace — the library. */
 export function useClientMedia(clientId: string | null) {
@@ -27,9 +70,7 @@ export function useClientMedia(clientId: string | null) {
     queryKey: mediaKeys.byClient(clientId ?? 'none'),
     enabled:  !!clientId,
     queryFn: async () => {
-      const { data } = await api.get<MediaAsset[]>('/api/media', {
-        params: { clientId },
-      })
+      const { data } = await api.get<MediaAsset[]>('/api/media', { params: { clientId } })
       return data
     },
   })
@@ -38,9 +79,9 @@ export function useClientMedia(clientId: string | null) {
 /**
  * Uploads one file to a client workspace.
  *
- * clientId is required by the API — media is scoped to a workspace so one
- * client's images can never be attached to another's post. Callers must not
- * offer upload before a workspace is chosen.
+ * clientId is required: media is scoped to a workspace so one client's images
+ * can never be attached to another's post. Callers must not offer upload
+ * before a workspace has been chosen.
  */
 export function useUploadMedia() {
   const qc = useQueryClient()
@@ -60,8 +101,11 @@ export function useUploadMedia() {
 
       const { data } = await api.post<MediaAsset>('/api/media', form, {
         params: { clientId },
-        // Let the browser set the multipart boundary; setting it by hand breaks the upload
+        // The axios instance defaults to application/json. Clearing it lets
+        // axios detect FormData and set multipart with the correct boundary;
+        // hardcoding 'multipart/form-data' omits the boundary and fails.
         headers: { 'Content-Type': undefined },
+        timeout: 120_000,   // large files outlive the 15s default
         onUploadProgress: (event) => {
           if (onProgress && event.total) {
             onProgress(Math.round((event.loaded / event.total) * 100))
@@ -89,48 +133,84 @@ export function useDeleteMedia() {
   })
 }
 
-// ── Client-side limits, mirroring MediaRules on the backend ───────────────
-//
-// Enforced server-side regardless; these exist so the user gets told before
-// spending time on an upload that will be rejected.
+// ── Advisory validation ───────────────────────────────────────────────────
 
-export const MEDIA_LIMITS = {
-  imageTypes:   ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
-  videoTypes:   ['video/mp4', 'video/quicktime'],
-  maxImageMB:   15,
-  maxVideoMB:   200,
-  maxPerPost:   10,
-} as const
+const mb = (bytes: number) => (bytes / (1024 * 1024)).toFixed(1)
 
 /**
- * Instagram is the strictest platform we publish to: JPEG/PNG only, 8 MB,
- * aspect ratio between 4:5 and 1.91:1. Used for warnings, not blocking —
- * a Facebook-only post can legitimately use an image Instagram would refuse.
+ * Warnings for one asset against every selected platform.
+ *
+ * Advisory only: the server decides at submit. This exists so a user is told
+ * before writing a caption around an image that will be refused. A platform
+ * with no defined spec says so rather than passing silently.
  */
-export const INSTAGRAM_LIMITS = {
-  types:    ['image/jpeg', 'image/png'],
-  maxMB:    8,
-  minRatio: 0.8,
-  maxRatio: 1.91,
-} as const
+export function mediaWarnings(
+  asset: MediaAsset,
+  platforms: string[],
+  specs: MediaSpecs | undefined,
+): string[] {
+  if (!specs) return []
 
-export function instagramWarning(asset: MediaAsset): string | null {
-  if (!asset.contentType.startsWith('image/')) return null
+  const warnings: string[] = []
+  const isImage = asset.contentType.startsWith('image/')
+  const isVideo = asset.contentType.startsWith('video/')
 
-  if (!INSTAGRAM_LIMITS.types.includes(asset.contentType as never)) {
-    return `Instagram does not accept ${asset.contentType.replace('image/', '').toUpperCase()}`
-  }
-  if (asset.sizeBytes > INSTAGRAM_LIMITS.maxMB * 1024 * 1024) {
-    return `Over Instagram's ${INSTAGRAM_LIMITS.maxMB} MB limit`
-  }
-  if (asset.width && asset.height) {
-    const ratio = asset.width / asset.height
-    if (ratio < INSTAGRAM_LIMITS.minRatio) {
-      return `Too tall for Instagram (${asset.width}×${asset.height}) — needs 4:5 or wider`
+  for (const platform of platforms) {
+    const spec = specs.platforms[platform]
+
+    if (!spec?.defined) {
+      warnings.push(`${platform}: media rules not defined yet`)
+      continue
     }
-    if (ratio > INSTAGRAM_LIMITS.maxRatio) {
-      return `Too wide for Instagram (${asset.width}×${asset.height}) — needs 1.91:1 or narrower`
+
+    if (isImage) {
+      if (spec.imageTypes && !spec.imageTypes.includes(asset.contentType)) {
+        warnings.push(`${platform} doesn't accept ${asset.contentType.replace('image/', '').toUpperCase()}`)
+        continue
+      }
+      if (spec.maxImageBytes && asset.sizeBytes > spec.maxImageBytes) {
+        warnings.push(`Over ${platform}'s ${mb(spec.maxImageBytes)} MB limit`)
+      }
+      if (asset.width && asset.height) {
+        const ratio = asset.width / asset.height
+        if (spec.minWidth && asset.width < spec.minWidth) {
+          warnings.push(`${platform} needs at least ${spec.minWidth}px wide`)
+        }
+        if (spec.maxWidth && asset.width > spec.maxWidth) {
+          warnings.push(`${platform} allows at most ${spec.maxWidth}px wide`)
+        }
+        if (spec.minAspectRatio && ratio < spec.minAspectRatio) {
+          warnings.push(`Too tall for ${platform} (${asset.width}×${asset.height})`)
+        }
+        if (spec.maxAspectRatio && ratio > spec.maxAspectRatio) {
+          warnings.push(`Too wide for ${platform} (${asset.width}×${asset.height})`)
+        }
+      }
+    } else if (isVideo) {
+      if (spec.videoTypes && !spec.videoTypes.includes(asset.contentType)) {
+        warnings.push(`${platform} doesn't accept ${asset.contentType}`)
+        continue
+      }
+      if (spec.maxVideoBytes && asset.sizeBytes > spec.maxVideoBytes) {
+        warnings.push(`Over ${platform}'s ${mb(spec.maxVideoBytes)} MB limit`)
+      }
     }
   }
-  return null
+
+  return warnings
+}
+
+/** Lowest per-post item cap across the selected platforms. */
+export function maxItemsFor(platforms: string[], specs: MediaSpecs | undefined): number {
+  if (!specs) return 10
+  const caps = platforms
+    .map((p) => specs.platforms[p]?.maxItemsPerPost)
+    .filter((n): n is number => typeof n === 'number')
+  return caps.length > 0 ? Math.min(...caps) : 10
+}
+
+/** Human-readable list of what can be uploaded at all. */
+export function acceptAttribute(specs: MediaSpecs | undefined): string {
+  if (!specs) return 'image/*'
+  return [...specs.uploadImageTypes, ...specs.uploadVideoTypes].join(',')
 }

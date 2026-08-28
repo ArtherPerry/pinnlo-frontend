@@ -6,10 +6,11 @@ import { Button, Badge } from '@/components/ui'
 import { useClients, type Client } from '@/hooks/useClients'
 import { useToast } from '@/hooks/useToast'
 import { ConnectedPlatforms } from '@/components/features/ConnectedPlatforms'
+import { ClientUsers } from '@/components/features/ClientUsers'
 import { MetaPagePicker } from '@/components/features/MetaPagePicker'
 import styles from './clients.module.css'
 
-const PLAN_LIMIT = 10
+const PLAN_LIMIT = 10 // TODO: read from the agency plan once the endpoint exists
 
 function getInitials(name: string): string {
   return name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
@@ -33,6 +34,8 @@ export default function ClientsPage() {
   const [selectedId,  setSelectedId]  = useState<string | null>(null)
   const [pickerNonce, setPickerNonce] = useState<string | null>(null)
 
+  // Returning from the Meta OAuth round trip: reopen the client's drawer and
+  // show the page picker. Params are stripped so a refresh doesn't re-trigger.
   useEffect(() => {
     const clientId = searchParams.get('client')
     const session  = searchParams.get('metaSession')
@@ -56,7 +59,7 @@ export default function ClientsPage() {
         <div>
           <div className={styles.title}>Clients</div>
           <div className={styles.subtitle}>
-            Manage your clients and their connected platforms
+            Manage your clients, their connected platforms and workspace access
           </div>
         </div>
         <div className={styles.workspaceCounter}>
@@ -143,13 +146,7 @@ function ClientDrawer({ client, onClose }: { client: Client; onClose: () => void
 
         <ConnectedPlatforms clientId={client.id} clientName={client.name} />
 
-        <div className={styles.drawerSection}>
-          <div className={styles.drawerSectionTitle}>Client workspace</div>
-          <div className={styles.toggleHint}>
-            Client login and post review are not available yet. Coming with the
-            client workspace release.
-          </div>
-        </div>
+        <ClientUsers clientId={client.id} clientName={client.name} />
       </div>
     </div>
   )

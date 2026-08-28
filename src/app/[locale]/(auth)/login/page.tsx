@@ -28,16 +28,19 @@ export default function LoginPage() {
     setError('')
 
     try {
-      // MSW intercepts this — returns mock user + token
-      const { data } = await api.post('/api/v1/auth/login', { email, password })
+           const { data } = await api.post('/api/v1/auth/login', { email, password })
 
       // Store token for Axios interceptor
       if (typeof window !== 'undefined') {
         localStorage.setItem('pinnlo-token', data.token)
       }
 
-      setUser(data.user)
-      router.push(`/${data.user.locale ?? locale}/dashboard`)
+            setUser(data.user)
+
+      // Client users have no access to the agency dashboard — every call there
+      // would 403. Send them to their own workspace.
+      const destination = data.user.role === 'CLIENT' ? 'client' : 'dashboard'
+      router.push(`/${data.user.locale ?? locale}/${destination}`)
     } catch (err) {
   const status = (err as { response?: { status?: number } })?.response?.status
   setError(

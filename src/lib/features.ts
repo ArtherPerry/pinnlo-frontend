@@ -23,7 +23,7 @@ export const FEATURES = {
   /** Shows the "sample output" banner. Remove when the RAG backend is live. */
   aiReviewIsPreview: true,
 
-  /** No media subsystem on the backend yet: mediaIds are accepted and discarded. */
+    /** Media subsystem is live: upload, library, per-platform validation. */
   mediaUpload: true,
 } as const
 

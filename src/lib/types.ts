@@ -1,5 +1,11 @@
 // ── Auth ──────────────────────────────────────────────────────────
-export type Role = 'OWNER' | 'MANAGER' | 'STAFF' | 'GUEST' | 'CLIENT_VIEWER'
+export type Role =
+  | 'OWNER'          // created the agency; full control
+  | 'MANAGER'        // manages content, clients and staff
+  | 'STAFF'          // creates and submits content
+  | 'CLIENT'         // the agency's customer: reviews and approves their own posts
+  | 'CLIENT_VIEWER'  // planned: client-side read-only, cannot approve
+  | 'GUEST'          // planned: link-based review with no account (Pro tier)
 export type Plan = 'STARTER' | 'PRO' | 'AGENCY' | 'ENTERPRISE'
 export type Locale = 'th' | 'en' | 'my' | 'lo'
 

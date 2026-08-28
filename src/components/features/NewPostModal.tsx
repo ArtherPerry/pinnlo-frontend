@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/useToast'
 import { cn, apiErrorMessage } from '@/lib/utils'
 import { FEATURES, ENABLED_PLATFORMS } from '@/lib/features'
 import type { Platform } from '@/lib/types'
+import type { MediaAsset } from '@/hooks/useMedia'
 import styles from './NewPostModal.module.css'
 import { CaptionGenerator } from './CaptionGenerator'
 import { ImageGenerator } from './ImageGenerator'
@@ -52,12 +53,11 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
   const submitPost = useSubmitPost()
   const toast      = useToast()
 
-  // MediaUpload owns its own file type and does not export it, so infer the
-  // shape from what we actually use: the id, for mediaIds on the request.
-  const [mediaFiles,   setMediaFiles]   = useState<{ id: string }[]>([])
-  const [showCaption,  setShowCaption]  = useState(false)
-  const [showImageAI,  setShowImageAI]  = useState(false)
-  const [showReview,   setShowReview]   = useState(false)
+  const [mediaFiles,  setMediaFiles ] = useState<MediaAsset[]>([])
+  const [showCaption, setShowCaption] = useState(false)
+  const [showImageAI, setShowImageAI] = useState(false)
+  const [showReview,  setShowReview ] = useState(false)
+
   // Which button was pressed. A ref, not state: onSubmit is a closure captured
   // at render time, so a state update from onClick would not be visible to it.
   const actionRef = useRef<'draft' | 'submit'>('draft')
@@ -81,6 +81,13 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
   const platforms  = watch('platforms') as Platform[]
   const clientId   = watch('clientId')
   const clientName = clients?.find((c) => c.id === clientId)?.name
+
+  // Media is scoped to a workspace, so changing workspace invalidates whatever
+  // is attached. Clearing here avoids a confusing "media could not be found"
+  // rejection at save time.
+  useEffect(() => {
+    setMediaFiles([])
+  }, [clientId])
 
   // Only show a counter when a selected platform actually has a tight limit.
   const limits    = platforms.map((p) => PLATFORM_CHAR_LIMIT[p]).filter(Boolean) as number[]
@@ -111,7 +118,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
 
       if (action === 'submit') {
         await submitPost.mutateAsync(created.id)
-        toast.show(`Sent for internal review`, 'success')
+        toast.show('Sent for internal review', 'success')
       } else {
         toast.show('Draft saved', 'success')
       }
@@ -123,7 +130,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
     }
   }
 
-  const isSaving  = createPost.isPending || submitPost.isPending
+  const isSaving    = createPost.isPending || submitPost.isPending
   const minDateTime = new Date(Date.now() + 5 * 60 * 1000).toISOString().slice(0, 16)
 
   return (
@@ -299,6 +306,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                     </button>
                   )}
                 </div>
+
                 {FEATURES.aiImage && showImageAI && (
                   <ImageGenerator
                     platform={platforms[0]}
@@ -306,7 +314,14 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
                     onClose={() => setShowImageAI(false)}
                   />
                 )}
-                <MediaUpload label="" onChange={setMediaFiles} />
+
+                <MediaUpload
+                  label=""
+                  clientId={clientId || null}
+                  platforms={platforms}
+                  value={mediaFiles}
+                  onChange={setMediaFiles}
+                />
               </div>
             )}
 

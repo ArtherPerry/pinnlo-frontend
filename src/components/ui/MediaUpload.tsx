@@ -1,257 +1,369 @@
 'use client'
 
-import { useRef, useState, useCallback } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
-import api from '@/lib/api'
+import { AuthedImage } from './AuthedImage'
+import {
+  useClientMedia,
+  useUploadMedia,
+  useMediaSpecs,
+  mediaWarnings,
+  maxItemsFor,
+  acceptAttribute,
+  type MediaAsset,
+} from '@/hooks/useMedia'
 import styles from './MediaUpload.module.css'
 
-interface UploadedFile {
-  id:        string
-  url:       string
-  mimeType:  string
-  sizeBytes: number
-  localUrl:  string  // blob URL for preview
-  name:      string
-}
-
 interface UploadingFile {
-  id:       string
+  key:      string
   name:     string
   localUrl: string
   progress: number
 }
 
 interface MediaUploadProps {
-  label?:     string
-  maxFiles?:  number
-  maxSizeMB?: number
-  onChange?:  (files: UploadedFile[]) => void
+  label?: string
+  /** Workspace the media belongs to. Upload is disabled until this is set. */
+  clientId: string | null
+  /** Selected platforms, for advisory warnings. */
+  platforms: string[]
+  /** Controlled: the assets currently attached, in publish order. */
+  value: MediaAsset[]
+  onChange: (assets: MediaAsset[]) => void
 }
 
-const ACCEPTED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4']
-
 function formatBytes(bytes: number): string {
-  if (bytes < 1024)        return `${bytes} B`
+  if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
 export function MediaUpload({
-  label     = 'Media',
-  maxFiles  = 4,
-  maxSizeMB = 10,
+  label = 'Media',
+  clientId,
+  platforms,
+  value,
   onChange,
 }: MediaUploadProps) {
-  const inputRef              = useRef<HTMLInputElement>(null)
-  const [isDragging,  setIsDragging ] = useState(false)
-  const [uploaded,    setUploaded   ] = useState<UploadedFile[]>([])
-  const [uploading,   setUploading  ] = useState<UploadingFile[]>([])
-  const [error,       setError      ] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
-  const canAddMore = uploaded.length + uploading.length < maxFiles
+  const [tab,        setTab       ] = useState<'upload' | 'library'>('upload')
+  const [isDragging, setIsDragging] = useState(false)
+  const [uploading,  setUploading ] = useState<UploadingFile[]>([])
+  const [error,      setError     ] = useState<string | null>(null)
+  const [dragIndex,  setDragIndex ] = useState<number | null>(null)
+  const [overIndex,  setOverIndex ] = useState<number | null>(null)
 
-  const uploadFile = useCallback(async (file: File) => {
+  const { data: specs }   = useMediaSpecs()
+  const { data: library } = useClientMedia(tab === 'library' ? clientId : null)
+  const upload            = useUploadMedia()
+
+  const maxItems  = maxItemsFor(platforms, specs)
+  const slotsLeft = maxItems - value.length - uploading.length
+  const canAdd    = !!clientId && slotsLeft > 0
+
+  // ── Upload ──────────────────────────────────────────────────────────
+
+  const uploadOne = useCallback(async (file: File) => {
+    if (!clientId) return
     setError(null)
 
-    // Validate type
-    if (!ACCEPTED.includes(file.type)) {
-      setError(`"${file.name}" is not a supported file type.`)
-      return
-    }
-
-    // Validate size
-    if (file.size > maxSizeMB * 1024 * 1024) {
-      setError(`"${file.name}" exceeds the ${maxSizeMB}MB limit.`)
-      return
-    }
-
-    const localUrl  = URL.createObjectURL(file)
-    const uploadId  = `uploading-${Date.now()}-${Math.random()}`
-
-    // Add to uploading list
-    setUploading((prev) => [...prev, { id: uploadId, name: file.name, localUrl, progress: 0 }])
-
-    // Simulate progress ticks
-    const progressInterval = setInterval(() => {
-      setUploading((prev) =>
-        prev.map((u) =>
-          u.id === uploadId
-            ? { ...u, progress: Math.min(u.progress + 20, 85) }
-            : u
-        )
-      )
-    }, 200)
+    const localUrl = URL.createObjectURL(file)
+    const key = `up-${Date.now()}-${Math.random()}`
+    setUploading((prev) => [...prev, { key, name: file.name, localUrl, progress: 0 }])
 
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const { data } = await api.post('/api/media/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const asset = await upload.mutateAsync({
+        clientId,
+        file,
+        onProgress: (percent) =>
+          setUploading((prev) =>
+            prev.map((u) => (u.key === key ? { ...u, progress: percent } : u))
+          ),
       })
-
-      clearInterval(progressInterval)
-
-      // Complete progress
-      setUploading((prev) =>
-        prev.map((u) => u.id === uploadId ? { ...u, progress: 100 } : u)
-      )
-
-      // Small delay so user sees 100%
-      await new Promise((r) => setTimeout(r, 300))
-
-      const uploadedFile: UploadedFile = {
-        id:        data.id,
-        url:       data.url,
-        mimeType:  data.mimeType,
-        sizeBytes: data.sizeBytes,
-        localUrl,
-        name:      file.name,
-      }
-
-      setUploaded((prev) => {
-        const next = [...prev, uploadedFile]
-        onChange?.(next)
-        return next
-      })
-
-      setUploading((prev) => prev.filter((u) => u.id !== uploadId))
-
-    } catch {
-      clearInterval(progressInterval)
-      setUploading((prev) => prev.filter((u) => u.id !== uploadId))
-      setError(`Failed to upload "${file.name}". Please try again.`)
+      onChange([...value, asset])
+    } catch (e: unknown) {
+      const message =
+        typeof e === 'object' && e !== null && 'response' in e
+          ? (e as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined
+      setError(message ?? `Could not upload "${file.name}"`)
+    } finally {
+      setUploading((prev) => prev.filter((u) => u.key !== key))
       URL.revokeObjectURL(localUrl)
     }
-  }, [maxSizeMB, onChange])
+  }, [clientId, onChange, upload, value])
 
   const handleFiles = useCallback((files: FileList | null) => {
-    if (!files) return
-    const remaining = maxFiles - uploaded.length - uploading.length
-    Array.from(files).slice(0, remaining).forEach(uploadFile)
-  }, [maxFiles, uploaded.length, uploading.length, uploadFile])
+    if (!files || !clientId) return
+    Array.from(files).slice(0, slotsLeft).forEach(uploadOne)
+  }, [clientId, slotsLeft, uploadOne])
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    handleFiles(e.dataTransfer.files)
+  // ── Attachment list ─────────────────────────────────────────────────
+
+  const remove = (id: string) => onChange(value.filter((a) => a.id !== id))
+
+  const move = (from: number, to: number) => {
+    if (to < 0 || to >= value.length || from === to) return
+    const next = [...value]
+    const [item] = next.splice(from, 1)
+    next.splice(to, 0, item)
+    onChange(next)
   }
 
-  const handleRemove = (id: string) => {
-    setUploaded((prev) => {
-      const next = prev.filter((f) => f.id !== id)
-      onChange?.(next)
-      return next
-    })
+  const toggleFromLibrary = (asset: MediaAsset) => {
+    const already = value.some((a) => a.id === asset.id)
+    if (already) {
+      remove(asset.id)
+    } else if (slotsLeft > 0) {
+      onChange([...value, asset])
+    }
   }
+
+  // ── Render ──────────────────────────────────────────────────────────
 
   return (
     <div className={styles.wrapper}>
       {label && <span className={styles.label}>{label}</span>}
 
-      {/* Drop zone */}
-      {canAddMore && (
-        <div
-          className={cn(
-            styles.dropzone,
-            isDragging && styles.dropzoneActive
-          )}
-          onClick={() => inputRef.current?.click()}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault()
-              inputRef.current?.click()
-            }
-          }}
-          aria-label="Upload media files"
-        >
-          <svg
-            className={styles.dropIcon}
-            viewBox="0 0 36 36"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-          >
-            <path d="M18 24V12M12 18l6-6 6 6"/>
-            <rect x="3" y="3" width="30" height="30" rx="6"/>
-            <path d="M3 24l7-7 5 5 5-6 7 8"/>
-          </svg>
-
-          <span className={styles.dropTitle}>
-            {isDragging ? 'Drop files here' : 'Click or drag to upload'}
-          </span>
+      {!clientId ? (
+        <div className={cn(styles.dropzone, styles.dropzoneDisabled)}>
+          <span className={styles.dropTitle}>Choose a client workspace first</span>
           <span className={styles.dropSub}>
-            Images (JPG, PNG, WebP, GIF) or MP4 video
+            Media is filed under a workspace so it can only be used for that client.
           </span>
-          <span className={styles.dropHint}>
-            Max {maxSizeMB}MB per file · Up to {maxFiles} files
-          </span>
-
-          <input
-            ref={inputRef}
-            type="file"
-            className={styles.hiddenInput}
-            accept={ACCEPTED.join(',')}
-            multiple={maxFiles > 1}
-            onChange={(e) => handleFiles(e.target.files)}
-          />
         </div>
+      ) : (
+        <>
+          <div className={styles.tabs} role="tablist">
+            <button
+              type="button" role="tab" aria-selected={tab === 'upload'}
+              className={cn(styles.tab, tab === 'upload' && styles.tabActive)}
+              onClick={() => setTab('upload')}
+            >
+              Upload
+            </button>
+            <button
+              type="button" role="tab" aria-selected={tab === 'library'}
+              className={cn(styles.tab, tab === 'library' && styles.tabActive)}
+              onClick={() => setTab('library')}
+            >
+              Library
+            </button>
+          </div>
+
+          {tab === 'upload' && (
+            <div
+              className={cn(
+                styles.dropzone,
+                isDragging && styles.dropzoneActive,
+                !canAdd && styles.dropzoneDisabled,
+              )}
+              onClick={() => canAdd && inputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); if (canAdd) setIsDragging(true) }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={(e) => { e.preventDefault(); setIsDragging(false); handleFiles(e.dataTransfer.files) }}
+              role="button"
+              tabIndex={canAdd ? 0 : -1}
+              aria-disabled={!canAdd}
+              onKeyDown={(e) => {
+                if (canAdd && (e.key === 'Enter' || e.key === ' ')) {
+                  e.preventDefault()
+                  inputRef.current?.click()
+                }
+              }}
+              aria-label="Upload media"
+            >
+              <svg className={styles.dropIcon} viewBox="0 0 36 36" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <rect x="3" y="3" width="30" height="30" rx="6" />
+                <path d="M3 24l7-7 5 5 5-6 7 8" />
+              </svg>
+
+              <span className={styles.dropTitle}>
+                {slotsLeft <= 0
+                  ? `Limit reached (${maxItems} per post)`
+                  : isDragging ? 'Drop files here' : 'Click or drag to upload'}
+              </span>
+
+              {specs && (
+                <>
+                  <span className={styles.dropSub}>
+                    {specs.uploadImageTypes.map((t) => t.replace('image/', '').toUpperCase()).join(', ')}
+                    {' or '}
+                    {specs.uploadVideoTypes.map((t) => t.replace('video/', '').toUpperCase()).join(', ')}
+                  </span>
+                  <span className={styles.dropHint}>
+                    Up to {formatBytes(specs.uploadMaxImageBytes)} per image ·{' '}
+                    {slotsLeft > 0 ? `${slotsLeft} slot${slotsLeft === 1 ? '' : 's'} left` : 'full'}
+                  </span>
+                </>
+              )}
+
+              <input
+                ref={inputRef}
+                type="file"
+                className={styles.hiddenInput}
+                accept={acceptAttribute(specs)}
+                multiple={maxItems > 1}
+                onChange={(e) => { handleFiles(e.target.files); e.target.value = '' }}
+              />
+            </div>
+          )}
+
+          {tab === 'library' && (
+            <div className={styles.library}>
+              {!library && <div className={styles.libraryEmpty}>Loading…</div>}
+              {library?.length === 0 && (
+                <div className={styles.libraryEmpty}>
+                  Nothing uploaded for this client yet.
+                </div>
+              )}
+              {library && library.length > 0 && (
+                <div className={styles.libraryGrid}>
+                  {library.map((asset) => {
+                    const selected = value.some((a) => a.id === asset.id)
+                    return (
+                      <button
+                        key={asset.id}
+                        type="button"
+                        className={cn(styles.libraryItem, selected && styles.libraryItemSelected)}
+                        onClick={() => toggleFromLibrary(asset)}
+                        aria-pressed={selected}
+                        disabled={!selected && slotsLeft <= 0}
+                      >
+                        <AuthedImage
+                          src={asset.url}
+                          publicUrl={asset.publicUrl}
+                          alt={asset.originalName}
+                          className={styles.libraryImg}
+                        />
+                        {selected && <span className={styles.librarySelectedMark}>✓</span>}
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+        </>
       )}
 
-      {/* Error */}
       {error && <div className={styles.error}>{error}</div>}
 
-      {/* Previews */}
-      {(uploaded.length > 0 || uploading.length > 0) && (
+      {/* In-flight uploads */}
+      {uploading.length > 0 && (
         <div className={styles.previews}>
-
-          {/* Uploading items */}
           {uploading.map((u) => (
-            <div key={u.id} className={styles.previewItem}>
-              <img
-                src={u.localUrl}
-                alt={u.name}
-                className={styles.previewImg}
-              />
+            <div key={u.key} className={styles.previewItem}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={u.localUrl} alt={u.name} className={styles.previewImg} />
               <div className={styles.progressOverlay}>
                 <div className={styles.progressBar}>
-                  <div
-                    className={styles.progressFill}
-                    style={{ width: `${u.progress}%` }}
-                  />
+                  <div className={styles.progressFill} style={{ width: `${u.progress}%` }} />
                 </div>
                 <span className={styles.progressPct}>{u.progress}%</span>
               </div>
             </div>
           ))}
-
-          {/* Uploaded items */}
-          {uploaded.map((f) => (
-            <div key={f.id} className={styles.previewItem}>
-              <img
-                src={f.localUrl}
-                alt={f.name}
-                className={styles.previewImg}
-              />
-              <button
-                type="button"
-                className={styles.removeBtn}
-                onClick={() => handleRemove(f.id)}
-                aria-label={`Remove ${f.name}`}
-              >
-                ×
-              </button>
-              <div className={styles.fileInfo}>
-                {formatBytes(f.sizeBytes)}
-              </div>
-            </div>
-          ))}
         </div>
+      )}
+
+      {/* Attached, in publish order */}
+      {value.length > 0 && (
+        <>
+          {value.length > 1 && (
+            <p className={styles.orderHint}>
+              Drag to reorder. The first image sets the crop for the whole carousel.
+            </p>
+          )}
+
+          <div className={styles.previews}>
+            {value.map((asset, index) => {
+              const warnings = mediaWarnings(asset, platforms, specs)
+              return (
+                <div
+                  key={asset.id}
+                  className={cn(
+                    styles.previewItem,
+                    warnings.length > 0 && styles.previewItemWarn,
+                    dragIndex === index && styles.previewItemDragging,
+                    overIndex === index && dragIndex !== index && styles.previewItemOver,
+                  )}
+                  draggable
+                  onDragStart={() => setDragIndex(index)}
+                  onDragEnd={() => { setDragIndex(null); setOverIndex(null) }}
+                  onDragOver={(e) => { e.preventDefault(); setOverIndex(index) }}
+                  onDrop={(e) => {
+                    e.preventDefault()
+                    if (dragIndex !== null) move(dragIndex, index)
+                    setDragIndex(null)
+                    setOverIndex(null)
+                  }}
+                >
+                  <AuthedImage
+                    src={asset.url}
+                    publicUrl={asset.publicUrl}
+                    alt={asset.originalName}
+                    className={styles.previewImg}
+                  />
+
+                  <span className={styles.positionBadge}>{index + 1}</span>
+
+                  <button
+                    type="button"
+                    className={styles.removeBtn}
+                    onClick={() => remove(asset.id)}
+                    aria-label={`Remove ${asset.originalName}`}
+                  >
+                    ×
+                  </button>
+
+                  {value.length > 1 && (
+                    <div className={styles.moveControls}>
+                      <button
+                        type="button"
+                        className={styles.moveBtn}
+                        onClick={() => move(index, index - 1)}
+                        disabled={index === 0}
+                        aria-label={`Move ${asset.originalName} earlier`}
+                      >
+                        ‹
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.moveBtn}
+                        onClick={() => move(index, index + 1)}
+                        disabled={index === value.length - 1}
+                        aria-label={`Move ${asset.originalName} later`}
+                      >
+                        ›
+                      </button>
+                    </div>
+                  )}
+
+                  <div className={styles.fileInfo}>
+                    {asset.width && asset.height
+                      ? `${asset.width}×${asset.height}`
+                      : formatBytes(asset.sizeBytes)}
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Advisory only — the server decides at submit */}
+          {value.some((a) => mediaWarnings(a, platforms, specs).length > 0) && (
+            <ul className={styles.warnings}>
+              {value.flatMap((asset) =>
+                mediaWarnings(asset, platforms, specs).map((w) => (
+                  <li key={`${asset.id}-${w}`}>
+                    <strong>{asset.originalName}</strong> — {w}
+                  </li>
+                ))
+              )}
+            </ul>
+          )}
+        </>
       )}
     </div>
   )

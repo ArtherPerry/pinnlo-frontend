@@ -10,37 +10,40 @@ import {
   useDeletePost,
   useSubmitPost,
   useCancelPost,
+  useRetryPost,
 } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate, apiErrorMessage } from '@/lib/utils'
 import styles from './PostCard.module.css'
-import { AlertTriangle, Clock, Check, MessageSquare, Send, XCircle } from 'lucide-react'
+import { AlertTriangle, Clock, Check, MessageSquare, Send, XCircle, RotateCw } from 'lucide-react'
 import { EditPostModal } from './EditPostModal'
 
 const STATUS_BADGE: Record<string, Parameters<typeof Badge>[0]['variant']> = {
-  DRAFT:             'draft',
-  PENDING_REVIEW:    'warning',
-  PENDING_CLIENT:    'info',
-  CHANGES_REQUESTED: 'danger',
-  APPROVED:          'info',
-  SCHEDULED:         'scheduled',
-  PUBLISHING:        'publishing',
-  PUBLISHED:         'published',
-  FAILED:            'failed',
-  CANCELLED:         'cancelled',
+  DRAFT:               'draft',
+  PENDING_REVIEW:      'warning',
+  PENDING_CLIENT:      'info',
+  CHANGES_REQUESTED:   'danger',
+  APPROVED:            'info',
+  SCHEDULED:           'scheduled',
+  PUBLISHING:          'publishing',
+  PUBLISHED:           'published',
+  PARTIALLY_PUBLISHED: 'warning',
+  FAILED:              'failed',
+  CANCELLED:           'cancelled',
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  DRAFT:             'Draft',
-  PENDING_REVIEW:    'Pending review',
-  PENDING_CLIENT:    'With client',
-  CHANGES_REQUESTED: 'Changes requested',
-  APPROVED:          'Approved',
-  SCHEDULED:         'Scheduled',
-  PUBLISHING:        'Publishing...',
-  PUBLISHED:         'Published',
-  FAILED:            'Failed',
-  CANCELLED:         'Cancelled',
+  DRAFT:               'Draft',
+  PENDING_REVIEW:      'Pending review',
+  PENDING_CLIENT:      'With client',
+  CHANGES_REQUESTED:   'Changes requested',
+  APPROVED:            'Approved',
+  SCHEDULED:           'Scheduled',
+  PUBLISHING:          'Publishing...',
+  PUBLISHED:           'Published',
+  PARTIALLY_PUBLISHED: 'Partly published',
+  FAILED:              'Failed',
+  CANCELLED:           'Cancelled',
 }
 
 interface PostCardProps {
@@ -61,11 +64,13 @@ export function PostCard({ post }: PostCardProps) {
   const deletePost = useDeletePost()
   const submit     = useSubmitPost()
   const cancel     = useCancelPost()
+  const retry      = useRetryPost()
 
   const isPending = post.status === 'PENDING_REVIEW'
   const isDraft   = post.status === 'DRAFT'
   const isFailed  = post.status === 'FAILED'
   const isChanges = post.status === 'CHANGES_REQUESTED'
+  const isPartial = post.status === 'PARTIALLY_PUBLISHED'
 
   // These mirror PostTransitions on the backend. Keep them in step: offering an
   // action the server rejects just produces a 409 the user cannot act on.
@@ -73,6 +78,12 @@ export function PostCard({ post }: PostCardProps) {
   const canEdit   = isDraft || isChanges
   const canDelete = isDraft || isPending || isChanges || post.status === 'CANCELLED'
   const canCancel = ['PENDING_CLIENT', 'APPROVED', 'SCHEDULED', 'FAILED'].includes(post.status)
+  const canRetry  = isFailed || isPartial
+
+  // A post can be live on one platform and failed on another, so the two are
+  // shown separately. Retry only re-sends the failed ones.
+  const failedTargets = post.targets.filter((t) => t.status === 'FAILED')
+  const livePlatforms = post.targets.filter((t) => t.status === 'PUBLISHED')
 
   const handleSubmit = async () => {
     try {
@@ -101,6 +112,20 @@ export function PostCard({ post }: PostCardProps) {
       setRejectComment('')
     } catch (error) {
       toast.show(apiErrorMessage(error, 'Could not reject this post'), 'error')
+    }
+  }
+
+  const handleRetry = async () => {
+    try {
+      await retry.mutateAsync(post.id)
+      toast.show(
+        isPartial
+          ? 'Retrying the platforms that failed'
+          : 'Rescheduled — publishing shortly',
+        'success'
+      )
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not retry this post'), 'error')
     }
   }
 
@@ -150,10 +175,25 @@ export function PostCard({ post }: PostCardProps) {
         {/* Content */}
         <p className={styles.content}>{post.content}</p>
 
-        {/* Failed error */}
-        {isFailed && post.targets.some((t) => t.errorMsg) && (
+        {/* Per-target outcome. A single error line would misrepresent a post
+            that is live on one platform and failed on another. */}
+        {failedTargets.length > 0 && (
           <div className={styles.errorBar}>
-            <AlertTriangle size={14} /> {post.targets.find((t) => t.errorMsg)?.errorMsg}
+            <AlertTriangle size={14} />
+            <div className={styles.targetErrors}>
+              {isPartial && livePlatforms.length > 0 && (
+                <div className={styles.partialNote}>
+                  Live on {livePlatforms.map((t) => t.platform).join(', ')} —
+                  the following did not publish:
+                </div>
+              )}
+              {failedTargets.map((t) => (
+                <div key={t.platform} className={styles.targetError}>
+                  <strong>{t.platform}</strong>
+                  {t.errorMsg ? ` — ${t.errorMsg}` : ' — publishing failed'}
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -221,6 +261,19 @@ export function PostCard({ post }: PostCardProps) {
                   Reject
                 </button>
               </>
+            )}
+
+            {/* Retry — only re-sends targets that failed */}
+            {canRetry && (
+              <button
+                className={cn(styles.actionBtn, styles.approveBtn)}
+                onClick={handleRetry}
+                disabled={retry.isPending}
+              >
+                {retry.isPending
+                  ? '...'
+                  : <><RotateCw size={14} /> {isPartial ? 'Retry failed' : 'Retry'}</>}
+              </button>
             )}
 
             {/* Edit */}

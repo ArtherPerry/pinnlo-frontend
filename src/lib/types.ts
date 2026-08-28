@@ -76,8 +76,17 @@ export type PostStatus =
   | 'SCHEDULED'
   | 'PUBLISHING'
   | 'PUBLISHED'
+  /** Some platforms went live and others did not. */
+  | 'PARTIALLY_PUBLISHED'
   | 'FAILED'
   | 'CANCELLED'
+
+/** Per-target lifecycle. Narrower than PostStatus — a target is never a draft. */
+export type PostTargetStatus =
+  | 'PENDING'
+  | 'PUBLISHING'
+  | 'PUBLISHED'
+  | 'FAILED'
 
 export type ApprovalStatus =
   | 'PENDING'
@@ -85,9 +94,12 @@ export type ApprovalStatus =
   | 'REJECTED'
 
 export interface PostTarget {
-  platform:  Platform
-  status:    PostStatus
-  errorMsg?: string
+  platform:        Platform
+  status:          PostTargetStatus
+  errorMsg?:       string
+  /** Platform's own id for the published post. Present once live. */
+  externalPostId?: string
+  publishedAt?:    string
 }
 
 export interface PostApproval {

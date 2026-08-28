@@ -104,6 +104,22 @@ export function useCancelPost() {
   })
 }
 
+// ── Retry a failed or partly failed post ──────────────────────────
+export function useRetryPost() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.post(`/api/posts/${id}/retry`)
+      return data as Post
+    },
+    onSuccess: (_data, id) => {
+      qc.invalidateQueries({ queryKey: postKeys.all() })
+      qc.invalidateQueries({ queryKey: postKeys.detail(id) })
+    },
+  })
+}
+
 // ── Delete post ───────────────────────────────────────────────────
 export function useDeletePost() {
   const qc = useQueryClient()

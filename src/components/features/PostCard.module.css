@@ -217,3 +217,20 @@
   border-color: var(--color-teal-500);
   box-shadow: 0 0 0 3px var(--color-teal-50);
 }
+
+.targetErrors {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.partialNote {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.targetError {
+  line-height: 1.5;
+  word-break: break-word;
+}

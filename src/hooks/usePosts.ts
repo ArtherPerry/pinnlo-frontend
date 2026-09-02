@@ -173,7 +173,7 @@ export function useEditPost(id: string) {
 
   return useMutation({
     mutationFn: async (input: CreatePostInput) => {
-      const { data } = await api.put(`/api/posts/${id}`, input)
+          const { data } = await api.patch(`/api/posts/${id}`, input)
       return data as Post
     },
     onSuccess: () => {

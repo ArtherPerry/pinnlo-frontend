@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/useToast'
 import { ConnectedPlatforms } from '@/components/features/ConnectedPlatforms'
 import { ClientUsers } from '@/components/features/ClientUsers'
 import { MetaPagePicker } from '@/components/features/MetaPagePicker'
+import { ClientFormModal } from '@/components/features/ClientFormModal'
 import styles from './clients.module.css'
 
 const PLAN_LIMIT = 10 // TODO: read from the agency plan once the endpoint exists
@@ -33,6 +34,8 @@ export default function ClientsPage() {
 
   const [selectedId,  setSelectedId]  = useState<string | null>(null)
   const [pickerNonce, setPickerNonce] = useState<string | null>(null)
+  const [showForm,    setShowForm]    = useState(false)
+  const [editClient,  setEditClient]  = useState<Client | null>(null)
 
   // Returning from the Meta OAuth round trip: reopen the client's drawer and
   // show the page picker. Params are stripped so a refresh doesn't re-trigger.
@@ -62,11 +65,14 @@ export default function ClientsPage() {
             Manage your clients, their connected platforms and workspace access
           </div>
         </div>
-        <div className={styles.workspaceCounter}>
-          <div className={styles.counterValue}>
-            {clients?.length ?? 0} / {PLAN_LIMIT}
+        <div className={styles.headerActions}>
+          <Button onClick={() => setShowForm(true)}>Add client</Button>
+          <div className={styles.workspaceCounter}>
+            <div className={styles.counterValue}>
+              {clients?.length ?? 0} / {PLAN_LIMIT}
+            </div>
+            <div className={styles.counterLabel}>clients used</div>
           </div>
-          <div className={styles.counterLabel}>clients used</div>
         </div>
       </div>
 
@@ -79,7 +85,10 @@ export default function ClientsPage() {
       )}
 
       {clients && clients.length === 0 && (
-        <div className={styles.list}>No clients yet.</div>
+        <div className={styles.emptyState}>
+          <p>No clients yet. Add your first one to start scheduling posts.</p>
+          <Button onClick={() => setShowForm(true)}>Add client</Button>
+        </div>
       )}
 
       {clients && clients.length > 0 && (
@@ -111,7 +120,24 @@ export default function ClientsPage() {
       )}
 
       {selected && (
-        <ClientDrawer client={selected} onClose={() => setSelectedId(null)} />
+        <ClientDrawer
+          client={selected}
+          onClose={() => setSelectedId(null)}
+          onEdit={() => {
+            setEditClient(selected)
+            setSelectedId(null)
+          }}
+        />
+      )}
+
+      {(showForm || editClient) && (
+        <ClientFormModal
+          client={editClient ?? undefined}
+          onClose={() => {
+            setShowForm(false)
+            setEditClient(null)
+          }}
+        />
       )}
 
       {pickerNonce && (
@@ -128,7 +154,15 @@ export default function ClientsPage() {
   )
 }
 
-function ClientDrawer({ client, onClose }: { client: Client; onClose: () => void }) {
+function ClientDrawer({
+  client,
+  onClose,
+  onEdit,
+}: {
+  client: Client
+  onClose: () => void
+  onEdit: () => void
+}) {
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.drawer} onClick={(e) => e.stopPropagation()}>
@@ -139,9 +173,14 @@ function ClientDrawer({ client, onClose }: { client: Client; onClose: () => void
               {client.status}
             </Badge>
           </div>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
-            &times;
-          </button>
+          <div className={styles.drawerActions}>
+            <Button variant="secondary" size="sm" onClick={onEdit}>
+              Edit
+            </Button>
+            <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+              &times;
+            </button>
+          </div>
         </div>
 
         <ConnectedPlatforms clientId={client.id} clientName={client.name} />

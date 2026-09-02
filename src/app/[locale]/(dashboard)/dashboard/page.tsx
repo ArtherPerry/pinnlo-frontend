@@ -6,7 +6,7 @@ import { useDashboardStats } from '@/hooks/useDashboard'
 import { usePosts } from '@/hooks/usePosts'
 import { Card } from '@/components/ui'
 import { useAuth } from '@/hooks/useAuth'
-import { CheckCircle, MessageSquare, Calendar, ArrowRight } from 'lucide-react'
+import { CheckCircle, Calendar, ArrowRight } from 'lucide-react'
 import styles from './dashboard.module.css'
 
 interface StatCard {
@@ -29,15 +29,15 @@ export default function DashboardPage() {
 
   const L = (href: string) => `/${locale}${href}`
 
-  const cards: StatCard[] = [
-    { label: 'Clients',         value: data?.totalClients,   href: '/clients' },
-    { label: 'Scheduled posts', value: data?.scheduledPosts, href: '/posts' },
-    { label: 'New leads',       value: data?.newLeads,       href: '/crm' },
-    { label: 'Unread comments', value: data?.unreadComments, href: '/inbox' },
+    const cards: StatCard[] = [
+    { label: 'Needs your review',   value: data?.needsReview,        href: '/posts/approval' },
+    { label: 'Waiting on clients',  value: data?.waitingOnClients,   href: '/posts' },
+    { label: 'Publishing failures', value: data?.publishingFailures, href: '/posts' },
+    { label: 'Connection problems', value: data?.connectionProblems, href: '/clients' },
   ]
 
   const pendingCount = pendingPosts?.length ?? 0
-  const unread = data?.unreadComments ?? 0
+
   const upcoming = (scheduledPosts ?? []).slice(0, 4)
 
   return (
@@ -75,7 +75,7 @@ export default function DashboardPage() {
                 <h3 className={styles.panelTitle}>Needs your attention</h3>
               </div>
 
-              {pendingCount === 0 && unread === 0 ? (
+              {pendingCount === 0 ? (
                 <div className={styles.emptyPanel}>
                   <CheckCircle size={28} />
                   <span>You&apos;re all caught up.</span>
@@ -91,15 +91,7 @@ export default function DashboardPage() {
                       <ArrowRight size={16} className={styles.attentionArrow} />
                     </Link>
                   )}
-                  {unread > 0 && (
-                    <Link href={L('/inbox')} className={styles.attentionRow}>
-                      <span className={styles.attentionIcon}><MessageSquare size={18} /></span>
-                      <span className={styles.attentionText}>
-                        <strong>{unread}</strong> unread message{unread > 1 ? 's' : ''} in your inbox
-                      </span>
-                      <ArrowRight size={16} className={styles.attentionArrow} />
-                    </Link>
-                  )}
+              
                 </div>
               )}
             </section>

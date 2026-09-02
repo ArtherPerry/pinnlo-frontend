@@ -2,10 +2,10 @@ import { useQuery } from '@tanstack/react-query'
 import api from '@/lib/api'
 
 interface DashboardStats {
-  totalClients:    number
-  scheduledPosts:  number
-  newLeads:        number
-  unreadComments:  number
+  needsReview:        number
+  waitingOnClients:   number
+  publishingFailures: number
+  connectionProblems: number
 }
 
 async function fetchDashboardStats(): Promise<DashboardStats> {

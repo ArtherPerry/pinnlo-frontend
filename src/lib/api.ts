@@ -64,10 +64,12 @@ api.interceptors.response.use(
   async (error) => {
     const original = error.config
 
-    // Never try to refresh a failed refresh — that loops.
-    const isAuthCall = original?.url?.includes('/api/v1/auth/refresh')
+        // A 401 on a request that carried no token means "not logged in", not
+    // "token expired" — refreshing would be pointless and would redirect
+    // away from the login page before the error message could be shown.
+    const hadToken = Boolean(original?.headers?.Authorization)
 
-    if (error.response?.status === 401 && !original._retry && !isAuthCall) {
+    if (error.response?.status === 401 && !original._retry && hadToken) {
       original._retry = true
 
       try {

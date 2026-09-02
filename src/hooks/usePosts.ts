@@ -167,30 +167,6 @@ export function useRejectPost() {
   })
 }
 
-// ── Calendar ──────────────────────────────────────────────────────
-interface CalendarDay {
-  id:         string
-  status:     string
-  clientName: string
-}
-
-interface CalendarData {
-  year:  number
-  month: number
-  days:  Record<string, CalendarDay[]>
-}
-
-async function fetchCalendar(year: number, month: number): Promise<CalendarData> {
-  const { data } = await api.get('/api/posts/calendar', { params: { year, month } })
-  return data
-}
-
-export function usePostCalendar(year: number, month: number) {
-  return useQuery({
-    queryKey: ['posts', 'calendar', year, month],
-    queryFn:  () => fetchCalendar(year, month),
-  })
-}
 // ── Edit post (full replace) ──────────────────────────────────────
 export function useEditPost(id: string) {
   const qc = useQueryClient()
@@ -204,5 +180,57 @@ export function useEditPost(id: string) {
       qc.invalidateQueries({ queryKey: postKeys.all() })
       qc.invalidateQueries({ queryKey: postKeys.detail(id) })
     },
+  })
+}
+
+/**
+ * Posts for one month, grouped by local date.
+ *
+ * The backend returns a flat list over an Instant range; the grouping happens
+ * here so the calendar grid can index by date directly.
+ */
+interface CalendarData {
+  days: Record<string, Post[]>
+}
+
+/**
+ * Grouped by the date the user sees, not the UTC date.
+ *
+ * A post scheduled 07:00 Bangkok time is 00:00 UTC the same day, but one at
+ * 06:00 Bangkok is 23:00 UTC the day before — grouping on the UTC date would
+ * put it in the wrong cell.
+ */
+function localDateKey(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+async function fetchCalendar(year: number, month: number): Promise<CalendarData> {
+  // Local month boundaries converted to instants, so the range covers the
+  // month as the user sees it rather than the UTC month.
+  const from = new Date(year, month - 1, 1, 0, 0, 0).toISOString()
+  const to   = new Date(year, month, 0, 23, 59, 59).toISOString()
+
+  const { data } = await api.get<Post[]>('/api/posts/calendar', {
+    params: { from, to },
+  })
+
+  const days: Record<string, Post[]> = {}
+  for (const post of data) {
+    // Published posts sit on the day they went out; everything else on the
+    // day it is due.
+    const anchor = post.publishedAt ?? post.scheduledAt
+    if (!anchor) continue
+    ;(days[localDateKey(anchor)] ??= []).push(post)
+  }
+
+  return { days }
+}
+
+export function usePostCalendar(year: number, month: number) {
+  return useQuery({
+    queryKey: ['posts', 'calendar', year, month],
+    queryFn:  () => fetchCalendar(year, month),
   })
 }

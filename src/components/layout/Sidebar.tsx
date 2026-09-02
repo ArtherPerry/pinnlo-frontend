@@ -7,6 +7,8 @@ import { useAuth } from '@/hooks/useAuth'
 import { cn } from '@/lib/utils'
 import styles from './Sidebar.module.css'
 import { useMobileNav } from '@/hooks/useMobileNav'
+import { clearAccessToken } from '@/lib/token'
+import api from '@/lib/api'
 import {
   LayoutDashboard, Building2, FileText, CheckCircle, Users,
   MessageSquare, LayoutTemplate, Send, Mail, Workflow,
@@ -111,11 +113,16 @@ export function Sidebar() {
   const locale = pathname.split('/')[1] || 'th'
 
   // ← This was the missing function
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('pinnlo-token')
+  const handleLogout = async () => {
+    // Tell the server first so the refresh token is revoked, not just
+    // forgotten — otherwise the cookie stays valid until it expires.
+    try {
+      await api.post('/api/v1/auth/logout')
+    } catch {
+      // A failed call must not trap someone in a session they asked to leave.
     }
-     logout()
+    clearAccessToken()
+    logout()
     router.push(`/${locale}/login`)
   }
 

@@ -50,7 +50,10 @@ export function ReportsSection() {
     )
   }
 
-  const maxTrend = Math.max(...report.trend.map((t) => t.value), 1)
+  // The client sees one series. The agency page offers a toggle across all of
+  // them, which is why the API returns several.
+  const viewsTrend = report.trend.find((s) => s.key === 'page_media_view')
+  const maxTrend   = Math.max(...(viewsTrend?.points.map((p) => p.value) ?? []), 1)
 
   return (
     <>
@@ -82,12 +85,16 @@ export function ReportsSection() {
         })}
       </div>
 
-      {report.trend.length > 0 && (
+      {viewsTrend && viewsTrend.points.length > 0 && (
         <div className={styles.reportCard}>
-          <div className={styles.reportCardTitle}>Views by day</div>
+          <div className={styles.reportCardTitle}>{viewsTrend.label} by day</div>
           <div className={styles.trendChart}>
-            {report.trend.map((point) => (
-              <div key={point.date} className={styles.trendBar} title={`${point.date}: ${point.value.toLocaleString()}`}>
+            {viewsTrend.points.map((point) => (
+              <div
+                key={point.date}
+                className={styles.trendBar}
+                title={`${point.date}: ${point.value.toLocaleString()}`}
+              >
                 <div
                   className={styles.trendBarFill}
                   style={{ height: `${(point.value / maxTrend) * 100}%` }}

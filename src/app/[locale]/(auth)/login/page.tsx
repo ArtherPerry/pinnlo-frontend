@@ -6,6 +6,7 @@ import { useLocale } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
 import { Input, Button } from '@/components/ui'
 import api from '@/lib/api'
+import { setAccessToken } from '@/lib/token'
 
 export default function LoginPage() {
   const [email,    setEmail   ] = useState('')
@@ -32,7 +33,7 @@ export default function LoginPage() {
 
       // Store token for Axios interceptor
       if (typeof window !== 'undefined') {
-        localStorage.setItem('pinnlo-token', data.token)
+        setAccessToken(data.token)
       }
 
             setUser(data.user)

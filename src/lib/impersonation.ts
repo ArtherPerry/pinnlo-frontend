@@ -1,31 +1,53 @@
-export function startImpersonation(impersonationToken: string) {
-  const currentToken = localStorage.getItem('pinnlo-token')
-  const currentAuth = localStorage.getItem('pinnlo-auth')
+import api from '@/lib/api'
+import { setAccessToken, isImpersonating as tokenIsImpersonating, impersonatorName } from '@/lib/token'
 
-  if (currentToken) localStorage.setItem('pinnlo-admin-token', currentToken)
-  if (currentAuth) localStorage.setItem('pinnlo-admin-auth', currentAuth)
+/**
+ * Read-only support sessions.
+ *
+ * Previously this swapped tokens in localStorage and forced a page reload.
+ * Now the server issues a separate refresh family for the support session,
+ * so it is recorded, revocable, expires in an hour, and every write is
+ * rejected server-side.
+ *
+ * Starting a session replaces the admin's own; there is no stashing and
+ * restoring. Two simultaneously valid sessions for one person is exactly what
+ * refresh-token reuse detection exists to prevent.
+ */
 
-  localStorage.setItem('pinnlo-token', impersonationToken)
-  localStorage.removeItem('pinnlo-auth')
-  localStorage.setItem('pinnlo-impersonating', 'true')
-
-  window.location.href = '/en/dashboard'
+export interface ImpersonationResult {
+  token:      string
+  agencyName: string
+  ownerName:  string
+  readOnly:   boolean
 }
 
-export function exitImpersonation() {
-  const adminToken = localStorage.getItem('pinnlo-admin-token')
-  const adminAuth = localStorage.getItem('pinnlo-admin-auth')
+export async function startImpersonation(agencyId: string): Promise<ImpersonationResult> {
+  const { data } = await api.post<ImpersonationResult>(
+    `/api/v1/admin/agencies/${agencyId}/impersonate`
+  )
 
-  if (adminToken) localStorage.setItem('pinnlo-token', adminToken)
-  if (adminAuth) localStorage.setItem('pinnlo-auth', adminAuth)
-
-  localStorage.removeItem('pinnlo-admin-token')
-  localStorage.removeItem('pinnlo-admin-auth')
-  localStorage.removeItem('pinnlo-impersonating')
-
-  window.location.href = '/en/admin'
+  // The response also set an impersonation refresh cookie, replacing the
+  // admin's. From here every request is the support session.
+  setAccessToken(data.token)
+  return data
 }
 
+export async function exitImpersonation(): Promise<void> {
+  try {
+    await api.post('/api/v1/auth/impersonate/exit')
+  } finally {
+    // Clear locally whatever the server said — a failed exit must not leave
+    // someone stuck in a support session.
+    setAccessToken(null)
+  }
+}
+
+/** True when the current token is a support session. */
 export function isImpersonating(): boolean {
-  return typeof window !== 'undefined' && localStorage.getItem('pinnlo-impersonating') === 'true'
+  return tokenIsImpersonating()
+}
+
+/** The admin running the support session, for the banner. */
+export function getImpersonator(): string | null {
+  return impersonatorName()
 }

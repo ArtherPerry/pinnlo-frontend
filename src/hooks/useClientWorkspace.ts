@@ -25,13 +25,18 @@ export interface ReportMetric {
   changePercent:  number | null
 }
 
+export interface MetricSeries {
+  key:    string
+  label:  string
+  points: { date: string; value: number }[]
+}
+
 export interface ClientReport {
   from:      string
   to:        string
-  /** False when nothing has been collected for this window at all. */
   hasData:   boolean
   metrics:   ReportMetric[]
-  trend:     { date: string; value: number }[]
+  trend:     MetricSeries[]
   topPosts:  {
     postId:      string
     content:     string
@@ -39,7 +44,6 @@ export interface ClientReport {
     value:       number
     publishedAt: string | null
   }[]
-  /** Report metrics the platform has stopped providing. */
   unavailableMetrics: string[]
 }
 

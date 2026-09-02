@@ -8,6 +8,7 @@ import { Input, Button } from '@/components/ui'
 import { useAuth } from '@/hooks/useAuth'
 import { apiErrorMessage } from '@/lib/utils'
 import api from '@/lib/api'
+import { setAccessToken } from '@/lib/token'
 import styles from '../invite.module.css'
 
 interface InvitationPreview {
@@ -72,7 +73,7 @@ export default function AcceptInvitePage() {
 
       // The server signs the new account in immediately — they just proved they
       // hold the link, so a separate login step would be friction only.
-      localStorage.setItem('pinnlo-token', data.token)
+      setAccessToken(data.token)
       setUser(data.user)
       router.push(`/${locale}/client`)
     } catch (err) {

@@ -25,6 +25,16 @@ export const FEATURES = {
 
     /** Media subsystem is live: upload, library, per-platform validation. */
   mediaUpload: true,
+
+    /** Best-posting-time heatmap. Needs hourly engagement data nobody collects yet. */
+  analyticsHeatmap: false,
+  /** Generated narrative summary. Currently prose built from numbers, not analysis. */
+  analystSummary: false,
+  /** PDF report export. No generator behind it. */
+  reportExport: false,
+
+  /** White-label client reporting. Phase 3, no backend. */
+  reportPortals: false,
 } as const
 
 import type { Platform } from './types'

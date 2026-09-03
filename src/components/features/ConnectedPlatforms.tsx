@@ -2,7 +2,12 @@
 
 import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui'
-import { useClientConnections, useStartMetaConnect, useDisconnectMetaConnection } from '@/hooks/useMeta'
+import {
+  useClientConnections,
+  useStartMetaConnect,
+  useDisconnectMetaConnection,
+  usePageInfo,
+} from '@/hooks/useMeta'
 import { useToast } from '@/hooks/useToast'
 import { formatDate } from '@/lib/utils'
 import { Plus } from 'lucide-react'
@@ -73,7 +78,7 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
         <div className={styles.list}>
           {connections.map((c) => (
             <div key={c.id} className={styles.row}>
-                            <PlatformIcon platform={c.platform} size={18} />
+              <PlatformIcon platform={c.platform} size={18} />
 
               <div className={styles.rowMain}>
                 <div className={styles.rowName}>{c.externalName}</div>
@@ -81,6 +86,11 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
                   {c.active ? 'Connected' : 'Inactive'}
                   {' · '}
                   {formatDate(c.connectedAt, locale, { dateStyle: 'medium' })}
+                  <PageStats
+                    connectionId={c.id}
+                    enabled={c.active && c.platform === 'FACEBOOK'}
+                    locale={locale}
+                  />
                 </div>
               </div>
 
@@ -97,5 +107,40 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
         </div>
       )}
     </div>
+  )
+}
+
+/**
+ * Follower count, when Meta will give one.
+ *
+ * Facebook only: the backend asks Graph for fan_count, which does not exist on
+ * an Instagram Business account, so an IG connection would return an error
+ * rather than a smaller payload.
+ *
+ * Renders nothing while loading or on failure. An expired token or a revoked
+ * page should not put an error into a row that is otherwise fine — the name,
+ * status and connection date are all still true and still useful.
+ */
+function PageStats({
+  connectionId,
+  enabled,
+  locale,
+}: {
+  connectionId: string
+  enabled:      boolean
+  locale:       string
+}) {
+  const { data } = usePageInfo(connectionId, enabled)
+
+  if (!data) return null
+
+  const followers = data.followers_count ?? data.fan_count
+  if (followers == null) return null
+
+  return (
+    <>
+      {' · '}
+      {followers.toLocaleString(locale)} followers
+    </>
   )
 }

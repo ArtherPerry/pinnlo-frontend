@@ -82,3 +82,37 @@ export function useDisconnectMetaConnection() {
     },
   })
 }
+
+/** Live page stats from Graph. */
+export interface MetaPageInfo {
+  id:               string
+  name:             string
+  fan_count?:       number
+  followers_count?: number
+}
+
+/**
+ * Follower counts for one connection, fetched live from Meta.
+ *
+ * Facebook only: fetchPageInfo asks Graph for fan_count, which does not exist
+ * on an Instagram Business account, so an IG connection returns an error
+ * rather than a smaller payload.
+ *
+ * A failure here is not worth surfacing — the row still shows the page name
+ * and status, it just has no counts. Hence retry: false and a stale time, so
+ * a dead connection does not re-hit Graph on every drawer open.
+ */
+export function usePageInfo(connectionId: string, enabled: boolean) {
+  return useQuery({
+    queryKey:  ['meta', 'pageInfo', connectionId],
+    enabled,
+    retry:     false,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data } = await api.get<MetaPageInfo>(
+        `/api/v1/meta/connections/${connectionId}/info`
+      )
+      return data
+    },
+  })
+}

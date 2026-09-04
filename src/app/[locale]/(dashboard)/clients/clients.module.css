@@ -277,3 +277,40 @@
   color: var(--color-muted);
   text-align: center;
 }
+
+.dangerZone {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
+
+.dangerLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  color: var(--color-danger);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.dangerTitle {
+  font-weight: 600;
+  color: var(--color-danger);
+  margin-bottom: var(--space-2);
+}
+
+.dangerBody {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-3);
+}
+
+.dangerActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}

@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { Button, Badge } from '@/components/ui'
-import { useClients, type Client } from '@/hooks/useClients'
+import { Button, Badge,Input } from '@/components/ui'
+import { useClients, useClient, useDeleteClient, type Client } from '@/hooks/useClients'
 import { useToast } from '@/hooks/useToast'
 import { ConnectedPlatforms } from '@/components/features/ConnectedPlatforms'
 import { ClientUsers } from '@/components/features/ClientUsers'
 import { MetaPagePicker } from '@/components/features/MetaPagePicker'
 import { ClientFormModal } from '@/components/features/ClientFormModal'
 import styles from './clients.module.css'
+
+
 
 const PLAN_LIMIT = 10 // TODO: read from the agency plan once the endpoint exists
 
@@ -163,14 +165,34 @@ function ClientDrawer({
   onClose: () => void
   onEdit: () => void
 }) {
+  const toast = useToast()
+  const [confirmText, setConfirmText] = useState('')
+  const [showDelete,  setShowDelete]  = useState(false)
+
+  // The list's copy seeds this, then the fetch corrects it.
+  const { data: fresh } = useClient(client.id, client)
+  const shown = fresh ?? client
+
+  const deleteClient = useDeleteClient()
+
+  const handleDelete = async () => {
+    try {
+      await deleteClient.mutateAsync(client.id)
+      toast.show(`${shown.name} deleted`, 'success')
+      onClose()
+    } catch {
+      toast.show('Failed to delete client', 'error')
+    }
+  }
+
   return (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.drawer} onClick={(e) => e.stopPropagation()}>
         <div className={styles.drawerHeader}>
           <div>
-            <div className={styles.drawerTitle}>{client.name}</div>
-            <Badge variant={client.status === 'ACTIVE' ? 'success' : 'neutral'}>
-              {client.status}
+            <div className={styles.drawerTitle}>{shown.name}</div>
+            <Badge variant={shown.status === 'ACTIVE' ? 'success' : 'neutral'}>
+              {shown.status}
             </Badge>
           </div>
           <div className={styles.drawerActions}>
@@ -183,9 +205,52 @@ function ClientDrawer({
           </div>
         </div>
 
-        <ConnectedPlatforms clientId={client.id} clientName={client.name} />
+        <ConnectedPlatforms clientId={shown.id} clientName={shown.name} />
 
-        <ClientUsers clientId={client.id} clientName={client.name} />
+        <ClientUsers clientId={shown.id} clientName={shown.name} />
+
+        {/* Deletion is irreversible and takes everything with it, so it asks
+            for the name to be typed rather than a click-through confirm. */}
+        <div className={styles.dangerZone}>
+          {!showDelete ? (
+            <button className={styles.dangerLink} onClick={() => setShowDelete(true)}>
+              Delete this client
+            </button>
+          ) : (
+            <>
+              <div className={styles.dangerTitle}>Delete {shown.name}</div>
+              <p className={styles.dangerBody}>
+                This removes every post, contact, uploaded file, connected page and
+                workspace login belonging to this client. Published posts already on
+                Facebook or Instagram stay there. Nothing here can be recovered.
+                To keep the history, set the status to Archived instead.
+              </p>
+              <Input
+                label={`Type "${shown.name}" to confirm`}
+                value={confirmText}
+                onChange={(e) => setConfirmText(e.target.value)}
+                placeholder={shown.name}
+              />
+              <div className={styles.dangerActions}>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => { setShowDelete(false); setConfirmText('') }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  disabled={confirmText !== shown.name || deleteClient.isPending}
+                  onClick={handleDelete}
+                >
+                  {deleteClient.isPending ? 'Deleting…' : 'Delete permanently'}
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

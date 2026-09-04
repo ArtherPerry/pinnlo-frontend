@@ -11,7 +11,6 @@ import api from '@/lib/api'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Role, Plan, Platform } from '@/lib/types'
 import styles from './settings.module.css'
-import { FEATURES } from '@/lib/features'
 
 type Tab = 'agency' | 'team' | 'platforms' | 'notifications' | 'billing'
 
@@ -283,6 +282,23 @@ function TeamTab() {
     }
   }
 
+    const handleRoleChange = async (id: string, role: string) => {
+    // Optimistic: the select shows the new role immediately, and rolls back
+    // on failure. A role change that appears to stick and then silently
+    // reverts on the next refetch is worse than one that visibly fails.
+    const previous = qc.getQueryData<TeamMember[]>(['settings', 'team'])
+    qc.setQueryData(['settings', 'team'], (old?: TeamMember[]) =>
+      old?.map((m) => (m.id === id ? { ...m, role: role as Role } : m)) ?? []
+    )
+    try {
+      await api.patch(`/api/settings/team/${id}`, { role })
+      toast.show('Role updated', 'success')
+    } catch {
+      qc.setQueryData(['settings', 'team'], previous)
+      toast.show('Failed to update role', 'error')
+    }
+  }
+
   if (isLoading) return (
     <div className={styles.loadingState}>
       <div className={styles.skelRow}>
@@ -331,10 +347,21 @@ function TeamTab() {
                     </div>
                   </div>
                 </td>
-                <td>
-                  <span className={cn(styles.roleBadge, ROLE_CLASS[member.role])}>
-                    {ROLE_LABELS[member.role]}
-                  </span>
+                                <td>
+                  {member.role === 'OWNER' || isPending ? (
+                    <span className={cn(styles.roleBadge, ROLE_CLASS[member.role])}>
+                      {ROLE_LABELS[member.role]}
+                    </span>
+                  ) : (
+                    <select
+                      className={styles.roleSelect}
+                      value={member.role}
+                      onChange={(e) => handleRoleChange(member.id, e.target.value)}
+                    >
+                      <option value="MANAGER">Manager</option>
+                      <option value="STAFF">Staff</option>
+                    </select>
+                  )}
                 </td>
                 <td>
                   <span className={cn(

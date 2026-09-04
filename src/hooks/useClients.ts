@@ -27,7 +27,53 @@ export interface ClientInput {
 }
 
 const clientKeys = {
-  list: () => ['clients', 'list'] as const,
+  list:   ()           => ['clients', 'list'] as const,
+  detail: (id: string) => ['clients', 'detail', id] as const,
+}
+
+/**
+ * One client, fetched fresh.
+ *
+ * The drawer opens from an object in the list, which can be minutes old — a
+ * page connected in another tab, or a status changed by a colleague, would not
+ * show. Seeded with the list's copy so the drawer paints immediately and
+ * corrects itself when the request lands.
+ */
+export function useClient(id: string | null, placeholder?: Client) {
+  return useQuery({
+    queryKey: clientKeys.detail(id ?? 'none'),
+    enabled:  !!id,
+    placeholderData: placeholder,
+    queryFn: async () => {
+      const { data } = await api.get<Client>(`/api/clients/${id}`)
+      return data
+    },
+  })
+}
+
+/**
+ * Permanent deletion.
+ *
+ * Every child table cascades: posts, contacts, media, platform connections,
+ * workspace access and invitations all go with the client, and none of it can
+ * be recovered. The caller is responsible for confirming properly — a
+ * window.confirm is not enough for this one.
+ *
+ * useArchiveClient is the reversible alternative and should be preferred.
+ */
+export function useDeleteClient() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/api/clients/${id}`)
+      return id
+    },
+    onSuccess: (id) => {
+      qc.removeQueries({ queryKey: clientKeys.detail(id) })
+      qc.invalidateQueries({ queryKey: clientKeys.list() })
+    },
+  })
 }
 
 export function useClients() {

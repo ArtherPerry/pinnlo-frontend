@@ -25,7 +25,12 @@ export function useApproveAgency() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (id: string) => api.post(`/api/v1/admin/agencies/${id}/approve`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['admin', 'agencies'] }),
+    onSuccess: () => {
+      // Approving moves an agency between three views: the full list, the
+      // pending queue, and the dashboard counts.
+      qc.invalidateQueries({ queryKey: ['admin', 'agencies'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'stats'] })
+    },
   })
 }
 
@@ -177,5 +182,25 @@ export function useImpersonate() {
   return useMutation({
     mutationFn: (agencyId: string) =>
       api.post(`/api/v1/admin/agencies/${agencyId}/impersonate`).then((r) => r.data),
+  })
+}
+
+async function fetchPendingAgencies(): Promise<AdminAgency[]> {
+  const { data } = await api.get('/api/v1/admin/agencies/pending')
+  return data
+}
+
+/**
+ * Agencies awaiting approval.
+ *
+ * A server-side filter rather than filtering the full list client-side: the
+ * dashboard needs this before the agencies list has been fetched, and an
+ * instance with a few thousand agencies should not download all of them to
+ * find the four that signed up overnight.
+ */
+export function usePendingAgencies() {
+  return useQuery({
+    queryKey: ['admin', 'agencies', 'pending'],
+    queryFn: fetchPendingAgencies,
   })
 }

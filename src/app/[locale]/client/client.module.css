@@ -507,3 +507,48 @@
 .calendarPostPublished { background: var(--color-teal-50, #eefaf7); color: var(--color-teal-700, #1a6b5c); }
 .calendarPostPartial   { background: var(--color-warning-bg, #fff8e6); color: var(--color-warning-text, #7a5c14); }
 .calendarPostFailed    { background: var(--color-danger-bg, #fdecec); color: var(--color-danger, #b3261e); }
+.detailStatus {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  margin-bottom: var(--space-3);
+}
+
+.detailContent {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  color: var(--color-ink);
+  margin: 0 0 var(--space-4);
+}
+
+.detailMedia {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.detailMediaImg {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.detailComment {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  background: var(--color-bg-2);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.detailCloseBtn {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  cursor: pointer;
+}

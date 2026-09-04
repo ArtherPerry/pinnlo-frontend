@@ -7,10 +7,12 @@ import {
   useClientMedia,
   useUploadMedia,
   useMediaSpecs,
+  useMediaAsset,
   mediaWarnings,
   maxItemsFor,
   acceptAttribute,
   type MediaAsset,
+  type MediaSpecs,
 } from '@/hooks/useMedia'
 import styles from './MediaUpload.module.css'
 
@@ -53,6 +55,7 @@ export function MediaUpload({
   const [error,      setError     ] = useState<string | null>(null)
   const [dragIndex,  setDragIndex ] = useState<number | null>(null)
   const [overIndex,  setOverIndex ] = useState<number | null>(null)
+  const [detailId,   setDetailId  ] = useState<string | null>(null)
 
   const { data: specs }   = useMediaSpecs()
   const { data: library } = useClientMedia(tab === 'library' ? clientId : null)
@@ -223,22 +226,34 @@ export function MediaUpload({
                   {library.map((asset) => {
                     const selected = value.some((a) => a.id === asset.id)
                     return (
-                      <button
-                        key={asset.id}
-                        type="button"
-                        className={cn(styles.libraryItem, selected && styles.libraryItemSelected)}
-                        onClick={() => toggleFromLibrary(asset)}
-                        aria-pressed={selected}
-                        disabled={!selected && slotsLeft <= 0}
-                      >
-                        <AuthedImage
-                          src={asset.url}
-                          publicUrl={asset.publicUrl}
-                          alt={asset.originalName}
-                          className={styles.libraryImg}
-                        />
-                        {selected && <span className={styles.librarySelectedMark}>✓</span>}
-                      </button>
+                      <div key={asset.id} className={styles.libraryCell}>
+                        <button
+                          type="button"
+                          className={cn(styles.libraryItem, selected && styles.libraryItemSelected)}
+                          onClick={() => toggleFromLibrary(asset)}
+                          aria-pressed={selected}
+                          disabled={!selected && slotsLeft <= 0}
+                        >
+                          <AuthedImage
+                            src={asset.url}
+                            publicUrl={asset.publicUrl}
+                            alt={asset.originalName}
+                            className={styles.libraryImg}
+                          />
+                          {selected && <span className={styles.librarySelectedMark}>✓</span>}
+                        </button>
+
+                        {/* Separate from the select button: the thumbnail alone
+                            does not say whether a file will be refused. */}
+                        <button
+                          type="button"
+                          className={styles.libraryInfo}
+                          onClick={() => setDetailId(asset.id)}
+                          aria-label={`Details for ${asset.originalName}`}
+                        >
+                          i
+                        </button>
+                      </div>
                     )
                   })}
                 </div>
@@ -249,6 +264,15 @@ export function MediaUpload({
       )}
 
       {error && <div className={styles.error}>{error}</div>}
+
+      {detailId && (
+        <AssetDetail
+          id={detailId}
+          platforms={platforms}
+          specs={specs}
+          onClose={() => setDetailId(null)}
+        />
+      )}
 
       {/* In-flight uploads */}
       {uploading.length > 0 && (
@@ -365,6 +389,94 @@ export function MediaUpload({
           )}
         </>
       )}
+    </div>
+  )
+}
+/**
+ * Everything known about one asset, fetched fresh by id.
+ *
+ * The point is the warnings: the library grid shows a thumbnail, so there is
+ * no way to tell that a file is too tall for Instagram until the post is
+ * submitted and refused. mediaWarnings already computes this — nothing
+ * surfaced it in the library tab.
+ *
+ * Fetched by id rather than passed down, because a list loaded before an
+ * upload finished processing can be missing the width and height the warnings
+ * depend on.
+ */
+function AssetDetail({
+  id,
+  platforms,
+  specs,
+  onClose,
+}: {
+  id:        string
+  platforms: string[]
+  specs:     MediaSpecs | undefined
+  onClose:   () => void
+}) {
+  const { data: asset, isLoading, isError } = useMediaAsset(id)
+
+  const warnings = asset ? mediaWarnings(asset, platforms, specs) : []
+
+  return (
+    <div className={styles.detailOverlay} onClick={onClose}>
+      <div className={styles.detailModal} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.detailHeader}>
+          <span className={styles.detailTitle}>
+            {asset?.originalName ?? 'Media details'}
+          </span>
+          <button className={styles.detailClose} onClick={onClose} aria-label="Close">
+            &times;
+          </button>
+        </div>
+
+        {isLoading && <div className={styles.detailBody}>Loading…</div>}
+        {isError && <div className={styles.detailBody}>Could not load this file.</div>}
+
+        {asset && (
+          <div className={styles.detailBody}>
+            <AuthedImage
+              src={asset.url}
+              publicUrl={asset.publicUrl}
+              alt={asset.originalName}
+              className={styles.detailImg}
+            />
+
+            <dl className={styles.detailFacts}>
+              <dt>Type</dt>
+              <dd>{asset.contentType}</dd>
+
+              <dt>Size</dt>
+              <dd>{formatBytes(asset.sizeBytes)}</dd>
+
+              <dt>Dimensions</dt>
+              <dd>
+                {asset.width && asset.height ? `${asset.width} × ${asset.height}` : '—'}
+              </dd>
+
+              {asset.durationMs != null && (
+                <>
+                  <dt>Duration</dt>
+                  <dd>{(asset.durationMs / 1000).toFixed(1)}s</dd>
+                </>
+              )}
+            </dl>
+
+            {platforms.length > 0 && (
+              warnings.length > 0 ? (
+                <ul className={styles.detailWarnings}>
+                  {warnings.map((w) => <li key={w}>{w}</li>)}
+                </ul>
+              ) : (
+                <div className={styles.detailOk}>
+                  Fits the rules for {platforms.join(' and ')}.
+                </div>
+              )
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }

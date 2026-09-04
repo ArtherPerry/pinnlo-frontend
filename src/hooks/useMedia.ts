@@ -214,3 +214,22 @@ export function acceptAttribute(specs: MediaSpecs | undefined): string {
   if (!specs) return 'image/*'
   return [...specs.uploadImageTypes, ...specs.uploadVideoTypes].join(',')
 }
+
+/**
+ * One asset, fetched by id.
+ *
+ * The library list carries full records, so this is not needed to render the
+ * grid. It backs the detail view, where the authoritative record matters: a
+ * list fetched before an upload finished processing can be missing the width
+ * and height that decide whether Instagram will accept the file.
+ */
+export function useMediaAsset(id: string | null) {
+  return useQuery({
+    queryKey: ['media', 'detail', id ?? 'none'],
+    enabled:  !!id,
+    queryFn: async () => {
+      const { data } = await api.get<MediaAsset>(`/api/media/${id}`)
+      return data
+    },
+  })
+}

@@ -152,3 +152,21 @@ export function useClientRequestChanges() {
     },
   })
 }
+
+/**
+ * One post from the client's own workspace.
+ *
+ * The calendar carries enough for a cell, but not the media, and a tooltip is
+ * not a way to read a caption. Fetched by id so the detail is authoritative —
+ * a calendar loaded before the agency edited a draft would show stale copy.
+ */
+export function useClientPost(id: string | null) {
+  return useQuery({
+    queryKey: ['client-workspace', 'post', id ?? 'none'],
+    enabled:  !!id,
+    queryFn: async () => {
+      const { data } = await api.get<ClientPost>(`/api/client/posts/${id}`)
+      return data
+    },
+  })
+}

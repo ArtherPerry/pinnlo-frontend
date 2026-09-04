@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Button } from '@/components/ui'
 import {
@@ -7,10 +8,11 @@ import {
   useStartMetaConnect,
   useDisconnectMetaConnection,
   usePageInfo,
+  usePageInsights,
 } from '@/hooks/useMeta'
 import { useToast } from '@/hooks/useToast'
-import { formatDate } from '@/lib/utils'
-import { Plus } from 'lucide-react'
+import { cn, formatDate } from '@/lib/utils'
+import { Plus, ChevronDown } from 'lucide-react'
 import { PlatformIcon } from '@/components/ui'
 import styles from './ConnectedPlatforms.module.css'
 
@@ -77,31 +79,37 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
       {!isLoading && connections && connections.length > 0 && (
         <div className={styles.list}>
           {connections.map((c) => (
-            <div key={c.id} className={styles.row}>
-              <PlatformIcon platform={c.platform} size={18} />
+            <div key={c.id}>
+              <div className={styles.row}>
+                <PlatformIcon platform={c.platform} size={18} />
 
-              <div className={styles.rowMain}>
-                <div className={styles.rowName}>{c.externalName}</div>
-                <div className={styles.rowMeta}>
-                  {c.active ? 'Connected' : 'Inactive'}
-                  {' · '}
-                  {formatDate(c.connectedAt, locale, { dateStyle: 'medium' })}
-                  <PageStats
-                    connectionId={c.id}
-                    enabled={c.active && c.platform === 'FACEBOOK'}
-                    locale={locale}
-                  />
+                <div className={styles.rowMain}>
+                  <div className={styles.rowName}>{c.externalName}</div>
+                  <div className={styles.rowMeta}>
+                    {c.active ? 'Connected' : 'Inactive'}
+                    {' · '}
+                    {formatDate(c.connectedAt, locale, { dateStyle: 'medium' })}
+                    <PageStats
+                      connectionId={c.id}
+                      enabled={c.active && c.platform === 'FACEBOOK'}
+                      locale={locale}
+                    />
+                  </div>
                 </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handleDisconnect(c.id, c.externalName)}
+                  disabled={disconnect.isPending}
+                >
+                  Disconnect
+                </Button>
               </div>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => handleDisconnect(c.id, c.externalName)}
-                disabled={disconnect.isPending}
-              >
-                Disconnect
-              </Button>
+              {c.platform === 'FACEBOOK' && c.active && (
+                <PageInsights connectionId={c.id} />
+              )}
             </div>
           ))}
         </div>
@@ -142,5 +150,70 @@ function PageStats({
       {' · '}
       {followers.toLocaleString(locale)} followers
     </>
+  )
+}
+
+/**
+ * Page metrics, loaded when the user asks for them.
+ *
+ * Collapsed by default because this is a live round trip to Graph per
+ * connection — opening a drawer with four pages should not fire four external
+ * calls for a panel nobody looked at.
+ *
+ * Values that are not plain numbers are skipped: some Graph metrics return an
+ * object broken down by type, with no single figure to show. Metrics Meta has
+ * retired come back with no values and simply do not appear, so this needs no
+ * hardcoded list of which names are currently valid.
+ */
+function PageInsights({ connectionId }: { connectionId: string }) {
+  const [open, setOpen] = useState(false)
+  const { data, isLoading, isError } = usePageInsights(connectionId, open)
+
+  const metrics = (data?.data ?? [])
+    .map((m) => {
+      const latest = m.values?.[m.values.length - 1]?.value
+      return typeof latest === 'number'
+        ? { key: m.name, label: m.title ?? m.name, value: latest }
+        : null
+    })
+    .filter((m): m is { key: string; label: string; value: number } => m !== null)
+
+  return (
+    <div className={styles.insights}>
+      <button className={styles.insightsToggle} onClick={() => setOpen((o) => !o)}>
+        <ChevronDown
+          size={14}
+          className={cn(styles.insightsChevron, open && styles.insightsChevronOpen)}
+        />
+        {open ? 'Hide insights' : 'View insights'}
+      </button>
+
+      {open && (
+        <div className={styles.insightsBody}>
+          {isLoading && (
+            <span className={styles.insightsMuted}>Loading from Facebook…</span>
+          )}
+
+          {isError && (
+            <span className={styles.insightsMuted}>
+              Facebook did not return insights for this page.
+            </span>
+          )}
+
+          {!isLoading && !isError && metrics.length === 0 && (
+            <span className={styles.insightsMuted}>
+              No metrics available for this page.
+            </span>
+          )}
+
+          {metrics.map((m) => (
+            <div key={m.key} className={styles.insightItem}>
+              <span className={styles.insightValue}>{m.value.toLocaleString()}</span>
+              <span className={styles.insightLabel}>{m.label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

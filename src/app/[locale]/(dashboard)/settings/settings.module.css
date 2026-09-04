@@ -530,3 +530,18 @@
   color: var(--color-muted);
   font-size: var(--text-small);
 }
+
+.roleSelect {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.roleSelect:hover {
+  border-color: var(--color-teal-200);
+}

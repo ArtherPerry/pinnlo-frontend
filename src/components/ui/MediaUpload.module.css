@@ -299,3 +299,116 @@
   line-height: 1.6;
   color: var(--color-warning-text, #7a5c14);
 }
+
+.libraryCell {
+  position: relative;
+}
+
+.libraryInfo {
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.libraryInfo:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.detailOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: var(--space-4);
+}
+
+.detailModal {
+  background: var(--color-white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.detailHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 0.5px solid var(--color-border);
+}
+
+.detailTitle {
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detailClose {
+  background: none;
+  border: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-muted);
+  cursor: pointer;
+}
+
+.detailBody {
+  padding: var(--space-4);
+}
+
+.detailImg {
+  width: 100%;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.detailFacts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-small);
+  margin: 0;
+}
+
+.detailFacts dt {
+  color: var(--color-muted);
+}
+
+.detailFacts dd {
+  margin: 0;
+  color: var(--color-ink);
+}
+
+.detailWarnings {
+  margin: var(--space-4) 0 0;
+  padding-left: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--color-danger);
+  line-height: 1.6;
+}
+
+.detailOk {
+  margin-top: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}

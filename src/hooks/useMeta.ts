@@ -116,3 +116,41 @@ export function usePageInfo(connectionId: string, enabled: boolean) {
     },
   })
 }
+
+/** Graph's insights envelope, passed through by the backend unchanged. */
+export interface MetaInsightMetric {
+  name:        string
+  period?:     string
+  title?:      string
+  description?: string
+  values:      { value: unknown; end_time?: string }[]
+}
+
+export interface MetaInsights {
+  data: MetaInsightMetric[]
+}
+
+/**
+ * Page insights for one connection, live from Meta.
+ *
+ * Fetched only when asked for: this is a network round trip to Graph per
+ * connection, so loading it for every row on drawer open would be several
+ * external calls for a panel nobody opened.
+ *
+ * Facebook only, like usePageInfo — Instagram uses a different metric
+ * vocabulary and the requested names would error.
+ */
+export function usePageInsights(connectionId: string, enabled: boolean) {
+  return useQuery({
+    queryKey:  ['meta', 'insights', connectionId],
+    enabled,
+    retry:     false,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data } = await api.get<MetaInsights>(
+        `/api/v1/meta/connections/${connectionId}/insights`
+      )
+      return data
+    },
+  })
+}

@@ -1,8 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useClientCalendar, type ClientPost } from '@/hooks/useClientWorkspace'
+import { useClientCalendar, useClientPost, type ClientPost } from '@/hooks/useClientWorkspace'
 import styles from './client.module.css'
+import { AuthedImage } from '@/components/ui/AuthedImage'
+
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 const MONTH_NAMES = [
@@ -24,6 +26,7 @@ export function CalendarSection() {
   const today = new Date()
   const [year, setYear]   = useState(today.getFullYear())
   const [month, setMonth] = useState(today.getMonth())
+  const [openPostId, setOpenPostId] = useState<string | null>(null)
 
   // Whole month, past and future. A client looking at their calendar wants to
   // see what went out as much as what is coming.
@@ -109,13 +112,15 @@ export function CalendarSection() {
                 {day}
               </div>
               {dayPosts.map((post) => (
-                <div
+                <button
                   key={post.id}
+                  type="button"
                   className={`${styles.calendarPost} ${statusClass(post.status)}`}
+                  onClick={() => setOpenPostId(post.id)}
                   title={`${post.content}\n${post.platforms.join(', ')}`}
                 >
                   {post.content}
-                </div>
+                </button>
               ))}
             </div>
           )
@@ -135,6 +140,71 @@ export function CalendarSection() {
           <span className={styles.legendDot} style={{ background: 'var(--color-warning, #e8b84b)' }} />
           Awaiting your review
         </div>
+      </div>
+
+      {openPostId && (
+        <PostDetail id={openPostId} onClose={() => setOpenPostId(null)} />
+      )}
+    </div>
+  )
+}
+
+/**
+ * One post, read-only.
+ *
+ * Approve and request-changes live in ReviewSection, which filters to
+ * PENDING_CLIENT. The calendar also shows published and scheduled posts, and
+ * offering an approve button on something already live would be a lie — so
+ * this view has no actions at all.
+ */
+function PostDetail({ id, onClose }: { id: string; onClose: () => void }) {
+  const { data: post, isLoading, isError } = useClientPost(id)
+
+  return (
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+        {isLoading && <div className={styles.modalSub}>Loading…</div>}
+        {isError && <div className={styles.modalSub}>Could not load this post.</div>}
+
+        {post && (
+          <>
+            <div className={styles.modalTitle}>{post.platforms.join(' · ')}</div>
+
+            <div className={styles.detailStatus}>
+              {post.publishedAt
+                ? `Published ${new Date(post.publishedAt).toLocaleString()}`
+                : post.scheduledAt
+                  ? `Scheduled for ${new Date(post.scheduledAt).toLocaleString()}`
+                  : 'Not scheduled'}
+            </div>
+
+            <p className={styles.detailContent}>{post.content}</p>
+
+            {post.media.length > 0 && (
+              <div className={styles.detailMedia}>
+                {post.media.map((m) => (
+                  <AuthedImage
+                    key={m.id}
+                    src={m.url}
+                    publicUrl={m.publicUrl}
+                    alt={m.originalName}
+                    className={styles.detailMediaImg}
+                  />
+                ))}
+              </div>
+            )}
+
+            {post.clientComment && (
+              <div className={styles.detailComment}>
+                <strong>Your note:</strong> {post.clientComment}
+              </div>
+            )}
+
+            <div className={styles.modalActions}>
+              <button className={styles.detailCloseBtn} onClick={onClose}>Close</button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

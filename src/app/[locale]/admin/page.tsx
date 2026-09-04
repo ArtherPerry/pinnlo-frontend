@@ -12,6 +12,7 @@ import {
   usePlatformStats,
   useAllUsers,
   useSetUserStatus,
+  usePendingAgencies,
 } from '@/hooks/useAdminAgencies'
 import { AdminShell, type AdminSection } from './adminShell'
 import styles from './admin.module.css'
@@ -229,7 +230,72 @@ function DashboardSection() {
           </div>
         ))}
       </div>
+
+      <PendingApprovals />
     </>
+  )
+}
+
+/**
+ * The approval queue, on the dashboard rather than behind a filter.
+ *
+ * The Pending stat card above says how many are waiting but gives no way to
+ * act; without this an admin has to switch to Agencies and filter by status.
+ * Signup is blocked until approval, so everyone in this list is locked out
+ * right now.
+ *
+ * Uses the server-side pending endpoint rather than filtering the full list:
+ * the dashboard needs this before the agencies list has been fetched at all.
+ */
+function PendingApprovals() {
+  const { data: pending, isLoading } = usePendingAgencies()
+  const approve = useApproveAgency()
+
+  if (isLoading) return null
+
+  if (!pending || pending.length === 0) {
+    return (
+      <div className={styles.chartCard}>
+        <div className={styles.chartTitle}>Awaiting approval</div>
+        <div className={styles.empty}>Nothing waiting. Every agency has been reviewed.</div>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.chartCard}>
+      <div className={styles.chartTitle}>Awaiting approval ({pending.length})</div>
+
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th>Agency</th>
+            <th>Plan</th>
+            <th>Signed up</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {pending.map((a) => (
+            <tr key={a.id}>
+              <td>{a.name}</td>
+              <td><Badge variant="neutral">{a.plan}</Badge></td>
+              <td className={styles.userEmail}>{formatDate(a.createdAt, 'en-GB')}</td>
+              <td>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  loading={approve.isPending}
+                  onClick={() => approve.mutate(a.id)}
+                >
+                  Approve
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   )
 }
 

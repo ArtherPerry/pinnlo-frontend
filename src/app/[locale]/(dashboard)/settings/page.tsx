@@ -11,6 +11,7 @@ import api from '@/lib/api'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Role, Plan, Platform } from '@/lib/types'
 import styles from './settings.module.css'
+import { FEATURES } from '@/lib/features'
 
 type Tab = 'agency' | 'team' | 'platforms' | 'notifications' | 'billing'
 

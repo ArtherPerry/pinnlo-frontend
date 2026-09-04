@@ -15,6 +15,7 @@ import {
   TrendingUp, Eye, BarChart3, LayoutGrid, Radio, Star,
   Code2, Settings,
 } from 'lucide-react'
+import { isNavVisible } from '@/lib/features'
 
 const ICON_SIZE = 18
 
@@ -102,6 +103,14 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ]
 
+/**
+ * Groups with every item hidden are dropped entirely — otherwise Phase 1
+ * shows a "MORE" heading with nothing under it.
+ */
+const VISIBLE_GROUPS: NavGroup[] = NAV_GROUPS
+  .map((group) => ({ ...group, items: group.items.filter((i) => isNavVisible(i.key)) }))
+  .filter((group) => group.items.length > 0)
+
 export function Sidebar() {
   const t        = useTranslations('nav')
   const pathname = usePathname()
@@ -135,7 +144,7 @@ export function Sidebar() {
 
       {/* Nav */}
       <nav className={styles.nav}>
-        {NAV_GROUPS.map((group, gi) => (
+          {VISIBLE_GROUPS.map((group, gi) => (
           <div key={gi} className={styles.navGroup}>
             {group.label && (
               <div className={styles.navGroupLabel}>{t(group.label)}</div>

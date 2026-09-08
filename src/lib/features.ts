@@ -78,7 +78,7 @@ const NAV_HIDDEN: Record<string, true> = {
   flows:       true,
 
   // No backend yet, in scope later.
-  inbox:      true,
+
   broadcasts: true,
   emails:     true,
 }

@@ -6,6 +6,7 @@ import {
   useCreateTemplate,
   useUpdateTemplate,
   useDeleteTemplate,
+  useRecordTemplateUsage,
 } from '@/hooks/useTemplates'
 import { Button, Input } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
@@ -28,7 +29,9 @@ const CATEGORIES: { value: TemplateCategory | ''; label: string }[] = [
 ]
 
 const PLATFORMS: { value: TemplatePlatform | ''; label: string }[] = [
-  { value: '',          label: 'All platforms' },
+  // '' is "do not filter"; ALL is a template tagged for every platform.
+  // Two options reading "All platforms" meant two different things.
+  { value: '',          label: 'Any platform'  },
   { value: 'ALL',       label: 'All platforms' },
   { value: 'FACEBOOK',  label: 'Facebook'      },
   { value: 'WHATSAPP',  label: 'WhatsApp'      },
@@ -218,6 +221,7 @@ function TemplateCard({
   onEdit:   (t: MessageTemplate) => void
 }) {
   const deleteTemplate = useDeleteTemplate()
+  const recordUsage    = useRecordTemplateUsage()
   const toast          = useToast()
 
   const handleDelete = async () => {
@@ -233,6 +237,9 @@ function TemplateCard({
   const handleCopy = () => {
     navigator.clipboard.writeText(template.content)
     toast.show('Template content copied', 'success')
+    // Fire and forget: the copy has already happened, and a failed counter
+    // is not worth an error message.
+    recordUsage.mutate(template.id)
   }
 
   return (

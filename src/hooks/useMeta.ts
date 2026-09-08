@@ -117,17 +117,13 @@ export function usePageInfo(connectionId: string, enabled: boolean) {
   })
 }
 
-/** Graph's insights envelope, passed through by the backend unchanged. */
-export interface MetaInsightMetric {
-  name:        string
-  period?:     string
-  title?:      string
-  description?: string
-  values:      { value: unknown; end_time?: string }[]
-}
-
-export interface MetaInsights {
-  data: MetaInsightMetric[]
+/** Already resolved by the backend: one entry per card, labels included. */
+export interface PageInsight {
+  metric:      string
+  label:       string
+  periodLabel: string
+  value:       number
+  asOf:        string | null
 }
 
 /**
@@ -147,7 +143,7 @@ export function usePageInsights(connectionId: string, enabled: boolean) {
     retry:     false,
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
-      const { data } = await api.get<MetaInsights>(
+      const { data } = await api.get<PageInsight[]>(
         `/api/v1/meta/connections/${connectionId}/insights`
       )
       return data

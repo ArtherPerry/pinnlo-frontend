@@ -430,12 +430,15 @@ function PlatformsTab() {
     }
   }
 
-  const handleReconnect = async (id: string) => {
+    const handleReconnect = async (id: string) => {
     try {
-      await api.post(`/api/settings/platforms/${id}/reconnect`)
-      toast.show('Reconnection initiated — follow the OAuth flow', 'info')
+      const { data } = await api.post(`/api/settings/platforms/${id}/reconnect`, null, {
+        params: { locale },
+      })
+      // The backend returns Meta's auth URL; the browser has to follow it.
+      window.location.href = data.authUrl
     } catch {
-      toast.show('Failed to reconnect', 'error')
+      toast.show('Failed to start reconnection', 'error')
     }
   }
 

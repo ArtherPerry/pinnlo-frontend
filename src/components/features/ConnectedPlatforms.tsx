@@ -160,23 +160,13 @@ function PageStats({
  * connection — opening a drawer with four pages should not fire four external
  * calls for a panel nobody looked at.
  *
- * Values that are not plain numbers are skipped: some Graph metrics return an
- * object broken down by type, with no single figure to show. Metrics Meta has
- * retired come back with no values and simply do not appear, so this needs no
- * hardcoded list of which names are currently valid.
+ * No interpretation here: the backend picks which metric and period each card
+ * shows and supplies the labels, because Graph's own titles are absent for some
+ * metrics and contradictory for others.
  */
 function PageInsights({ connectionId }: { connectionId: string }) {
   const [open, setOpen] = useState(false)
-  const { data, isLoading, isError } = usePageInsights(connectionId, open)
-
-  const metrics = (data?.data ?? [])
-    .map((m) => {
-      const latest = m.values?.[m.values.length - 1]?.value
-      return typeof latest === 'number'
-        ? { key: m.name, label: m.title ?? m.name, value: latest }
-        : null
-    })
-    .filter((m): m is { key: string; label: string; value: number } => m !== null)
+  const { data: metrics, isLoading, isError } = usePageInsights(connectionId, open)
 
   return (
     <div className={styles.insights}>
@@ -200,16 +190,17 @@ function PageInsights({ connectionId }: { connectionId: string }) {
             </span>
           )}
 
-          {!isLoading && !isError && metrics.length === 0 && (
+          {!isLoading && !isError && metrics?.length === 0 && (
             <span className={styles.insightsMuted}>
               No metrics available for this page.
             </span>
           )}
 
-          {metrics.map((m) => (
-            <div key={m.key} className={styles.insightItem}>
+          {metrics?.map((m) => (
+            <div key={m.metric} className={styles.insightItem}>
               <span className={styles.insightValue}>{m.value.toLocaleString()}</span>
               <span className={styles.insightLabel}>{m.label}</span>
+              <span className={styles.insightPeriod}>{m.periodLabel}</span>
             </div>
           ))}
         </div>

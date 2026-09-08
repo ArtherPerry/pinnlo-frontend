@@ -98,10 +98,48 @@ export function useUpdateTemplate(id: string) {
       )
       return { snapshot }
     },
+
+        onSuccess: (updated) => {
+      // The server derives `variables` from content, so the optimistic copy is
+      // incomplete — replace it rather than leaving stale chips on screen.
+      qc.setQueriesData(
+        { queryKey: templateKeys.all() },
+        (old: MessageTemplate[] | undefined) =>
+          old ? old.map((t) => t.id === id ? updated : t) : old
+      )
+    },
     onError: (_err, _input, context) => {
       if (context?.snapshot) {
         context.snapshot.forEach(([key, value]) => qc.setQueryData(key, value))
       }
+    },
+  })
+}
+
+/**
+ * Records that a template was copied.
+ *
+ * The count is bumped locally straight away and not rolled back on failure:
+ * this is a soft metric attached to a copy that already succeeded, and
+ * showing an error for it would be noise. No invalidation either — refetching
+ * the list because someone clicked Copy would be jarring.
+ */
+export function useRecordTemplateUsage() {
+  const qc = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      await api.post(`/api/templates/${id}/use`)
+      return id
+    },
+    onMutate: async (id) => {
+      qc.setQueriesData(
+        { queryKey: templateKeys.all() },
+        (old: MessageTemplate[] | undefined) =>
+          old?.map((t) =>
+            t.id === id ? { ...t, usageCount: t.usageCount + 1 } : t
+          ) ?? old
+      )
     },
   })
 }

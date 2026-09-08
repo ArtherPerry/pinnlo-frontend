@@ -117,3 +117,9 @@
   font-size: var(--text-small);
   color: var(--color-muted);
 }
+
+.insightPeriod {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  opacity: 0.7;
+}

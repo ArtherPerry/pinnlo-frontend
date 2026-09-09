@@ -109,7 +109,12 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
         clientId:    values.clientId,
         content:     values.content,
         platforms:   values.platforms as Platform[],
-        scheduledAt: values.scheduledAt || null,
+                // datetime-local gives "2026-09-09T09:45" — no seconds, no timezone.
+        // Instant.parse needs a full ISO instant, and treating the bare string
+        // as UTC would schedule a 09:45 Bangkok post for 16:45 local.
+        scheduledAt: values.scheduledAt
+          ? new Date(values.scheduledAt).toISOString()
+          : null,
         labels: values.labels
           ? values.labels.split(',').map((l) => l.trim()).filter(Boolean)
           : [],

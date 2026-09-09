@@ -2,13 +2,39 @@
 
 import { usePosts, useApprovePost, useRejectPost } from '@/hooks/usePosts'
 import { PlatformIcons } from '@/components/ui'
-import { Check, CheckCircle } from 'lucide-react'
+import { Check, CheckCircle, AlertTriangle } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
 import { formatDate, cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import type { Post } from '@/lib/types'
 import styles from './approval.module.css'
+
+/**
+ * OpenAI's raw category names are not reviewer-facing — "harassment/threatening"
+ * reads like a system error. Anything unmapped falls back to the raw name
+ * rather than being hidden, so a new category from OpenAI is visible rather
+ * than silently dropped.
+ */
+const MODERATION_LABELS: Record<string, string> = {
+  'sexual':                 'Sexual content',
+  'sexual/minors':          'Sexual content involving minors',
+  'harassment':             'Harassment',
+  'harassment/threatening': 'Threatening language',
+  'hate':                   'Hate speech',
+  'hate/threatening':       'Threatening hate speech',
+  'violence':               'Violence',
+  'violence/graphic':       'Graphic violence',
+  'self-harm':              'Self-harm',
+  'self-harm/intent':       'Self-harm intent',
+  'self-harm/instructions': 'Self-harm instructions',
+  'illicit':                'Illicit activity',
+  'illicit/violent':        'Violent illicit activity',
+}
+
+function moderationLabel(category: string): string {
+  return MODERATION_LABELS[category] ?? category
+}
 
 export default function ApprovalPage() {
   const { data: posts, isLoading } = usePosts('PENDING_REVIEW')
@@ -100,6 +126,27 @@ export default function ApprovalPage() {
                   <span className={styles.pipeStep}>2 · Client</span>
                 </div>
               </div>
+
+                            {/* Moderation */}
+              {post.moderationFlagged && post.moderationCategories && (
+                <div className={styles.moderationWarning}>
+                  <AlertTriangle size={16} className={styles.moderationIcon} />
+                  <div>
+                    <div className={styles.moderationTitle}>
+                      Flagged for review
+                    </div>
+                    <div className={styles.moderationBody}>
+                      An automated check flagged this for{' '}
+                      {post.moderationCategories
+                        .split(',')
+                        .map(moderationLabel)
+                        .join(', ')
+                        .toLowerCase()}
+                      . Automated checks are often wrong — read the post and decide.
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Content */}
               <p className={styles.content}>{post.content}</p>

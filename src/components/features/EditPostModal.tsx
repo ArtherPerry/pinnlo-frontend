@@ -39,6 +39,15 @@ interface EditPostModalProps {
   onClose: () => void
 }
 
+/** "2026-09-09T09:45" in the browser's own timezone, which is what
+ *  datetime-local expects. */
+function toLocalInputValue(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+       + `T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export function EditPostModal({ post, onClose }: EditPostModalProps) {
   const editPost = useEditPost(post.id)
   const toast    = useToast()
@@ -54,8 +63,11 @@ export function EditPostModal({ post, onClose }: EditPostModalProps) {
     defaultValues: {
       platforms:   post.platforms,
       content:     post.content,
+            // Local time for the input, not UTC. toISOString would show a Bangkok
+      // 09:45 post as 02:45, and saving that would shift it another seven
+      // hours on every edit.
       scheduledAt: post.scheduledAt
-        ? new Date(post.scheduledAt).toISOString().slice(0, 16)
+        ? toLocalInputValue(post.scheduledAt)
         : '',
       labels: post.labels.join(', '),
     },
@@ -85,7 +97,12 @@ export function EditPostModal({ post, onClose }: EditPostModalProps) {
         clientId:    post.clientId,
         content:     values.content,
         platforms:   values.platforms as Platform[],
-        scheduledAt: values.scheduledAt,
+                // datetime-local gives "2026-09-09T09:45" — no seconds, no timezone.
+        // Instant.parse needs a full ISO instant, and treating the bare string
+        // as UTC would schedule a 09:45 Bangkok post for 16:45 local.
+        scheduledAt: values.scheduledAt
+          ? new Date(values.scheduledAt).toISOString()
+          : null,
         labels:      values.labels
           ? values.labels.split(',').map((l) => l.trim()).filter(Boolean)
           : [],

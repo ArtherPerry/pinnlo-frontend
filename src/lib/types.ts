@@ -135,6 +135,9 @@ export interface Post {
   createdBy:   string
   createdAt:   string
   updatedAt:   string
+  moderationFlagged:    boolean | null
+  moderationCategories: string | null
+  moderationCheckedAt:  string | null
 }
 
 export interface CreatePostInput {

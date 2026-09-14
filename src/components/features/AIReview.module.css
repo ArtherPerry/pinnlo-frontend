@@ -1,7 +1,8 @@
+/* ── Shell ── */
 .wrap {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .intro {
@@ -14,8 +15,10 @@
 }
 
 .introIcon {
-  font-size: 22px;
-  display: flex; align-items: center;
+  display: flex;
+  align-items: center;
+  color: var(--color-teal-600);
+  flex-shrink: 0;
 }
 
 .introTitle {
@@ -28,75 +31,137 @@
   font-size: var(--text-small);
   color: var(--color-muted);
   margin-top: 2px;
+  line-height: 1.5;
 }
 
-.section {
+/* ── States ── */
+.state {
+  padding: var(--space-4);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-danger-light);
+  color: var(--color-danger);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+/* ── Rendered review ──
+   The model returns light markdown: bold lines as headings, "-" bullets, and
+   inline bold. These classes style what the renderer emits rather than the
+   fixed sections this panel used to show. */
+.body {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: var(--space-4);
 }
 
-.sectionHead {
+.sectionTitle {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
+/* The first heading sits flush with the top of the box. */
+.body > .sectionTitle:first-child {
+  margin-top: 0;
+}
+
+.para {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-small);
+  line-height: 1.65;
+  color: var(--color-ink);
+}
+
+/* Rendered as bare <li> without a surrounding list, so the marker position
+   has to be set here rather than inherited from a <ul>. */
+.bullet {
+  margin: 0 0 var(--space-2);
+  margin-left: var(--space-5);
+  font-size: var(--text-small);
+  line-height: 1.65;
+  color: var(--color-ink);
+  list-style: disc;
+  list-style-position: outside;
+}
+
+.bullet strong,
+.para strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+/* ── Regenerate ── */
+.regenerate {
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.regenerate:hover:not(:disabled) {
+  border-color: var(--color-teal-200);
+  color: var(--color-ink);
+}
+
+.regenerate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.marketRow {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  font-size: var(--text-body);
-  font-weight: 600;
-  color: var(--color-ink);
-  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
 }
 
-.sectionIcon {
-  font-size: 16px;
-  display: flex; align-items: center;
-}
-
-.scoreTag {
-  margin-left: auto;
-  font-size: var(--text-caption);
-  font-weight: 600;
-  color: var(--color-teal-600);
-  background: var(--color-teal-50);
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-}
-
-.sectionBody {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.primary {
-  font-size: var(--text-body);
-  color: var(--color-ink);
-  font-weight: 500;
-}
-
-.note {
+.marketLabel {
   font-size: var(--text-small);
   color: var(--color-muted);
-  line-height: 1.5;
 }
 
-.tips {
-  margin: 0;
-  padding-left: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.tips li {
-  font-size: var(--text-body);
-  color: var(--color-ink);
-  line-height: 1.5;
-}
-
-.warnNote {
+.marketOption {
+  padding: 3px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-white);
+  font-family: var(--font-sans);
   font-size: var(--text-small);
-  color: var(--color-warning);
-  background: var(--color-warning-light);
-  padding: var(--space-3);
-  border-radius: var(--radius-md);
+  color: var(--color-muted);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.marketOption:hover:not(:disabled) {
+  border-color: var(--color-teal-200);
+  color: var(--color-ink);
+}
+
+.marketOptionActive {
+  border-color: var(--color-teal-500);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  font-weight: 600;
+}
+
+.marketOption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

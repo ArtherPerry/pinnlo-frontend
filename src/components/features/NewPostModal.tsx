@@ -81,6 +81,8 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
   const platforms  = watch('platforms') as Platform[]
   const clientId   = watch('clientId')
   const clientName = clients?.find((c) => c.id === clientId)?.name
+  // The client's usual market seeds the review; the panel can target another.
+  const clientMarket = clients?.find((c) => c.id === clientId)?.market ?? 'TH'
 
   // Media is scoped to a workspace, so changing workspace invalidates whatever
   // is attached. Clearing here avoids a confusing "media could not be found"
@@ -109,7 +111,7 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
         clientId:    values.clientId,
         content:     values.content,
         platforms:   values.platforms as Platform[],
-                // datetime-local gives "2026-09-09T09:45" — no seconds, no timezone.
+        // datetime-local gives "2026-09-09T09:45" — no seconds, no timezone.
         // Instant.parse needs a full ISO instant, and treating the bare string
         // as UTC would schedule a 09:45 Bangkok post for 16:45 local.
         scheduledAt: values.scheduledAt
@@ -282,19 +284,12 @@ export function NewPostModal({ onClose }: NewPostModalProps) {
               {/* Optional AI review — never blocks saving */}
               {FEATURES.aiReview && showReview && content.trim() && (
                 <div style={{ marginTop: 12 }}>
-                  {FEATURES.aiReviewIsPreview && (
-                    <div className={styles.previewNote}>
-                      <Info size={14} />
-                      <span>
-                        Preview feature — this is sample output to show the format.
-                        Real recommendations arrive with Annovist Intelligence.
-                      </span>
-                    </div>
-                  )}
                   <AIReview
+                    clientId={clientId}
                     content={content}
-                    clientName={clientName}
+                    platforms={platforms}
                     hasMedia={mediaFiles.length > 0}
+                    defaultMarket={clientMarket}
                   />
                 </div>
               )}

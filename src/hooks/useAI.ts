@@ -73,3 +73,33 @@ export function useGenerateImages() {
     },
   })
 }
+
+export interface ReviewInput {
+  clientId:  string
+  content:   string
+  platforms: string[]
+  hasMedia:  boolean
+  /** Optional — the backend falls back to the client's usual market. */
+  market?:   string
+}
+
+export interface AIReviewResult {
+  review:      string
+  market:      string
+  generatedAt: string
+}
+
+/**
+ * Advisory review of draft content, before it is saved.
+ *
+ * A mutation rather than a query: it costs money on every call, so it runs
+ * when the user asks rather than whenever the component mounts.
+ */
+export function useAIReview() {
+  return useMutation({
+    mutationFn: async (input: ReviewInput) => {
+      const { data } = await api.post<AIReviewResult>('/api/posts/review', input)
+      return data
+    },
+  })
+}

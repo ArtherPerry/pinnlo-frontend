@@ -140,3 +140,18 @@ export function useArchiveClient(id: string) {
     },
   })
 }
+
+export interface Client {
+  id:        string
+  name:      string
+  platforms: string[]
+  status:    string
+  market:    string
+}
+
+export interface ClientInput {
+  name:      string
+  platforms: string[]
+  status:    string
+  market:    string
+}

@@ -1,119 +1,155 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import styles from './AIReview.module.css'
-import { Sparkles, Target, Clock, FileText, Eye, TrendingUp } from 'lucide-react'
+import { Sparkles, AlertCircle } from 'lucide-react'
+import { useAIReview } from '@/hooks/useAI'
+import { cn } from '@/lib/utils'
+import type { Platform } from '@/lib/types'
 
 interface AIReviewProps {
-  content: string
-  clientName?: string
-  hasMedia: boolean
+  clientId:  string
+  content:   string
+  platforms: Platform[]
+  hasMedia:  boolean
+  /** The client's usual market — the starting point, not a constraint. */
+  defaultMarket: string
 }
 
-// Mock recommendations — in production these come from the RAG backend
-// (SEA market chunks + content-writing chunks + client history + competitor data)
-function buildMockReview(content: string, clientName?: string) {
-  const wordCount = content.trim().split(/\s+/).filter(Boolean).length
-  return {
-    audience: {
-      primary: 'Urban millennials (25–34), food & lifestyle interest',
-      note: `Based on ${clientName ?? 'this client'}'s follower base and similar F&B pages in the region.`,
-    },
-    timing: {
-      bestTime: 'Thursday–Friday, 6:00–8:00 PM',
-      location: 'Bangkok metro + surrounding provinces',
-      note: 'Engagement for this client peaks in early evening on weekdays.',
-    },
-    content: {
-      score: wordCount > 0 ? (wordCount < 40 ? 'Good length' : 'Consider shortening') : 'Add some text',
-      tips: [
-        'Tone fits the SEA casual-friendly style — good.',
-        'Consider adding 1–2 local hashtags for discovery.',
-        'A question at the end tends to lift comments for this market.',
-      ],
-    },
-    competitor: {
-      insight: 'Two tracked competitors posted discount promotions this week.',
-      suggestion: 'Your angle differs (experience-focused) — lean into that to stand out rather than competing on price.',
-    },
-    performance: {
-      estimate: '3,200–4,500 reach',
-      note: `Estimated from ${clientName ?? 'this client'}'s last 10 posts with similar content and timing.`,
-    },
+/**
+ * The market being reviewed for is a property of the post, not the client: a
+ * Bangkok restaurant may run a campaign aimed at Myanmar tourists, and a Lao
+ * agency may post for a Thai client. The client's market is only the default.
+ */
+const MARKETS = [
+  { value: 'TH', label: 'Thailand' },
+  { value: 'MM', label: 'Myanmar'  },
+  { value: 'LA', label: 'Laos'     },
+]
+
+/**
+ * Renders the review's light markdown without a library.
+ *
+ * The model returns **bold** headings and "-" bullets and nothing else, so a
+ * dependency for this would be more code than the code. Also normalises the
+ * non-breaking hyphens and narrow spaces the model emits, which otherwise
+ * render as odd gaps.
+ */
+function renderReview(markdown: string) {
+  const clean = markdown
+    .replace(/\u2011/g, '-')   // non-breaking hyphen
+    .replace(/\u202f/g, ' ')   // narrow no-break space
+    .replace(/\u2013/g, '–')
+
+  return clean.split('\n').map((line, i) => {
+    const trimmed = line.trim()
+    if (!trimmed) return null
+
+    // A whole line that is bold is a heading.
+    const heading = trimmed.match(/^\*\*(.+?)\*\*\s*$/)
+    if (heading) {
+      return <div key={i} className={styles.sectionTitle}>{heading[1]}</div>
+    }
+
+    const bullet = trimmed.startsWith('- ') || trimmed.startsWith('• ')
+    const text = bullet ? trimmed.slice(2) : trimmed
+
+    // Inline bold inside a line.
+    const parts = text.split(/(\*\*[^*]+\*\*)/g).map((part, j) =>
+      part.startsWith('**') && part.endsWith('**')
+        ? <strong key={j}>{part.slice(2, -2)}</strong>
+        : part
+    )
+
+    return bullet
+      ? <li key={i} className={styles.bullet}>{parts}</li>
+      : <p key={i} className={styles.para}>{parts}</p>
+  })
+}
+
+export function AIReview({
+  clientId,
+  content,
+  platforms,
+  hasMedia,
+  defaultMarket,
+}: AIReviewProps) {
+  const [market, setMarket] = useState(defaultMarket)
+  const review = useAIReview()
+  const { mutate } = review
+
+  const run = (targetMarket: string) => {
+    mutate({ clientId, content, platforms, hasMedia, market: targetMarket })
   }
-}
 
-export function AIReview({ content, clientName, hasMedia }: AIReviewProps) {
-  const review = buildMockReview(content, clientName)
+  // Runs once when opened. The parent only mounts this after the user clicks
+  // AI review, so mounting is the request.
+  useEffect(() => {
+    if (clientId && content.trim()) {
+      run(market)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className={styles.wrap}>
       <div className={styles.intro}>
         <span className={styles.introIcon}><Sparkles size={20} /></span>
         <div>
-          <div className={styles.introTitle}>AI Review</div>
+          <div className={styles.introTitle}>AI review</div>
           <div className={styles.introSub}>
-            Grounded in Southeast Asia market knowledge, {clientName ?? 'this client'}&apos;s history, and competitor activity.
+            Advice grounded in market knowledge for the selected country.
+            It has no data on this client&apos;s own followers or competitors.
           </div>
         </div>
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}><Target size={16} /></span> Target Audience
-        </div>
-        <div className={styles.sectionBody}>
-          <div className={styles.primary}>{review.audience.primary}</div>
-          <div className={styles.note}>{review.audience.note}</div>
-        </div>
+      {/* Changing the market re-runs straight away — the intent is
+          unambiguous, and a second click to confirm would be friction. */}
+      <div className={styles.marketRow}>
+        <span className={styles.marketLabel}>Reviewing for</span>
+        {MARKETS.map((m) => (
+          <button
+            key={m.value}
+            type="button"
+            className={cn(
+              styles.marketOption,
+              market === m.value && styles.marketOptionActive,
+            )}
+            onClick={() => { setMarket(m.value); run(m.value) }}
+            disabled={review.isPending}
+          >
+            {m.label}
+          </button>
+        ))}
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}><Clock size={16} /></span> Best Timing & Location
-        </div>
-        <div className={styles.sectionBody}>
-          <div className={styles.primary}>{review.timing.bestTime}</div>
-          <div className={styles.primary}>{review.timing.location}</div>
-          <div className={styles.note}>{review.timing.note}</div>
-        </div>
-      </div>
+      {review.isPending && (
+        <div className={styles.state}>Reading the post…</div>
+      )}
 
-      <div className={styles.section}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}><FileText size={16} /></span> Content Feedback
-          <span className={styles.scoreTag}>{review.content.score}</span>
+      {review.isError && (
+        <div className={styles.error}>
+          <AlertCircle size={16} />
+          <span>
+            {(review.error as { response?: { data?: { message?: string } } })
+              ?.response?.data?.message ?? 'Could not produce a review.'}
+          </span>
         </div>
-        <div className={styles.sectionBody}>
-          <ul className={styles.tips}>
-            {review.content.tips.map((t, i) => <li key={i}>{t}</li>)}
-          </ul>
-        </div>
-      </div>
+      )}
 
-      <div className={styles.section}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}><Eye size={16} /></span> Competitor Insight
-        </div>
-        <div className={styles.sectionBody}>
-          <div className={styles.primary}>{review.competitor.insight}</div>
-          <div className={styles.note}>{review.competitor.suggestion}</div>
-        </div>
-      </div>
-
-      <div className={styles.section}>
-        <div className={styles.sectionHead}>
-          <span className={styles.sectionIcon}><TrendingUp size={16} /></span> Performance Outlook
-        </div>
-        <div className={styles.sectionBody}>
-          <div className={styles.primary}>{review.performance.estimate}</div>
-          <div className={styles.note}>{review.performance.note}</div>
-        </div>
-      </div>
-
-      {!hasMedia && (
-        <div className={styles.warnNote}>
-          Tip: posts with an image or video typically get more reach in this market.
-        </div>
+      {review.data && !review.isPending && (
+        <>
+          <div className={styles.body}>{renderReview(review.data.review)}</div>
+          <button
+            type="button"
+            className={styles.regenerate}
+            onClick={() => run(market)}
+            disabled={review.isPending}
+          >
+            Review again
+          </button>
+        </>
       )}
     </div>
   )

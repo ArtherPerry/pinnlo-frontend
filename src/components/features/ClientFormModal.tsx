@@ -30,10 +30,22 @@ const STATUSES = [
   { value: 'ARCHIVED', label: 'Archived' },
 ]
 
+/**
+ * The client's usual market, not a fixed property of them. A Bangkok
+ * restaurant may run a campaign aimed at Myanmar tourists, so AI review can
+ * target a different market per post — this is only the default.
+ */
+const MARKETS = [
+  { value: 'TH', label: 'Thailand' },
+  { value: 'MM', label: 'Myanmar'  },
+  { value: 'LA', label: 'Laos'     },
+]
+
 const schema = z.object({
   name:      z.string().min(2, 'Name must be at least 2 characters'),
   platforms: z.array(z.string()),
   status:    z.string().min(1, 'Select a status'),
+  market:    z.string().min(1, 'Select a market'),
 })
 
 type FormValues = z.infer<typeof schema>
@@ -62,6 +74,7 @@ export function ClientFormModal({ client, onClose }: ClientFormModalProps) {
       name:      client?.name      ?? '',
       platforms: client?.platforms ?? [],
       status:    client?.status    ?? 'ACTIVE',
+      market:    client?.market    ?? 'TH',
     },
   })
 
@@ -168,6 +181,38 @@ export function ClientFormModal({ client, onClose }: ClientFormModalProps) {
               {errors.status?.message && (
                 <span className={styles.formError}>{errors.status.message}</span>
               )}
+            </div>
+
+            <div>
+              <span className={styles.sectionLabel}>Usual market</span>
+              <Controller
+                name="market"
+                control={control}
+                render={({ field }) => (
+                  <div className={styles.statusGrid}>
+                    {MARKETS.map((m) => (
+                      <button
+                        key={m.value}
+                        type="button"
+                        className={cn(
+                          styles.statusOption,
+                          field.value === m.value && styles.statusOptionActive,
+                        )}
+                        onClick={() => field.onChange(m.value)}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              />
+              {errors.market?.message && (
+                <span className={styles.formError}>{errors.market.message}</span>
+              )}
+              <p className={styles.hint}>
+                The default market for AI review. You can target a different one
+                per post, for cross-border campaigns.
+              </p>
             </div>
 
           </div>

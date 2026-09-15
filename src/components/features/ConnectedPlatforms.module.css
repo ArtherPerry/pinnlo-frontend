@@ -123,3 +123,49 @@
   color: var(--color-muted);
   opacity: 0.7;
 }
+
+.waList {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.waRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.waInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.waIcon { color: #25d366; flex-shrink: 0; }
+
+.waName {
+  font-size: var(--text-small);
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.waMeta {
+  font-size: var(--text-caption);
+  color: var(--color-muted);
+}
+
+.waWarn { color: var(--color-warning); font-weight: 600; }
+
+.waDisconnect {
+  border: none;
+  background: none;
+  color: var(--color-danger);
+  font-size: var(--text-small);
+  cursor: pointer;
+  font-family: var(--font-sans);
+}

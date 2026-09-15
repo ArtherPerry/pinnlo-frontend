@@ -697,3 +697,25 @@ export interface CreateFlowInput {
   platform:    FlowPlatform
   clientId:    string
 }
+
+export interface WhatsappConnection {
+  id:                 string
+  clientId:           string
+  wabaId:             string
+  phoneNumberId:      string
+  displayPhoneNumber: string | null
+  verifiedName:       string | null
+  qualityRating:      string | null
+  active:             boolean
+  connectedAt:        string
+}
+
+export interface WhatsappTemplate {
+  id:            string
+  name:          string
+  language:      string
+  category:      string
+  status:        string   // APPROVED / PENDING / REJECTED / PAUSED / DISABLED
+  bodyText:      string | null
+  variableCount: number
+}

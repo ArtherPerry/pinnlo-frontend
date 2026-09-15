@@ -10,9 +10,15 @@ import {
   usePageInfo,
   usePageInsights,
 } from '@/hooks/useMeta'
+import {
+  useWhatsappConnections,
+  useConnectWhatsapp,
+  useDisconnectWhatsapp,
+} from '@/hooks/useWhatsapp'
+import { useFacebookSdk } from '@/hooks/useFacebookSdk'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate } from '@/lib/utils'
-import { Plus, ChevronDown } from 'lucide-react'
+import { Plus, ChevronDown, MessageCircle } from 'lucide-react'
 import { PlatformIcon } from '@/components/ui'
 import styles from './ConnectedPlatforms.module.css'
 
@@ -27,6 +33,34 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
   const { data: connections, isLoading } = useClientConnections(clientId)
   const start      = useStartMetaConnect()
   const disconnect = useDisconnectMetaConnection()
+
+  const sdkReady     = useFacebookSdk()
+  const { data: waConnections } = useWhatsappConnections(clientId)
+  const connectWa    = useConnectWhatsapp()
+  const disconnectWa = useDisconnectWhatsapp()
+
+  const handleConnectWhatsapp = async () => {
+    try {
+      await connectWa.mutateAsync(clientId)
+      toast.show('WhatsApp connected', 'success')
+    } catch (e) {
+      // A cancelled popup is not an error worth alarming over.
+      const msg = (e as Error).message
+      if (!msg.includes('cancelled') && !msg.includes('incomplete')) {
+        toast.show('Could not connect WhatsApp. Please try again.', 'error')
+      }
+    }
+  }
+
+  const handleDisconnectWhatsapp = async (id: string, name: string) => {
+    if (!confirm(`Disconnect WhatsApp "${name}"?`)) return
+    try {
+      await disconnectWa.mutateAsync(id)
+      toast.show('Disconnected', 'success')
+    } catch {
+      toast.show('Failed to disconnect', 'error')
+    }
+  }
 
   const handleConnect = async () => {
     try {
@@ -60,6 +94,16 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
         >
           <Plus size={14} />
           {start.isPending ? 'Opening Facebook…' : 'Connect Facebook Page'}
+        </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleConnectWhatsapp}
+          disabled={!sdkReady || connectWa.isPending}
+          title={!sdkReady ? 'WhatsApp signup is loading…' : undefined}
+        >
+          <MessageCircle size={14} />
+          {connectWa.isPending ? 'Connecting…' : 'Connect WhatsApp'}
         </Button>
       </div>
 
@@ -110,6 +154,40 @@ export function ConnectedPlatforms({ clientId, clientName }: Props) {
               {c.platform === 'FACEBOOK' && c.active && (
                 <PageInsights connectionId={c.id} />
               )}
+            </div>
+          ))}
+        </div>
+      )}
+
+      {waConnections && waConnections.length > 0 && (
+        <div className={styles.waList}>
+          {waConnections.map((wa) => (
+            <div key={wa.id} className={styles.waRow}>
+              <div className={styles.waInfo}>
+                <MessageCircle size={16} className={styles.waIcon} />
+                <div>
+                  <div className={styles.waName}>
+                    {wa.verifiedName ?? wa.displayPhoneNumber ?? 'WhatsApp Business'}
+                  </div>
+                  <div className={styles.waMeta}>
+                    {wa.displayPhoneNumber}
+                    {wa.qualityRating && wa.qualityRating !== 'GREEN' && (
+                      <span className={styles.waWarn}> · quality {wa.qualityRating}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <button
+                className={styles.waDisconnect}
+                onClick={() =>
+                  handleDisconnectWhatsapp(
+                    wa.id,
+                    wa.verifiedName ?? wa.displayPhoneNumber ?? 'this number',
+                  )
+                }
+              >
+                Disconnect
+              </button>
             </div>
           ))}
         </div>

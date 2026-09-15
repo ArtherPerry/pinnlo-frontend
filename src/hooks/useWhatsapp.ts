@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
-import type { WhatsappConnection, WhatsappTemplate } from '@/lib/types'
+import type { WhatsappConnection, WhatsappTemplate,WhatsappConversation } from '@/lib/types'
 
 const CONFIG_ID = process.env.NEXT_PUBLIC_WHATSAPP_CONFIG_ID
 
@@ -147,6 +147,47 @@ export function useSyncWhatsappTemplates() {
     },
     onSuccess: (_r, connectionId) => {
       qc.invalidateQueries({ queryKey: ['whatsapp', 'templates', connectionId] })
+    },
+  })
+}
+
+
+export function useWhatsappConversations(clientId?: string, status?: string) {
+  return useQuery({
+    queryKey: ['whatsapp', 'inbox', clientId, status],
+    queryFn: async () => {
+      const params: Record<string, string> = {}
+      if (clientId) params.clientId = clientId
+      if (status)   params.status   = status
+      const { data } = await api.get('/api/v1/whatsapp/inbox/conversations', { params })
+      return data.content as WhatsappConversation[]
+    },
+  })
+}
+
+export function useReplyWhatsapp() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, text }: { id: string; text: string }) => {
+      const { data } = await api.post(
+        `/api/v1/whatsapp/inbox/conversations/${id}/reply`, { text })
+      return data
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['whatsapp', 'inbox'] })
+    },
+  })
+}
+
+export function useSetWhatsappConversationStatus() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      await api.patch(`/api/v1/whatsapp/inbox/conversations/${id}`, { status })
+      return id
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['whatsapp', 'inbox'] })
     },
   })
 }

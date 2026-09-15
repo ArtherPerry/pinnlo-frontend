@@ -540,37 +540,7 @@ export type BroadcastStatus =
   | 'SENT'
   | 'FAILED'
 
-export type BroadcastPlatform = 'FACEBOOK' | 'WHATSAPP' | 'LINE'
 
-export interface BroadcastCampaign {
-  id:             string
-  name:           string
-  platform:       BroadcastPlatform
-  clientId:       string
-  clientName:     string
-  status:         BroadcastStatus
-  message:        string
-  templateId:     string | null
-  recipientCount: number
-  sentCount:      number
-  failedCount:    number
-  openRate:       number | null
-  scheduledAt:    string | null
-  sentAt:         string | null
-  createdBy:      string
-  createdAt:      string
-  tags:           string[]   // filter contacts by tag
-}
-
-export interface CreateBroadcastInput {
-  name:        string
-  platform:    BroadcastPlatform
-  clientId:    string
-  message:     string
-  templateId?: string
-  tags:        string[]
-  scheduledAt?: string
-}
 
 // ── Email campaigns ───────────────────────────────────────────────
 export type EmailCampaignStatus =
@@ -718,4 +688,67 @@ export interface WhatsappTemplate {
   status:        string   // APPROVED / PENDING / REJECTED / PAUSED / DISABLED
   bodyText:      string | null
   variableCount: number
+}
+
+
+export type BroadcastPlatform = 'WHATSAPP' | 'LINE'
+
+/** WhatsApp-only in practice — LINE has no backend yet, so it isn't sent. */
+export interface BroadcastCampaign {
+  id:             string
+  name:           string
+  clientId:       string
+  clientName:     string
+  connectionId:   string
+  templateId:     string
+  templateName:   string
+  variableValues: string[]
+  status:         BroadcastStatus
+  recipientCount: number
+  sentCount:      number
+  failedCount:    number
+  tags:           string[]
+  scheduledAt:    string | null
+  sentAt:         string | null
+  createdBy:      string
+  createdAt:      string
+}
+
+export interface CreateBroadcastInput {
+  name:           string
+  clientId:       string
+  connectionId:   string
+  templateId:     string
+  variableValues: string[]
+  tags:           string[]
+  scheduledAt?:   string
+}
+
+export interface WhatsappMessage {
+  id:             string
+  externalId:     string | null
+  direction:      'INBOUND' | 'OUTBOUND'
+  messageType:    string
+  content:        string | null
+  mediaId:        string | null
+  deliveryStatus: string | null
+  author:         string | null
+  sentAt:         string
+}
+
+export interface WhatsappConversation {
+  id:            string
+  clientId:      string
+  clientName:    string
+  connectionId:  string
+  waId:          string
+  profileName:   string | null
+  contactId:     string | null
+  status:        'OPEN' | 'CLOSED'
+  assignedTo:    string | null
+  /** True while a free-form reply is still allowed (24h window). */
+  windowOpen:    boolean
+  lastInboundAt: string | null
+  lastMessageAt: string
+  messages:      WhatsappMessage[]
 }

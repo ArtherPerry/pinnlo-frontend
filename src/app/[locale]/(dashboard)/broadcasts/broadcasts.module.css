@@ -466,3 +466,59 @@
   background: var(--color-bg-2);
   color: var(--color-muted);
 }
+
+.comingSoon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-4);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-2);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+.notice {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-light);
+  color: var(--color-warning);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.templateLabelRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.syncBtn {
+  border: none;
+  background: none;
+  color: var(--color-teal-600);
+  font-size: var(--text-caption);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+}
+
+.syncBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.templatePreview {
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-2);
+  font-size: var(--text-small);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  margin-bottom: var(--space-3);
+}
+
+.variablesWrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}

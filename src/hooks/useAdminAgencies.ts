@@ -152,6 +152,7 @@ export interface AuditLogEntry {
   targetType: string
   targetName: string | null
   createdAt: string
+   detail?: string
 }
 
 async function fetchAuditLogs(): Promise<AuditLogEntry[]> {

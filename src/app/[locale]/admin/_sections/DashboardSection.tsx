@@ -100,7 +100,7 @@ function AttentionPanel({
         </span>
         <div className={styles.grow}>
           <h2 className={styles.attentionTitle}>All clear</h2>
-         <p className={styles.muted}>
+          <p className={styles.muted}>
             No failed posts in the last 24 hours, no expiring connections, and no agencies
             waiting for approval.
           </p>
@@ -187,7 +187,7 @@ function describe(g: AttentionGroup): { title: string; detail: string; target?: 
         detail: summarise(
           i.map((x) => `${x.agencyName} at ${x.percent}% of ${metric(x.metric)}`),
         ),
-        target: 'agencies',
+        target: 'usage',
       }
     case 'CONNECTION_EXPIRED':
       return {

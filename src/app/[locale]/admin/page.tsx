@@ -5,6 +5,7 @@ import { AdminShell, type AdminSection } from './adminShell'
 import { DashboardSection } from './_sections/DashboardSection'
 import { AgenciesSection } from './_sections/AgenciesSection'
 import { UsersSection } from './_sections/UsersSection'
+import { UsageSection } from './_sections/UsageSection'
 import { AuditSection } from './_sections/AuditSection'
 
 /**
@@ -21,6 +22,7 @@ export default function AdminPage() {
       {section === 'dashboard' && <DashboardSection onNavigate={setSection} />}
       {section === 'agencies' && <AgenciesSection />}
       {section === 'users' && <UsersSection />}
+      {section === 'usage' && <UsageSection />}
       {section === 'audit' && <AuditSection />}
     </AdminShell>
   )

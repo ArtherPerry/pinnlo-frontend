@@ -1,0 +1,341 @@
+/* Admin usage section. Same visual language as the dashboard: one quiet
+ * surface style, colour reserved for status, with accessible text variants of
+ * the warning and danger colours (the product tokens fail contrast as text). */
+
+.root {
+  --status-warn-text: #9A5B00;
+  --status-danger-text: #B42827;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.summary {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+
+.summary strong {
+  color: var(--color-ink);
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.button {
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button:focus-visible,
+.agencyButton:focus-visible,
+.iconButton:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: var(--color-teal-600);
+  border-color: var(--color-teal-600);
+  color: var(--color-white);
+}
+
+/* Table beside the detail panel when one is open; stacked when narrow. */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.layoutWithDetail {
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+
+.tableWrap {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-muted);
+  padding: var(--space-3) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.rowSelected td {
+  background: var(--color-teal-50);
+}
+
+.agencyButton {
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-teal-600);
+  cursor: pointer;
+  text-align: left;
+}
+
+.agencyButton:hover {
+  text-decoration: underline;
+}
+
+.agencyMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.suspended {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--status-danger-text);
+}
+
+.renews {
+  white-space: nowrap;
+  color: var(--color-muted);
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 130px;
+}
+
+.cellText {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--color-ink);
+}
+
+.labelWarn,
+.labelFailed {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.labelWarn { color: var(--status-warn-text); }
+.labelFailed { color: var(--status-danger-text); }
+
+.bar {
+  height: 6px;
+  background: var(--color-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--color-teal-600);
+  border-radius: 3px;
+}
+
+.fillWarn { background: var(--status-warn-text); }
+.fillFailed { background: var(--status-danger-text); }
+
+/* ── Detail panel ──────────────────────────────────────────────── */
+
+.detail {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  position: sticky;
+  top: var(--space-5);
+}
+
+.detailHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.detailTitle {
+  margin: 0 0 var(--space-1);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.iconButton {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  color: var(--color-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  background: var(--color-bg);
+}
+
+.metricList {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.metricRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.metricRow dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.metricRow dd {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.grantForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+}
+
+.formTitle {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.field select,
+.field input {
+  height: 38px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.field select:focus-visible,
+.field input:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 1px;
+}
+
+.note {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.success,
+.error {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.success { color: var(--color-teal-600); }
+.error { color: var(--status-danger-text); }
+
+@media (max-width: 1100px) {
+  .layoutWithDetail {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .detail {
+    position: static;
+  }
+}
+
+.optional {
+  font-weight: 400;
+  color: var(--color-muted);
+}

@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import styles from './adminLayout.module.css'
 
-export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'audit'
+export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'usage' | 'audit'
 
 /**
  * A navigation entry. Entries with no key are sections still to be built:
@@ -41,7 +41,7 @@ const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
   {
     label: 'Operations',
     items: [
-      { key: null, label: 'Usage', icon: Zap },
+      { key: 'usage', label: 'Usage', icon: Zap },
       { key: null, label: 'Costs', icon: Tag },
       { key: null, label: 'Connections', icon: Share2 },
       { key: null, label: 'Publishing', icon: Send },
@@ -54,11 +54,13 @@ const SECTION_TITLES: Record<AdminSection, string> = {
   dashboard: 'Dashboard',
   agencies: 'Agencies',
   users: 'Users',
+  usage: 'Usage',
   audit: 'Audit log',
 }
 
 const SECTION_SUBTITLES: Partial<Record<AdminSection, string>> = {
   dashboard: 'Last 30 days, compared with the 30 before',
+  usage: "Each agency's current billing period, closest to a limit first",
 }
 
 function getInitials(name: string): string {

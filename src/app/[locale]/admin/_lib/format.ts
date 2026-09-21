@@ -16,7 +16,21 @@ export function userStatusVariant(status: string): 'success' | 'warning' | 'dang
   return 'neutral'
 }
 
+const GRANT_UNITS: Record<string, [string, string]> = {
+  AI_REVIEW: ['AI review', 'AI reviews'],
+  EMAIL_SENT: ['email', 'emails'],
+  WHATSAPP_MESSAGE: ['WhatsApp message', 'WhatsApp messages'],
+}
+
 export function formatAction(action: string): string {
+  // GRANT_WHATSAPP_MESSAGE_+500 reads as "Granted 500 WhatsApp messages".
+  // The generic rule below would give "Grant Whatsapp Message +500".
+  const grant = action.match(/^GRANT_(.+)_\+(\d+)$/)
+  if (grant) {
+    const n = Number(grant[2])
+    const [one, many] = GRANT_UNITS[grant[1]] ?? [grant[1], grant[1]]
+    return `Granted ${n.toLocaleString('en-US')} ${n === 1 ? one : many}`
+  }
   return action
     .replace(/_/g, ' ')
     .toLowerCase()
@@ -26,6 +40,6 @@ export function formatAction(action: string): string {
 export function actionVariant(action: string): 'success' | 'danger' | 'neutral' | 'info' {
   if (action.startsWith('APPROVE')) return 'success'
   if (action.startsWith('SUSPEND') || action.includes('SUSPENDED')) return 'danger'
-  if (action.startsWith('SET_PLAN')) return 'info'
+  if (action.startsWith('SET_PLAN') || action.startsWith('GRANT_')) return 'info'
   return 'neutral'
 }

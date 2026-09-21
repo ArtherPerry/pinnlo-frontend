@@ -26,7 +26,11 @@ export function AuditSection() {
       <tbody>
         {logs.map((log) => (
           <tr key={log.id}>
-            <td><Badge variant={actionVariant(log.action)}>{formatAction(log.action)}</Badge></td>
+            <td>
+              <Badge variant={actionVariant(log.action)}>{formatAction(log.action)}</Badge>
+              {/* Context recorded with the action, such as a grant's payment reference. */}
+              {log.detail && <div className={styles.userEmail}>{log.detail}</div>}
+            </td>
             <td>
               <div className={styles.userName}>{log.targetName ?? '—'}</div>
               <div className={styles.userEmail}>{log.targetType}</div>

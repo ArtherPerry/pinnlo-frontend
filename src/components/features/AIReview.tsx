@@ -98,8 +98,8 @@ export function AIReview({
         <div>
           <div className={styles.introTitle}>AI review</div>
           <div className={styles.introSub}>
-            Advice grounded in market knowledge for the selected country.
-            It has no data on this client&apos;s own followers or competitors.
+            Advice grounded in market knowledge, writing craft, and this
+            client&apos;s own measured performance.
           </div>
         </div>
       </div>

@@ -1,0 +1,402 @@
+/* Admin dashboard.
+ *
+ * Colour carries status and nothing else. The product's own warning and danger
+ * tokens fail WCAG contrast as text (amber is 2.2:1), so accessible text
+ * variants are defined here rather than altering product-wide tokens. */
+
+.root {
+  --status-warn-text: #9A5B00;   /* 5.4:1 on white */
+  --status-danger-text: #B42827; /* 6.4:1 on white */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.grow {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.button {
+  height: 36px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.button:hover {
+  background: var(--color-bg);
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}
+
+.errorBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  color: var(--color-ink);
+}
+
+/* Panels: one quiet surface style. Hierarchy comes from size, weight and
+   position, not from giving every block its own treatment. */
+.panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.padded {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.emptyNote {
+  margin: 0;
+  padding: var(--space-6) 0;
+  font-size: 14px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.caption {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+/* ── Needs attention: the one loud element on the page ──────────── */
+
+.attentionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6) var(--space-4);
+}
+
+.attentionTitle {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.attentionList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.attentionRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+}
+
+.attentionRow + .attentionRow {
+  border-top: 1px solid var(--color-border);
+}
+
+.attentionItemTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.attentionDetail {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.labelWarn,
+.labelFailed {
+  font-size: 12px;
+  font-weight: 600;
+  margin-right: var(--space-2);
+}
+
+.labelWarn { color: var(--status-warn-text); }
+.labelFailed { color: var(--status-danger-text); }
+
+.statusIcon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusWarn { background: var(--color-warning-light); color: var(--status-warn-text); }
+.statusFailed { background: var(--color-danger-light); color: var(--status-danger-text); }
+.statusOk { background: var(--color-teal-50); color: var(--color-teal-600); }
+
+.allClear {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-5) var(--space-6);
+}
+
+/* ── Headline figures: one band, not four floating cards ────────── */
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.figure {
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.figure + .figure {
+  border-left: 1px solid var(--color-border);
+}
+
+.figureLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.figureBody {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.figureNumbers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.figureValue {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1.1;
+}
+
+.figureDelta {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.sparkline {
+  flex-shrink: 0;
+  stroke: var(--color-teal-500);
+}
+
+/* ── Cost ───────────────────────────────────────────────────────── */
+
+.costRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-5);
+}
+
+/* A time series needs width more than anything else on the page. */
+.trend {
+  grid-column: span 2;
+}
+
+.chart {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.chartAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px;
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.chartPlot {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.chartSvg {
+  width: 100%;
+  height: 160px;
+  display: block;
+}
+
+.gridLine {
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.trendLine {
+  stroke: var(--color-teal-600);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chartDates {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.channels {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.channelHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.channelAmount {
+  font-weight: 600;
+}
+
+.bar {
+  height: 8px;
+  background: var(--color-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background: var(--color-teal-600);
+  border-radius: 4px;
+}
+
+/* ── Plans ──────────────────────────────────────────────────────── */
+
+.plans {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.plansBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.segments {
+  display: flex;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.legendCount {
+  font-weight: 600;
+}
+
+/* Narrower screens: stack rather than squeeze. */
+@media (max-width: 1100px) {
+  .figures { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .figure:nth-child(3) { border-left: none; }
+  .figure:nth-child(n + 3) { border-top: 1px solid var(--color-border); }
+  .costRow { grid-template-columns: 1fr; }
+  .trend { grid-column: auto; }
+}

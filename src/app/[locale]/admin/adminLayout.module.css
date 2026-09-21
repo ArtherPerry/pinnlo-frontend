@@ -1,3 +1,6 @@
+/* Admin console frame: a white sidebar grouped by purpose, matching the
+   product's own light sidebar so admins work in one visual language. */
+
 .shell {
   display: flex;
   min-height: 100vh;
@@ -6,120 +9,193 @@
 
 .sidebar {
   width: 240px;
-  background: var(--color-ink);
-  color: var(--color-white);
+  flex-shrink: 0;
+  background: var(--color-white);
+  border-right: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
+  padding: var(--space-6) var(--space-4) var(--space-4);
+  gap: var(--space-6);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
 }
 
 .brand {
-  padding: var(--space-5) var(--space-5) var(--space-4);
-  font-size: var(--text-h3);
-  font-weight: 700;
-  color: var(--color-white);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0 var(--space-3);
 }
 
-.brandSub {
-  font-size: var(--text-small);
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 2px;
+.brandName {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.brandTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
 }
 
 .nav {
-  flex: 1;
-  padding: var(--space-4) var(--space-3);
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
+  gap: var(--space-5);
+  overflow-y: auto;
+}
+
+.navGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navGroupLabel {
+  padding: 0 var(--space-3) var(--space-1);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
+.navItem,
+.navItemSoon {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .navItem {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-3);
-  border-radius: var(--radius-md);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: var(--text-body);
-  font-weight: 500;
-  cursor: pointer;
   border: none;
   background: none;
-  text-align: left;
-  width: 100%;
+  color: var(--color-ink);
+  cursor: pointer;
   transition: background var(--transition-fast), color var(--transition-fast);
 }
 
+.navItem svg {
+  color: var(--color-muted);
+}
+
 .navItem:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--color-white);
+  background: var(--color-bg);
 }
 
-.navItemActive {
-  background: var(--color-teal-500);
-  color: var(--color-white);
+.navItem:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
 }
 
+.navItemActive,
 .navItemActive:hover {
-  background: var(--color-teal-500);
-}
-
-.navIcon {
-  font-size: 18px;
-  width: 20px;
-  text-align: center;
-}
-
-.main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.topbar {
-  height: 60px;
-  background: var(--color-white);
-  border-bottom: 1px solid var(--color-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--space-6);
-  flex-shrink: 0;
-}
-
-.topbarTitle {
-  font-size: var(--text-h3);
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
   font-weight: 600;
-  color: var(--color-ink);
 }
 
-.topbarUser {
+.navItemActive svg {
+  color: var(--color-teal-600);
+}
+
+/* Not built yet: visible, but plainly not a link. */
+.navItemSoon {
+  color: var(--color-muted);
+  cursor: default;
+}
+
+.soonTag {
+  margin-left: auto;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-muted);
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: 1px 6px;
+}
+
+.userBlock {
+  margin-top: auto;
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  font-size: var(--text-small);
-  color: var(--color-muted);
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border);
 }
 
 .avatar {
   width: 32px;
   height: 32px;
+  flex-shrink: 0;
   border-radius: var(--radius-full);
-  background: var(--color-teal-500);
+  background: var(--color-teal-600);
   color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  font-size: var(--text-small);
+  font-size: 13px;
+}
+
+.userText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.userName {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userRole {
+  font-size: 12px;
+  color: var(--color-muted);
 }
 
 .content {
   flex: 1;
-  padding: var(--space-6);
-  overflow-y: auto;
+  min-width: 0;
+  padding: var(--space-8) var(--space-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.pageHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.pageTitle {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.pageSubtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-muted);
 }

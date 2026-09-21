@@ -2,23 +2,63 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  BarChart3,
+  Building2,
+  User,
+  Zap,
+  Tag,
+  Share2,
+  Send,
+  FileText,
+  type LucideIcon,
+} from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
 import styles from './adminLayout.module.css'
 
 export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'audit'
 
-const NAV_ITEMS: { key: AdminSection; label: string; icon: string }[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: '▦' },
-  { key: 'agencies',  label: 'Agencies',  icon: '▢' },
-  { key: 'users',     label: 'Users',     icon: '◉' },
-  { key: 'audit',     label: 'Audit Log', icon: '≡' },
+/**
+ * A navigation entry. Entries with no key are sections still to be built:
+ * they are shown so the structure is visible, but disabled rather than linked
+ * to a page that does not exist yet.
+ */
+interface NavEntry {
+  key: AdminSection | null
+  label: string
+  icon: LucideIcon
+}
+
+const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
+  { label: 'Overview', items: [{ key: 'dashboard', label: 'Dashboard', icon: BarChart3 }] },
+  {
+    label: 'Customers',
+    items: [
+      { key: 'agencies', label: 'Agencies', icon: Building2 },
+      { key: 'users', label: 'Users', icon: User },
+    ],
+  },
+  {
+    label: 'Operations',
+    items: [
+      { key: null, label: 'Usage', icon: Zap },
+      { key: null, label: 'Costs', icon: Tag },
+      { key: null, label: 'Connections', icon: Share2 },
+      { key: null, label: 'Publishing', icon: Send },
+    ],
+  },
+  { label: 'Records', items: [{ key: 'audit', label: 'Audit log', icon: FileText }] },
 ]
 
 const SECTION_TITLES: Record<AdminSection, string> = {
   dashboard: 'Dashboard',
-  agencies:  'Agencies',
-  users:     'Users',
-  audit:     'Audit Log',
+  agencies: 'Agencies',
+  users: 'Users',
+  audit: 'Audit log',
+}
+
+const SECTION_SUBTITLES: Partial<Record<AdminSection, string>> = {
+  dashboard: 'Last 30 days, compared with the 30 before',
 }
 
 function getInitials(name: string): string {
@@ -44,37 +84,65 @@ export function AdminShell({
   if (!user) return <div style={{ padding: 24 }}>Loading…</div>
   if (!user.platformAdmin) return <div style={{ padding: 24 }}>Access denied.</div>
 
+  const subtitle = SECTION_SUBTITLES[section]
+
   return (
     <div className={styles.shell}>
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
-          Pinnalo
-          <div className={styles.brandSub}>Admin Console</div>
+          <span className={styles.brandName}>Movio</span>
+          <span className={styles.brandTag}>Admin</span>
         </div>
-        <nav className={styles.nav}>
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              className={`${styles.navItem} ${section === item.key ? styles.navItemActive : ''}`}
-              onClick={() => onSectionChange(item.key)}
-            >
-              <span className={styles.navIcon}>{item.icon}</span>
-              {item.label}
-            </button>
+
+        <nav className={styles.nav} aria-label="Admin">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className={styles.navGroup}>
+              <div className={styles.navGroupLabel}>{group.label}</div>
+              {group.items.map((item) => {
+                const Icon = item.icon
+                if (item.key === null) {
+                  return (
+                    <div key={item.label} className={styles.navItemSoon} aria-disabled="true">
+                      <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                      <span>{item.label}</span>
+                      <span className={styles.soonTag}>Soon</span>
+                    </div>
+                  )
+                }
+                const active = section === item.key
+                return (
+                  <button
+                    key={item.key}
+                    type="button"
+                    className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
+                    aria-current={active ? 'page' : undefined}
+                    onClick={() => onSectionChange(item.key as AdminSection)}
+                  >
+                    <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
+                    <span>{item.label}</span>
+                  </button>
+                )
+              })}
+            </div>
           ))}
         </nav>
+
+        <div className={styles.userBlock}>
+          <div className={styles.avatar}>{getInitials(user.name)}</div>
+          <div className={styles.userText}>
+            <span className={styles.userName}>{user.name}</span>
+            <span className={styles.userRole}>Platform admin</span>
+          </div>
+        </div>
       </aside>
 
-      <div className={styles.main}>
-        <header className={styles.topbar}>
-          <div className={styles.topbarTitle}>{SECTION_TITLES[section]}</div>
-          <div className={styles.topbarUser}>
-            <span>{user.name}</span>
-            <div className={styles.avatar}>{getInitials(user.name)}</div>
-          </div>
+      <main className={styles.content}>
+        <header className={styles.pageHeader}>
+          <h1 className={styles.pageTitle}>{SECTION_TITLES[section]}</h1>
+          {subtitle && <p className={styles.pageSubtitle}>{subtitle}</p>}
         </header>
-        <main className={styles.content}>{children}</main>
-      </div>
+        {children}
+      </main>
     </div>
   )
 }

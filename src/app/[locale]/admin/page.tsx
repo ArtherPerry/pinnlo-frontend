@@ -17,7 +17,8 @@ export default function AdminPage() {
 
   return (
     <AdminShell section={section} onSectionChange={setSection}>
-      {section === 'dashboard' && <DashboardSection />}
+      {/* The dashboard's Review buttons jump to the section that can act. */}
+      {section === 'dashboard' && <DashboardSection onNavigate={setSection} />}
       {section === 'agencies' && <AgenciesSection />}
       {section === 'users' && <UsersSection />}
       {section === 'audit' && <AuditSection />}

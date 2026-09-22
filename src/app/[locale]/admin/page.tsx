@@ -7,6 +7,7 @@ import { AgenciesSection } from './_sections/AgenciesSection'
 import { UsersSection } from './_sections/UsersSection'
 import { UsageSection } from './_sections/UsageSection'
 import { CostsSection } from './_sections/CostsSection'
+import { ConnectionsSection } from './_sections/ConnectionsSection'
 import { AuditSection } from './_sections/AuditSection'
 
 /**
@@ -25,6 +26,7 @@ export default function AdminPage() {
       {section === 'users' && <UsersSection />}
       {section === 'usage' && <UsageSection />}
       {section === 'costs' && <CostsSection />}
+      {section === 'connections' && <ConnectionsSection />}
       {section === 'audit' && <AuditSection />}
     </AdminShell>
   )

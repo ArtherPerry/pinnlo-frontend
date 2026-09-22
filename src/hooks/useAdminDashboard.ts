@@ -7,16 +7,15 @@ export type Severity = 'FAILED' | 'WARNING'
 export type AttentionType =
   | 'PUBLISH_FAILED'
   | 'NEAR_LIMIT'
-  | 'CONNECTION_EXPIRED'
-  | 'CONNECTION_EXPIRING'
-  | 'WHATSAPP_QUALITY'
+  | 'CONNECTION_FAILED'
+  | 'CONNECTION_WARNING'
   | 'PENDING_APPROVAL'
 
 export interface AttentionGroup {
   type: AttentionType
   severity: Severity
   count: number
-  items: Record<string, string | number>[]
+  items: Record<string, string | number | string[]>[]
 }
 
 export interface Figure {

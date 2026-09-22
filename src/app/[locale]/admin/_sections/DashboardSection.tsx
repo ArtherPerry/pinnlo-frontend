@@ -101,8 +101,8 @@ function AttentionPanel({
         <div className={styles.grow}>
           <h2 className={styles.attentionTitle}>All clear</h2>
           <p className={styles.muted}>
-            No failed posts in the last 24 hours, no expiring connections, and no agencies
-            waiting for approval.
+            No failed posts in the last 24 hours, no known connection problems, and no
+            agencies waiting for approval.
           </p>
         </div>
         <span className={styles.muted}>{checked}</span>
@@ -189,26 +189,17 @@ function describe(g: AttentionGroup): { title: string; detail: string; target?: 
         ),
         target: 'usage',
       }
-    case 'CONNECTION_EXPIRED':
+    case 'CONNECTION_FAILED':
       return {
-        title: `${n} ${s('connection has', 'connections have')} expired`,
-        detail: summarise(
-          i.map((x) => `${x.clientName}'s ${platform(x.platform)} has stopped working`),
-        ),
+        title: `${n} ${s('connection has a problem', 'connections have problems')}`,
+        detail: summarise(i.map((x) => `${x.clientName}'s ${platform(x.platform)}: ${connectionReason(x)}`)),
+        target: 'connections',
       }
-    case 'CONNECTION_EXPIRING':
+    case 'CONNECTION_WARNING':
       return {
-        title: `${n} ${s('connection expires', 'connections expire')} within 7 days`,
-        detail: summarise(
-          i.map((x) => `${x.clientName}'s ${platform(x.platform)} ${inDays(Number(x.daysLeft))}`),
-        ),
-      }
-    case 'WHATSAPP_QUALITY':
-      return {
-        title: `${n} WhatsApp ${s('number has', 'numbers have')} low quality`,
-        detail: summarise(
-          i.map((x) => `${x.number} for ${x.clientName} is rated ${String(x.rating).toLowerCase()}`),
-        ),
+        title: `${n} ${s('connection needs', 'connections need')} attention soon`,
+        detail: summarise(i.map((x) => `${x.clientName}'s ${platform(x.platform)}: ${connectionReason(x)}`)),
+        target: 'connections',
       }
     case 'PENDING_APPROVAL':
       return {
@@ -433,9 +424,27 @@ function metric(m: string | number | undefined) {
   return METRIC_NAMES[String(m)] ?? String(m)
 }
 
-function inDays(d: number) {
-  if (d <= 0) return 'expires today'
-  return d === 1 ? 'expires in 1 day' : `expires in ${d} days`
+/** Plain wording for a connection's most serious reason, as judged by the Connections section. */
+const CONNECTION_REASONS: Record<string, string> = {
+  INVALID_TOKEN: 'Meta reports the token is invalid',
+  TOKEN_EXPIRED: 'the token has expired',
+  MISSING_PERMISSION: 'missing the permission needed to publish',
+  QUALITY_RED: 'quality is rated red',
+  DATA_ACCESS_ENDED: 'data access has ended',
+  TOKEN_EXPIRING: 'the token expires soon',
+  DATA_ACCESS_ENDING: 'data access ends soon',
+  QUALITY_YELLOW: 'quality is rated yellow',
+  CHECK_UNVERIFIED: 'the last check could not reach Meta',
+}
+
+function connectionReason(x: Record<string, string | number | string[]>) {
+  const reasons = Array.isArray(x.reasons) ? x.reasons : []
+  const first = reasons[0]
+  if (first === 'DATA_ACCESS_ENDING' && typeof x.dataAccessExpiresAt === 'string') {
+    const days = Math.max(0, Math.floor((new Date(x.dataAccessExpiresAt).getTime() - Date.now()) / 86_400_000))
+    return days === 1 ? 'data access ends in 1 day' : `data access ends in ${days} days`
+  }
+  return CONNECTION_REASONS[first] ?? 'needs checking'
 }
 
 /** The first two, then a count — enough to act on without a wall of text. */

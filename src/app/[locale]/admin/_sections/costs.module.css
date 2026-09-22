@@ -1,0 +1,362 @@
+/* Admin Costs section. Same language as the dashboard and Usage: one quiet
+ * surface style, colour reserved for status, accessible text variants of the
+ * warning and danger colours. */
+
+.root {
+  --status-warn-text: #9A5B00;
+  --status-danger-text: #B42827;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  font-variant-numeric: tabular-nums;
+}
+
+.explainer,
+.muted {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.strong { font-weight: 600; color: var(--color-ink); }
+
+.panel {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.panelHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.panelTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.total {
+  margin: var(--space-1) 0 0;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+.emptyNote {
+  margin: 0;
+  padding: var(--space-5) 0;
+  font-size: 14px;
+  color: var(--color-muted);
+  line-height: 1.5;
+}
+
+.error { margin: 0; font-size: 13px; color: var(--status-danger-text); }
+.success { margin: 0; font-size: 13px; font-weight: 500; color: var(--color-teal-600); }
+
+.warning {
+  margin: 0;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-warning-light);
+  color: var(--status-warn-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.note { margin: 0; font-size: 13px; color: var(--color-muted); line-height: 1.5; }
+.note strong { color: var(--color-ink); }
+
+/* Range toggle */
+.toggle {
+  display: flex;
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.toggleButton {
+  height: 34px;
+  padding: 0 var(--space-4);
+  border: none;
+  background: var(--color-white);
+  color: var(--color-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.toggleButton + .toggleButton { border-left: 1px solid var(--color-border); }
+
+.toggleActive {
+  background: var(--color-teal-50);
+  color: var(--color-teal-600);
+  font-weight: 600;
+}
+
+.toggleButton:focus-visible,
+.button:focus-visible,
+.linkButton:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}
+
+/* Cost over time */
+.overTime {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.chart { display: flex; gap: var(--space-3); }
+
+.chartAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 160px;
+  font-size: 12px;
+  color: var(--color-muted);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.chartPlot { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.chartSvg { width: 100%; height: 160px; display: block; }
+.gridLine { stroke: var(--color-border); stroke-width: 1; }
+
+.trendLine {
+  stroke: var(--color-teal-600);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chartDates {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.channels { display: flex; flex-direction: column; gap: var(--space-4); }
+.channel { display: flex; flex-direction: column; gap: 4px; }
+
+.channelHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.bar, .shareBar {
+  height: 6px;
+  background: var(--color-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.shareBar { margin-top: 6px; min-width: 90px; }
+
+.barFill {
+  height: 100%;
+  background: var(--color-teal-600);
+  border-radius: 3px;
+}
+
+/* Cost by agency */
+.tableWrap { overflow-x: auto; }
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+.table th {
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-muted);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: top;
+}
+
+.table tbody tr:last-child td { border-bottom: none; }
+
+.table .num { text-align: right; }
+
+/* Rates */
+.rates {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.rateCards { display: flex; flex-direction: column; gap: var(--space-3); }
+
+.rateCard {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.rateName { font-size: 13px; font-weight: 600; color: var(--color-muted); }
+.rateValue { font-size: 20px; font-weight: 700; color: var(--color-ink); }
+
+.scheduled {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-size: 13px;
+  color: var(--color-ink);
+}
+
+.scheduledTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-teal-600);
+  margin-right: var(--space-2);
+}
+
+.linkButton {
+  align-self: flex-start;
+  border: none;
+  background: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-teal-600);
+  cursor: pointer;
+}
+
+.linkButton:hover { text-decoration: underline; }
+.linkButton:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.history {
+  margin: 0;
+  padding-left: var(--space-5);
+  font-size: 13px;
+  color: var(--color-ink);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+/* Set rate form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+}
+
+.formTitle { margin: 0; font-size: 15px; font-weight: 600; color: var(--color-ink); }
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.field select,
+.field input,
+.dateInput {
+  height: 38px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.field select:focus-visible,
+.field input:focus-visible,
+.dateInput:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 1px;
+}
+
+.when {
+  margin: 0;
+  padding: 0;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.when legend {
+  padding: 0;
+  margin-bottom: var(--space-1);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink);
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 14px;
+  color: var(--color-ink);
+}
+
+.button {
+  height: 38px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-white);
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.primary {
+  background: var(--color-teal-600);
+  border-color: var(--color-teal-600);
+  color: var(--color-white);
+}
+
+@media (max-width: 1100px) {
+  .overTime, .rates { grid-template-columns: 1fr; }
+}

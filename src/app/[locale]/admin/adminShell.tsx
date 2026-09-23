@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import {
   BarChart3,
   Building2,
@@ -66,7 +66,7 @@ const SECTION_SUBTITLES: Partial<Record<AdminSection, string>> = {
   usage: "Each agency's current billing period, closest to a limit first",
   costs: 'What serving agencies costs, and the rates behind it',
   connections: 'Every connected account, checked against Meta, problems first',
-  publishing: 'Every publish across agencies, and whether any failure could already be live',
+  publishing: 'Whether each failed post could already be live, and what is scheduled',
 }
 
 function getInitials(name: string): string {
@@ -82,15 +82,29 @@ export function AdminShell({
   onSectionChange: (s: AdminSection) => void
   children: React.ReactNode
 }) {
-  const { user } = useAuth()
+  // _hydrated says the auth store has finished reading browser storage.
+  // Without it, a null user means both "still loading" and "signed out",
+  // and the page waits for ever instead of sending you to sign in.
+  const { user, _hydrated } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   useEffect(() => {
-    if (user && !user.platformAdmin) router.replace('/dashboard')
-  }, [user, router])
+    if (!_hydrated) return
+    const locale = pathname.split('/')[1] ?? 'en'
+    if (!user) {
+      router.replace(`/${locale}/login`)
+    } else if (!user.platformAdmin) {
+      router.replace(`/${locale}/dashboard`)
+    }
+  }, [user, _hydrated, pathname, router])
 
-  if (!user) return <div style={{ padding: 24 }}>Loading…</div>
-  if (!user.platformAdmin) return <div style={{ padding: 24 }}>Access denied.</div>
+  // Blank rather than a message: a redirect is already under way, and text
+  // would flash and disappear.
+  if (!_hydrated) {
+    return <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />
+  }
+  if (!user || !user.platformAdmin) return null
 
   const subtitle = SECTION_SUBTITLES[section]
 

@@ -14,9 +14,9 @@ export const FEATURES = {
   /** Requires LINE Messaging API + a backend. Phase 2+. */
   platformLine: false,
 
-  /** Claude caption generation. Ships with Annovist Intelligence. */
+  /** Claude caption generation. Ships with Movio Intelligence. */
   aiCaption: false,
-  /** Image generation. Ships with Annovist Intelligence. */
+  /** Image generation. Ships with Movio Intelligence. */
   aiImage: false,
   /** Optional pre-save check. Currently sample output — see aiReviewIsPreview. */
   aiReview: true,

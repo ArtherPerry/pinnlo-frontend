@@ -7,7 +7,7 @@ import { ErrorBoundary }  from "@/components/providers/ErrorBoundary"
 import "../globals.css"
 
 export const metadata: Metadata = {
-  title: "Annovist — Social Media Management",
+  title: "Movio — Social Media Management",
   description: "Social media management for Southeast Asia agencies",
 }
 

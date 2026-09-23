@@ -16,7 +16,7 @@ import {
 import { useAuth } from '@/hooks/useAuth'
 import styles from './adminLayout.module.css'
 
-export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'usage' | 'costs' | 'connections' | 'audit'
+export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'usage' | 'costs' | 'connections' | 'publishing' | 'audit'
 
 /**
  * A navigation entry. Entries with no key are sections still to be built:
@@ -44,7 +44,7 @@ const NAV_GROUPS: { label: string; items: NavEntry[] }[] = [
       { key: 'usage', label: 'Usage', icon: Zap },
       { key: 'costs', label: 'Costs', icon: Tag },
       { key: 'connections', label: 'Connections', icon: Share2 },
-      { key: null, label: 'Publishing', icon: Send },
+      { key: 'publishing', label: 'Publishing', icon: Send },
     ],
   },
   { label: 'Records', items: [{ key: 'audit', label: 'Audit log', icon: FileText }] },
@@ -57,6 +57,7 @@ const SECTION_TITLES: Record<AdminSection, string> = {
   usage: 'Usage',
   costs: 'Costs',
   connections: 'Connections',
+  publishing: 'Publishing',
   audit: 'Audit log',
 }
 
@@ -65,6 +66,7 @@ const SECTION_SUBTITLES: Partial<Record<AdminSection, string>> = {
   usage: "Each agency's current billing period, closest to a limit first",
   costs: 'What serving agencies costs, and the rates behind it',
   connections: 'Every connected account, checked against Meta, problems first',
+  publishing: 'Every publish across agencies, and whether any failure could already be live',
 }
 
 function getInitials(name: string): string {

@@ -180,6 +180,7 @@ function describe(g: AttentionGroup): { title: string; detail: string; target?: 
             return x.error ? `${where}: ${truncate(String(x.error), 70)}` : where
           }),
         ),
+        target: 'publishing',
       }
     case 'NEAR_LIMIT':
       return {

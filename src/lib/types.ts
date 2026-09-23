@@ -383,7 +383,7 @@ export interface Influencer {
   email:           string | null
   profileUrl:      string
   recentPosts:     InfluencerPost[]
-  score:           number  // Pinnalo relevance score 0-100
+  score:           number  // Movio relevance score 0-100
 }
 
 export interface InfluencerPost {

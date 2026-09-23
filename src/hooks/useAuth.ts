@@ -22,7 +22,7 @@ export const useAuth = create<AuthState>()(
       logout:    () => set({ user: null }),
     }),
     {
-      name: 'pinnlo-auth',
+      name: 'movio-auth',
       onRehydrateStorage: () => (state) => {
         if (state) state._hydrated = true
       },

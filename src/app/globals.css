@@ -41,10 +41,10 @@ a:hover { text-decoration: underline; }
 @media print {
   /* Hide everything except the report */
   body > * { display: none !important; }
-  #pinnlo-report { display: block !important; }
+  #movio-report { display: block !important; }
 
   /* Reset */
-  #pinnlo-report {
+  #movio-report {
     position: fixed;
     inset: 0;
     background: white;

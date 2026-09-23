@@ -87,7 +87,7 @@ export function UpgradePrompt({
         <Button variant="primary" onClick={handleUpgrade}>
           Upgrade to {PLAN_LABELS[requiredPlan]}
         </Button>
-        <Button variant="secondary" onClick={() => window.open('https://pinnlo.io/pricing', '_blank')}>
+        <Button variant="secondary" onClick={() => window.open('https://movio.io/pricing', '_blank')}>
           View pricing ↗
         </Button>
       </div>

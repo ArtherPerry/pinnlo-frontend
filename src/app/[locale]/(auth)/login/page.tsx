@@ -81,7 +81,7 @@ export default function LoginPage() {
             letterSpacing: '-0.02em',
             marginBottom: 4,
           }}>
-            Pinnalo
+            Movio
           </div>
           <div style={{
             fontSize: 'var(--text-small)',

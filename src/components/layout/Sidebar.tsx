@@ -139,7 +139,7 @@ export function Sidebar() {
     <aside className={cn(styles.sidebar, mobileNavOpen && styles.open)}>
       {/* Logo */}
       <div className={styles.logo}>
-        <span className={styles.logoMark}>Pinnalo</span>
+        <span className={styles.logoMark}>Movio</span>
       </div>
 
       {/* Nav */}

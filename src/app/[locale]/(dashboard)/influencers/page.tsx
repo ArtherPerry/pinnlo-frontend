@@ -160,7 +160,7 @@ const LANGUAGES = ['Burmese', 'English', 'Both']
       features={[
         'Search 10,000+ influencers across Thailand, Myanmar and Laos',
         'Filter by tier, platform, location and engagement rate',
-        'Pinnalo relevance scoring for brand fit',
+        'Movio relevance scoring for brand fit',
         'View recent posts and engagement analytics',
         'Direct email contact for collaboration',
       ]}

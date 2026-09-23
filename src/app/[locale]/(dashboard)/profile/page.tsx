@@ -263,7 +263,7 @@ export default function ProfilePage() {
                 Cancel
               </Button>
               <a
-                href="mailto:support@pinnalo.com?subject=Account%20deletion%20request"
+                href="mailto:support@movio.com?subject=Account%20deletion%20request"
                 className={styles.dialogDangerLink}
                 onClick={() => setShowDeleteDialog(false)}
               >

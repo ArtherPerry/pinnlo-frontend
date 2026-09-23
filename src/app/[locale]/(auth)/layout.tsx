@@ -4,7 +4,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   return (
     <div className={styles.shell}>
       <div className={styles.card}>
-        <div className={styles.logo}>Pinnalo</div>
+        <div className={styles.logo}>Movio</div>
         {children}
       </div>
     </div>

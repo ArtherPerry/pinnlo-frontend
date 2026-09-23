@@ -265,7 +265,7 @@ export default function DeveloperPage() {
           <div className={styles.headerLeft}>
             <h2 className={styles.pageTitle}>API access</h2>
             <p className={styles.pageSub}>
-              Manage API keys and monitor usage for your Pinnalo integration.
+              Manage API keys and monitor usage for your Movio integration.
             </p>
           </div>
           <Button variant="primary" size="sm" onClick={() => setShowCreate(true)}>
@@ -365,7 +365,7 @@ export default function DeveloperPage() {
           <div className={styles.docsGrid}>
             {[
               { icon: '📖', title: 'Authentication',  sub: 'Bearer token in Authorization header'      },
-              { icon: '🔗', title: 'Base URL',         sub: 'https://api.pinnlo.io/api/v1'              },
+              { icon: '🔗', title: 'Base URL',         sub: 'https://api.movio.io/api/v1'              },
               { icon: '📦', title: 'Rate limits',      sub: '100,000 requests / month on Enterprise'   },
               { icon: '🔔', title: 'Webhooks',         sub: 'Subscribe to post, contact and lead events'},
               { icon: '📄', title: 'Pagination',       sub: 'All list endpoints support page + size'    },

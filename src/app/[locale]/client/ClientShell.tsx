@@ -40,9 +40,9 @@ export function ClientShell({
       <aside className={styles.sidebar}>
         <div className={styles.brand}>
           <div className={styles.brandLogo}>
-            <div className={styles.brandMark}>P</div>
+            <div className={styles.brandMark}>M</div>
             <div>
-              <div className={styles.brandName}>Pinnalo</div>
+              <div className={styles.brandName}>Movio</div>
               <div className={styles.brandSub}>Client Portal</div>
             </div>
           </div>

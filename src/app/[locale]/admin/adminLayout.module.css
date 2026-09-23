@@ -199,3 +199,31 @@
   font-size: 14px;
   color: var(--color-muted);
 }
+
+/* Matches the main app's sidebar logout. */
+.logoutButton {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  margin-top: var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-muted);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.logoutButton:hover {
+  background: var(--color-danger-light);
+  color: #B42827;
+}
+
+.logoutButton:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Button, Badge } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
+import { useRouter, usePathname } from 'next/navigation'
 import { startImpersonation } from '@/lib/impersonation'
 import {
   useAgencies,
@@ -11,7 +12,6 @@ import {
   useSetPlan,
   useAgencyDetail,
   useCreateAgency,
-  useImpersonate,
 } from '@/hooks/useAdminAgencies'
 import { PLANS, statusVariant } from '../_lib/format'
 import styles from '../admin.module.css'
@@ -29,11 +29,33 @@ export function AgenciesSection() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('ALL')
   const [planFilter, setPlanFilter] = useState('ALL')
-  const impersonate = useImpersonate()
+  const [impersonateError, setImpersonateError] = useState<string | null>(null)
+  // Which row is starting a session, so only that button shows progress.
+  const [impersonatingId, setImpersonatingId] = useState<string | null>(null)
+  const router = useRouter()
+  const pathname = usePathname()
 
+  /**
+   * startImpersonation both calls the endpoint and stores the returned token.
+   * The mutation that used to run first called the same endpoint again, with
+   * the token where the agency id belongs — which is why this failed with 500.
+   *
+   * Afterwards the admin session has been replaced by the support session, so
+   * the admin screens would refuse every request. Go to the agency's own app.
+   */
   const handleImpersonate = async (agencyId: string) => {
-    const data = await impersonate.mutateAsync(agencyId)
-    startImpersonation(data.token)
+    setImpersonateError(null)
+    setImpersonatingId(agencyId)
+    try {
+      await startImpersonation(agencyId)
+      const locale = pathname.split('/')[1] ?? 'en'
+      router.push(`/${locale}/dashboard`)
+    } catch {
+      setImpersonateError('Could not start the support session. Please try again.')
+      setImpersonatingId(null)
+    }
+    // Left set on success: the page is navigating away, and re-enabling the
+    // button first would invite a second click.
   }
 
   const filtered = (agencies ?? []).filter((a) => {
@@ -45,6 +67,7 @@ export function AgenciesSection() {
 
   return (
     <>
+      {impersonateError && <div className={styles.empty}>{impersonateError}</div>}
       {isLoading && <div className={styles.empty}>Loading agencies…</div>}
       {!isLoading && agencies && agencies.length === 0 && (
         <div className={styles.empty}>No agencies yet.</div>
@@ -132,7 +155,7 @@ export function AgenciesSection() {
                     </Button>
                   )}
                   {a.status === 'APPROVED' && (
-                  <Button variant="ghost" size="sm" loading={impersonate.isPending}
+                  <Button variant="ghost" size="sm" loading={impersonatingId === a.id}
                     onClick={() => handleImpersonate(a.id)}>
                     Impersonate
                   </Button>

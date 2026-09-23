@@ -14,6 +14,8 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
+import { clearAccessToken } from '@/lib/token'
+import api from '@/lib/api'
 import styles from './adminLayout.module.css'
 
 export type AdminSection = 'dashboard' | 'agencies' | 'users' | 'usage' | 'costs' | 'connections' | 'publishing' | 'audit'
@@ -85,13 +87,12 @@ export function AdminShell({
   // _hydrated says the auth store has finished reading browser storage.
   // Without it, a null user means both "still loading" and "signed out",
   // and the page waits for ever instead of sending you to sign in.
-  const { user, _hydrated } = useAuth()
+  const { user, _hydrated, logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
 
   useEffect(() => {
     if (!_hydrated) return
-    const locale = pathname.split('/')[1] ?? 'en'
     if (!user) {
       router.replace(`/${locale}/login`)
     } else if (!user.platformAdmin) {
@@ -105,6 +106,22 @@ export function AdminShell({
     return <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />
   }
   if (!user || !user.platformAdmin) return null
+
+  const locale = pathname.split('/')[1] ?? 'en'
+
+  const handleLogout = async () => {
+    // Tell the server first so the refresh token is revoked rather than just
+    // forgotten, then clear locally whatever it said — a failed call must not
+    // trap someone in a session they asked to leave.
+    try {
+      await api.post('/api/v1/auth/logout')
+    } catch {
+      // Ignored deliberately.
+    }
+    clearAccessToken()
+    logout()
+    router.push(`/${locale}/login`)
+  }
 
   const subtitle = SECTION_SUBTITLES[section]
 
@@ -156,6 +173,16 @@ export function AdminShell({
             <span className={styles.userRole}>Platform admin</span>
           </div>
         </div>
+
+        <button type="button" className={styles.logoutButton} onClick={handleLogout}>
+          {/* The same inline icon the main app uses, rather than a Lucide name
+              that may not exist in this version. */}
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+               stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+            <path d="M5 2H2a1 1 0 00-1 1v8a1 1 0 001 1h3M10 10l3-3-3-3M13 7H5" />
+          </svg>
+          <span>Log out</span>
+        </button>
       </aside>
 
       <main className={styles.content}>

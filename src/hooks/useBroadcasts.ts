@@ -44,24 +44,24 @@ export function useCreateBroadcast() {
     onMutate: async (input) => {
       await qc.cancelQueries({ queryKey: broadcastKeys.all() })
 
-      const optimistic: BroadcastCampaign = {
+            const optimistic: BroadcastCampaign = {
         id:             `temp-${Date.now()}`,
         name:           input.name,
-        platform:       input.platform,
         clientId:       input.clientId,
         clientName:     '',
+        connectionId:   input.connectionId,
+        templateId:     input.templateId,
+        templateName:   '',
+        variableValues: input.variableValues,
         status:         input.scheduledAt ? 'SCHEDULED' : 'DRAFT',
-        message:        input.message,
-        templateId:     input.templateId ?? null,
         recipientCount: 0,
         sentCount:      0,
         failedCount:    0,
-        openRate:       null,
+        tags:           input.tags,
         scheduledAt:    input.scheduledAt ?? null,
         sentAt:         null,
         createdBy:      'You',
         createdAt:      new Date().toISOString(),
-        tags:           input.tags,
       }
 
       qc.setQueriesData(

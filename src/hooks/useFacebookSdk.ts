@@ -2,20 +2,23 @@
 
 import { useEffect, useState } from 'react'
 
-/**
- * Loads the Facebook JS SDK once, for WhatsApp Embedded Signup.
- *
- * The Meta page-connect flow uses a server redirect and never needs the SDK.
- * Embedded Signup is the one thing that requires it: the WABA id and
- * phone-number id come back through a postMessage event the SDK popup fires,
- * which has no redirect equivalent.
- *
- * The SDK only works on an HTTPS domain listed in the app's Allowed Domains, so
- * this does nothing useful on plain-HTTP localhost — the popup will refuse.
- */
+/** The parts of Meta's JavaScript SDK this app uses. */
+export interface FacebookLoginResponse {
+  status?: string
+  authResponse?: { code?: string; accessToken?: string } | null
+}
+
+interface FacebookSdk {
+  init: (options: Record<string, unknown>) => void
+  login: (
+    callback: (response: FacebookLoginResponse) => void,
+    options?: Record<string, unknown>,
+  ) => void
+}
+
 declare global {
   interface Window {
-    FB?: any
+    FB?: FacebookSdk
     fbAsyncInit?: () => void
   }
 }
@@ -30,7 +33,7 @@ export function useFacebookSdk() {
     if (window.FB) { setReady(true); return }
 
     window.fbAsyncInit = () => {
-      window.FB.init({
+      window.FB?.init({
         appId:   APP_ID,
         cookie:  true,
         xfbml:   false,

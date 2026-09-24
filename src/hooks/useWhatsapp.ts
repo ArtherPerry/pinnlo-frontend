@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 import type { WhatsappConnection, WhatsappTemplate,WhatsappConversation } from '@/lib/types'
+import type { FacebookLoginResponse } from '@/hooks/useFacebookSdk'
 
 const CONFIG_ID = process.env.NEXT_PUBLIC_WHATSAPP_CONFIG_ID
 
@@ -95,8 +96,9 @@ function launchEmbeddedSignup(): Promise<{
 
     window.addEventListener('message', onMessage)
 
-    window.FB.login(
-      (response: any) => {
+        // Guarded by the caller, which throws if the SDK isn't ready (line 35).
+    window.FB!.login(
+      (response: FacebookLoginResponse) => {
         window.removeEventListener('message', onMessage)
         const code = response?.authResponse?.code
         if (code && signupData.wabaId && signupData.phoneNumberId) {

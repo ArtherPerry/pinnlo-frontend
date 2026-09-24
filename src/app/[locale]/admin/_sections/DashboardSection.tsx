@@ -417,11 +417,11 @@ function formatFigure(key: Figure['key'], v: number) {
   return key === 'estimatedCost' ? usd.format(v) : count.format(v)
 }
 
-function platform(p: string | number | undefined) {
+function platform(p: unknown) {
   return PLATFORM_NAMES[String(p)] ?? String(p)
 }
 
-function metric(m: string | number | undefined) {
+function metric(m: unknown) {
   return METRIC_NAMES[String(m)] ?? String(m)
 }
 

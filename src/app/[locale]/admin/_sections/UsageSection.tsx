@@ -185,7 +185,7 @@ function DetailPanel({ agency, onClose }: { agency: AgencyUsage; onClose: () => 
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!valid || metric === '') return
+       if (!valid) return
     setMessage(null)
     try {
       await grant.mutateAsync({ agencyId: agency.agencyId, metric, amount: parsed })

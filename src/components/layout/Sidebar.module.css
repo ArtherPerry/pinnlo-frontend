@@ -185,14 +185,28 @@
   margin-bottom: var(--space-2);
 }
 
-/* ── Mobile: off-canvas drawer ── */
-@media (max-width: 768px) {
+/* ── Drawer on tablet and phone ───────────────────────────────────────
+ * Replaces the 768px block: a 220px sidebar on a portrait tablet took a
+ * third of the screen, so the drawer now starts at 900px. */
+@media (max-width: 900px) {
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--transition-base);
     box-shadow: var(--shadow-lg);
+    /* Clear of the status bar and home indicator on phones. */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
+
   .sidebar.open {
     transform: translateX(0);
+  }
+}
+
+/* A 220px drawer looks mean on a phone; roomier, but never full width so the
+ * page behind stays visible and tappable to dismiss. */
+@media (max-width: 640px) {
+  .sidebar {
+    width: min(280px, 85vw);
   }
 }

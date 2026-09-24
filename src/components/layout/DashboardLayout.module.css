@@ -1,3 +1,6 @@
+/* App shell: fixed sidebar beside scrolling content, with the sidebar
+ * becoming a drawer on tablets and phones. */
+
 .shell {
   display: flex;
   min-height: 100vh;
@@ -5,6 +8,7 @@
 
 .main {
   flex: 1;
+  min-width: 0;             /* lets wide tables scroll instead of pushing the layout */
   margin-left: var(--sidebar-width);
   display: flex;
   flex-direction: column;
@@ -13,21 +17,30 @@
 
 .content {
   flex: 1;
-  padding: var(--space-6);
-  max-width: var(--content-max-width);
   width: 100%;
+  max-width: var(--content-max-width);
+  /* Centred. Without this, content sat against the left edge of a wide
+     screen with an empty strip beside it. */
+  margin-inline: auto;
+  padding: var(--content-pad);
+  box-sizing: border-box;
 }
 
-/* ── Mobile ── */
-@media (max-width: 768px) {
-  .main { margin-left: 0; margin-bottom: 60px; }
+/* Sidebar becomes a drawer: covers portrait tablets as well as phones,
+   where a 220px sidebar took a third of the screen. */
+@media (max-width: 900px) {
+  .main {
+    margin-left: 0;
+    /* Keeps content clear of a phone's home indicator. Zero elsewhere. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 .overlay {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .overlay {
     display: block;
     position: fixed;

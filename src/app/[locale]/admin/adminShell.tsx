@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import {
   BarChart3,
@@ -11,6 +11,7 @@ import {
   Share2,
   Send,
   FileText,
+  Menu,
   type LucideIcon,
 } from 'lucide-react'
 import { useAuth } from '@/hooks/useAuth'
@@ -91,6 +92,14 @@ export function AdminShell({
   const router = useRouter()
   const pathname = usePathname()
 
+  // Everything the effect and the handlers need, declared before any early
+  // return. Hooks must run in the same order on every render, and the redirect
+  // below runs exactly when the component has returned early — so anything
+  // declared after those returns would not exist when it is needed.
+  const locale = pathname.split('/')[1] ?? 'en'
+  // Below 900px the sidebar is a drawer, so it needs opening and closing.
+  const [drawerOpen, setDrawerOpen] = useState(false)
+
   useEffect(() => {
     if (!_hydrated) return
     if (!user) {
@@ -98,7 +107,7 @@ export function AdminShell({
     } else if (!user.platformAdmin) {
       router.replace(`/${locale}/dashboard`)
     }
-  }, [user, _hydrated, pathname, router])
+  }, [user, _hydrated, locale, router])
 
   // Blank rather than a message: a redirect is already under way, and text
   // would flash and disappear.
@@ -106,8 +115,6 @@ export function AdminShell({
     return <div style={{ minHeight: '100vh', background: 'var(--color-bg)' }} />
   }
   if (!user || !user.platformAdmin) return null
-
-  const locale = pathname.split('/')[1] ?? 'en'
 
   const handleLogout = async () => {
     // Tell the server first so the refresh token is revoked rather than just
@@ -127,7 +134,16 @@ export function AdminShell({
 
   return (
     <div className={styles.shell}>
-      <aside className={styles.sidebar}>
+      {/* Only rendered while open, so it never intercepts clicks on desktop. */}
+      {drawerOpen && (
+        <div
+          className={styles.overlay}
+          onClick={() => setDrawerOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside className={`${styles.sidebar} ${drawerOpen ? styles.sidebarOpen : ''}`}>
         <div className={styles.brand}>
           <span className={styles.brandName}>Movio</span>
           <span className={styles.brandTag}>Admin</span>
@@ -155,7 +171,10 @@ export function AdminShell({
                     type="button"
                     className={`${styles.navItem} ${active ? styles.navItemActive : ''}`}
                     aria-current={active ? 'page' : undefined}
-                    onClick={() => onSectionChange(item.key as AdminSection)}
+                    onClick={() => {
+                      onSectionChange(item.key as AdminSection)
+                      setDrawerOpen(false)
+                    }}
                   >
                     <Icon size={18} strokeWidth={1.75} aria-hidden="true" />
                     <span>{item.label}</span>
@@ -166,32 +185,53 @@ export function AdminShell({
           ))}
         </nav>
 
-        <div className={styles.userBlock}>
-          <div className={styles.avatar}>{getInitials(user.name)}</div>
-          <div className={styles.userText}>
-            <span className={styles.userName}>{user.name}</span>
-            <span className={styles.userRole}>Platform admin</span>
+        {/* Name and logout together at the foot of the sidebar. Separately, the
+            sidebar's gap sat between them and the button floated on its own. */}
+        <div className={styles.sidebarFooter}>
+          <div className={styles.userBlock}>
+            <div className={styles.avatar}>{getInitials(user.name)}</div>
+            <div className={styles.userText}>
+              <span className={styles.userName}>{user.name}</span>
+              <span className={styles.userRole}>Platform admin</span>
+            </div>
           </div>
-        </div>
 
-        <button type="button" className={styles.logoutButton} onClick={handleLogout}>
-          {/* The same inline icon the main app uses, rather than a Lucide name
-              that may not exist in this version. */}
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-               stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
-            <path d="M5 2H2a1 1 0 00-1 1v8a1 1 0 001 1h3M10 10l3-3-3-3M13 7H5" />
-          </svg>
-          <span>Log out</span>
-        </button>
+          <button type="button" className={styles.logoutButton} onClick={handleLogout}>
+            {/* The same inline icon the main app uses, rather than a Lucide name
+                that may not exist in this version. */}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+                 stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+              <path d="M5 2H2a1 1 0 00-1 1v8a1 1 0 001 1h3M10 10l3-3-3-3M13 7H5" />
+            </svg>
+            <span>Log out</span>
+          </button>
+        </div>
       </aside>
 
-      <main className={styles.content}>
-        <header className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>{SECTION_TITLES[section]}</h1>
-          {subtitle && <p className={styles.pageSubtitle}>{subtitle}</p>}
-        </header>
-        {children}
-      </main>
+      <div className={styles.mainColumn}>
+        {/* Appears only when the sidebar has become a drawer — otherwise there
+            would be no way to reach navigation. */}
+        <div className={styles.mobileBar}>
+          <button
+            type="button"
+            className={styles.menuButton}
+            onClick={() => setDrawerOpen(true)}
+            aria-label="Open navigation"
+          >
+            <Menu size={20} strokeWidth={1.75} aria-hidden="true" />
+          </button>
+          <span className={styles.brandName}>Movio</span>
+          <span className={styles.brandTag}>Admin</span>
+        </div>
+
+        <main className={styles.content}>
+          <header className={styles.pageHeader}>
+            <h1 className={styles.pageTitle}>{SECTION_TITLES[section]}</h1>
+            {subtitle && <p className={styles.pageSubtitle}>{subtitle}</p>}
+          </header>
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

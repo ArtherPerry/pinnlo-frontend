@@ -227,3 +227,143 @@
   outline: 2px solid var(--color-teal-600);
   outline-offset: 2px;
 }
+/* ── Responsive ───────────────────────────────────────────────────────
+ * Breakpoints follow the shared scale: 900px is where the sidebar becomes a
+ * drawer, 640px is a phone.
+ *
+ * Before this, the sidebar stayed 240px at any width — on a 375px phone that
+ * left 135px for content. */
+
+.mainColumn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The bar only exists while the sidebar is a drawer. */
+.mobileBar {
+  display: none;
+}
+
+.menuButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-white);
+  color: var(--color-ink);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menuButton:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}
+
+.overlay {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .mobileBar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    height: 56px;
+    padding: 0 var(--space-4);
+    /* Clear of a phone's status bar; zero on other devices. */
+    padding-top: env(safe-area-inset-top, 0px);
+    background: var(--color-white);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    width: min(280px, 85vw);
+    transform: translateX(-100%);
+    transition: transform var(--transition-base);
+    box-shadow: var(--shadow-lg);
+    padding-top: calc(var(--space-6) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 99;
+  }
+
+  /* 40px of padding either side is a lot of a small screen. */
+  .content {
+    padding: var(--space-5);
+  }
+
+  .pageTitle {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .content {
+    padding: var(--space-4);
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Name and logout belong together at the foot of the sidebar. Separately, the
+   sidebar's gap sat between them and the button floated on its own. */
+.sidebarFooter {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.sidebarFooter .userBlock {
+  margin-top: 0;
+}
+
+.sidebarFooter .logoutButton {
+  margin-top: 0;
+}
+
+/* Close the remaining gap so logout reads as part of the user block. */
+.sidebarFooter .userBlock {
+  padding-bottom: var(--space-2);
+}
+
+.sidebarFooter .logoutButton {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+/* Line logout up with the user block: icon centred under the avatar, text
+   starting where "Platform admin" does. */
+.sidebarFooter .logoutButton {
+  padding-left: var(--space-3); /* same inset as the user block */
+  gap: var(--space-3);          /* same gap as avatar-to-name */
+}
+
+.sidebarFooter .logoutButton svg {
+  flex-shrink: 0;
+  /* (avatar 32px − icon 14px) ÷ 2, so the icon sits centred under the avatar. */
+  margin-inline: 9px;
+}

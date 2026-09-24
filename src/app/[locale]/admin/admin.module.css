@@ -516,3 +516,30 @@
   justify-content: space-between;
   margin-bottom: var(--space-5);
 }
+
+/* ── Responsive ───────────────────────────────────────────────────────
+ * These tables had overflow: hidden for their rounded corners and no
+ * scrolling wrapper, so on a narrow screen the right-hand columns were cut
+ * off and unreachable rather than scrollable.
+ *
+ * Making the table itself a scrolling block is the contained fix. The tidier
+ * one is a wrapper element around each table, which needs changes in the
+ * Agencies, Users and Audit components. */
+@media (max-width: 900px) {
+  .table {
+    display: block;
+    overflow-x: auto;
+    /* Without this, narrow columns wrap into very tall rows. */
+    white-space: nowrap;
+  }
+
+  .toolbar {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 640px) {
+  .statGrid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}

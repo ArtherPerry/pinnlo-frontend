@@ -78,9 +78,18 @@
   padding: var(--space-2);
 }
 
-@media (max-width: 768px) {
+/* Matches the drawer breakpoint: the hamburger must appear exactly when the
+ * sidebar leaves, or there is no way to reach navigation on a tablet. */
+@media (max-width: 900px) {
   .hamburger {
     display: flex;
     align-items: center;
+  }
+}
+
+/* Clear of the phone status bar, since the header is sticky at the top. */
+@media (max-width: 900px) {
+  .header {
+    padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
   }
 }

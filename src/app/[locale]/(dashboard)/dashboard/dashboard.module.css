@@ -209,3 +209,25 @@
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Four stats: one row wherever there's room, two-by-two on a phone — never
+   three and an orphan. auto-fit with 180px minimums landed on three at tablet
+   widths. */
+.grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.panelLink {
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Side by side, the two panels squeezed their text to a word per line. */
+  .columns {
+    grid-template-columns: 1fr;
+  }
+}

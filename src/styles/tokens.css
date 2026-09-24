@@ -73,3 +73,39 @@
   --transition-fast: 0.12s ease;
   --transition-base: 0.18s ease;
 }
+
+/* ── Breakpoints ──────────────────────────────────────────────────────
+ *
+ * One scale, used everywhere. Written as literal pixels in @media rules
+ * because CSS variables do not work inside media queries — these values are
+ * the reference, not something the rules can read.
+ *
+ *   ≤ 640px    phone                 (360px is the smallest supported width)
+ *   ≤ 900px    tablet, and any width where the sidebar becomes a drawer
+ *   ≤ 1200px   small laptop
+ *   ≥ 1600px   external monitor
+ *
+ * Existing files use 560, 768, 900 and 1100. Migrate each to this scale as
+ * it is touched, rather than in one sweep.
+ */
+
+:root {
+  /* Content was capped at 980px and not centred, so on anything wider
+     everything sat on the left with a gap beside it. Wider, and centred in
+     the layout. */
+  --content-max-width: 1280px;
+
+  /* Data-heavy pages — tables, analytics — may opt into more width. */
+  --content-max-width-wide: 1600px;
+
+  /* Padding shrinks with the viewport; set by the layout per breakpoint. */
+  --content-pad: var(--space-6);
+}
+
+@media (max-width: 900px) {
+  :root { --content-pad: var(--space-5); }
+}
+
+@media (max-width: 640px) {
+  :root { --content-pad: var(--space-4); }
+}

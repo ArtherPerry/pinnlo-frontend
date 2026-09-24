@@ -12,6 +12,7 @@ import api from '@/lib/api'
 import styles from './signup.module.css'
 
 const schema = z.object({
+  name:       z.string().min(1, 'Enter your name'),
   agencyName: z.string().min(2, 'Agency name must be at least 2 characters'),
   email:      z.string().email('Enter a valid email address'),
   password:   z.string().min(8, 'Password must be at least 8 characters'),
@@ -38,7 +39,8 @@ export default function SignupPage() {
 
   const onSubmit = async (data: FormData) => {
     try {
-      await api.post('/api/v1/auth/signup', {
+           await api.post('/api/v1/auth/signup', {
+        name:       data.name,
         agencyName: data.agencyName,
         email:      data.email,
         password:   data.password,
@@ -55,6 +57,13 @@ export default function SignupPage() {
       <p className={styles.sub}>Create your Movio agency account</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form} noValidate>
+                <Input
+          label={t('your_name')}
+          type="text"
+          placeholder="Somchai"
+          error={errors.name?.message}
+          {...register('name')}
+        />
         <Input
           label={t('agency_name')}
           type="text"

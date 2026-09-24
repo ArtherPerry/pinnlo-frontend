@@ -1,0 +1,2854 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movio — Move your marketing forward</title>
+    <meta
+      name="description"
+      content="Movio is the workspace agencies run client social media from — scheduling, two-step approval, a comment inbox, market-grounded review, and real reports, all under one login."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f6f7f4;
+        --bg-alt: #eef0ea;
+        --surface: #ffffff;
+        --ink: #10151a;
+        --ink-soft: #57616b;
+        --ink-faint: #9aa3aa;
+        --coral: #ff5a36;
+        --coral-soft: #ffe4da;
+        --cobalt: #2f52e0;
+        --cobalt-soft: #e3e8ff;
+        --ok: #1f9d6b;
+        --ok-soft: #d8f2e6;
+        --line: #e2e4de;
+        --radius: 20px;
+        --font-display: "Space Grotesk", sans-serif;
+        --font-body: "Inter", sans-serif;
+        --font-mono: "IBM Plex Mono", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--font-body);
+        color: var(--ink);
+        background: var(--bg);
+        line-height: 1.55;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      img,
+      canvas {
+        display: block;
+        max-width: 100%;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      ul {
+        list-style: none;
+      }
+      section {
+        position: relative;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: var(--font-display);
+        letter-spacing: -0.01em;
+        color: var(--ink);
+      }
+      h1 {
+        font-weight: 700;
+        font-size: clamp(2.6rem, 6vw, 5.1rem);
+        line-height: 1.02;
+        letter-spacing: -0.02em;
+      }
+      h2 {
+        font-weight: 600;
+        font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+        line-height: 1.12;
+      }
+      h3 {
+        font-weight: 600;
+        font-size: 1.18rem;
+      }
+      p {
+        color: var(--ink-soft);
+      }
+      :focus-visible {
+        outline: 2px solid var(--cobalt);
+        outline-offset: 3px;
+        border-radius: 4px;
+      }
+
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2rem;
+      }
+      .eyebrow {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--cobalt);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55em;
+        font-weight: 500;
+      }
+      .eyebrow::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--coral);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 1.7rem;
+        border-radius: 999px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition:
+          transform 0.25s ease,
+          box-shadow 0.25s ease,
+          border-color 0.25s ease;
+        cursor: pointer;
+        border: 1.5px solid transparent;
+      }
+      .btn-primary {
+        background: var(--coral);
+        color: #fff;
+        box-shadow: 0 10px 24px -10px rgba(255, 90, 54, 0.6);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 30px -8px rgba(255, 90, 54, 0.7);
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--ink);
+        border-color: var(--line);
+      }
+      .btn-ghost:hover {
+        border-color: var(--ink);
+      }
+      .btn-sm {
+        padding: 0.6rem 1.25rem;
+        font-size: 0.85rem;
+      }
+      .btn-lg {
+        padding: 1.05rem 2.3rem;
+        font-size: 1.05rem;
+      }
+
+      /* ---------- NAV ---------- */
+      .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        padding: 1.15rem 0;
+        transition:
+          background 0.3s ease,
+          box-shadow 0.3s ease,
+          padding 0.3s ease;
+      }
+      .nav.scrolled {
+        background: rgba(246, 247, 244, 0.82);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 1px 0 var(--line);
+        padding: 0.75rem 0;
+      }
+      .nav-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.2rem;
+      }
+      .logo-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--coral);
+        box-shadow: 0 0 0 5px var(--coral-soft);
+      }
+      .nav-links {
+        display: flex;
+        gap: 2.2rem;
+        font-size: 0.92rem;
+        font-weight: 500;
+      }
+      .nav-links a {
+        color: var(--ink-soft);
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--ink);
+      }
+      @media (max-width: 800px) {
+        .nav-links {
+          display: none;
+        }
+      }
+
+      /* ---------- HERO ---------- */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        padding-top: 5rem;
+      }
+      .hero-grid {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 3.5rem;
+        align-items: center;
+        width: 100%;
+      }
+      .hero-content {
+        max-width: 560px;
+      }
+      .hero-content h1 {
+        margin-top: 1.3rem;
+      }
+      .hero-sub {
+        font-size: 1.15rem;
+        margin: 1.7rem 0 2.3rem;
+        max-width: 540px;
+      }
+      .hero-cta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .hero-media {
+        position: relative;
+      }
+      .hero-video {
+        position: relative;
+        aspect-ratio: 4 / 3;
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: linear-gradient(160deg, var(--bg-alt), var(--surface));
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.1rem;
+        box-shadow: 0 30px 60px -30px rgba(16, 21, 26, 0.25);
+      }
+      .hero-video::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at 28% 22%,
+          var(--coral-soft),
+          transparent 55%
+        );
+        opacity: 0.6;
+      }
+      .hero-video-play {
+        position: relative;
+        z-index: 1;
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: var(--coral);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 16px 32px -10px rgba(255, 90, 54, 0.55);
+        transition: transform 0.25s ease;
+      }
+      .hero-video-play:hover {
+        transform: scale(1.06);
+      }
+      .hero-video-play svg {
+        margin-left: 4px;
+      }
+      .hero-video-label {
+        position: relative;
+        z-index: 1;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        letter-spacing: 0.06em;
+        color: var(--ink-soft);
+      }
+      @media (max-width: 900px) {
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+        .hero-content {
+          max-width: none;
+        }
+      }
+      .scroll-cue {
+        position: absolute;
+        bottom: 2.1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        letter-spacing: 0.16em;
+        color: var(--ink-faint);
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .scroll-cue::after {
+        content: "";
+        width: 1px;
+        height: 26px;
+        background: linear-gradient(var(--ink-faint), transparent);
+        animation: scrollcue 1.8s ease-in-out infinite;
+      }
+      @keyframes scrollcue {
+        0% {
+          opacity: 0;
+          transform: translateY(-6px);
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+      }
+
+      /* ---------- MARQUEE ---------- */
+      .marquee-wrap {
+        margin-top: 5rem;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 1.9rem 0;
+        overflow: hidden;
+        background: var(--bg-alt);
+      }
+      .marquee-label {
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        letter-spacing: 0.14em;
+        color: var(--ink-faint);
+        margin-bottom: 1.3rem;
+        text-transform: uppercase;
+      }
+      .marquee-track {
+        display: flex;
+        gap: 4.2rem;
+        width: max-content;
+        animation: marquee 26s linear infinite;
+      }
+      .marquee-track span {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.3rem;
+        color: var(--ink-faint);
+        white-space: nowrap;
+      }
+      @keyframes marquee {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-50%);
+        }
+      }
+
+      /* ---------- REVEAL ---------- */
+      .reveal {
+        opacity: 0;
+        transform: translateY(26px);
+        transition:
+          opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ---------- CAPABILITY RAIL ---------- */
+      .rail {
+        padding: 7.5rem 0;
+      }
+      .rail-head {
+        max-width: 1240px;
+        margin: 0 auto 3rem;
+        padding: 0 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 2rem;
+        flex-wrap: wrap;
+      }
+      .rail-head p {
+        max-width: 360px;
+        font-size: 0.95rem;
+      }
+      .rail-track {
+        display: flex;
+        gap: 1.4rem;
+        overflow-x: auto;
+        padding: 0 2rem 1.6rem;
+        scroll-snap-type: x proximity;
+        scrollbar-width: none;
+        cursor: grab;
+      }
+      .rail-track::-webkit-scrollbar {
+        display: none;
+      }
+      .rail-track.dragging {
+        cursor: grabbing;
+        scroll-snap-type: none;
+        user-select: none;
+      }
+      .rail-card {
+        flex: 0 0 clamp(255px, 32vw, 338px);
+        scroll-snap-align: start;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.1rem;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          border-color 0.3s ease;
+      }
+      .rail-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 22px 40px -22px rgba(16, 21, 26, 0.2);
+        border-color: transparent;
+      }
+      .rail-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .rail-index {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--coral);
+        font-weight: 600;
+      }
+      .rail-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: var(--cobalt-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--cobalt);
+        flex: none;
+      }
+      .rail-card p {
+        font-size: 0.92rem;
+      }
+      .rail-card--phase {
+        flex: 0 0 clamp(280px, 34vw, 380px);
+      }
+      .phase-feats {
+        display: flex;
+        flex-direction: column;
+        gap: 0.55rem;
+        margin-top: 0.2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--line);
+      }
+      .phase-feats li {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+        display: flex;
+        gap: 0.6rem;
+        align-items: flex-start;
+        line-height: 1.4;
+      }
+      .phase-feats li::before {
+        content: "";
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: var(--cobalt);
+        margin-top: 0.5em;
+        flex: none;
+      }
+
+      /* ---------- WORKFLOW (approval card) ---------- */
+      .workflow-section {
+        padding: 7.5rem 0;
+        background: var(--bg-alt);
+      }
+      .workflow {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: 0.95fr 1.15fr;
+        gap: 3.4rem;
+        align-items: center;
+      }
+      .workflow-text p {
+        margin-top: 1.2rem;
+        max-width: 420px;
+      }
+      .workflow-text .aside {
+        margin-top: 1.6rem;
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.02em;
+        color: var(--ink-faint);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .workflow-text .aside::before {
+        content: "";
+        width: 22px;
+        height: 1px;
+        background: var(--ink-faint);
+      }
+      .apr-stage {
+        position: relative;
+        display: flex;
+        justify-content: center;
+      }
+      .apr-card {
+        width: min(430px, 100%);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: 0 30px 60px -34px rgba(16, 21, 26, 0.32);
+        overflow: hidden;
+      }
+      .apr-rail {
+        display: flex;
+        gap: 4px;
+        padding: 14px 16px 0;
+      }
+      .apr-rail span {
+        height: 3px;
+        flex: 1;
+        border-radius: 2px;
+        background: var(--line);
+        transition: background 0.5s ease;
+      }
+      .apr-card[data-stage="0"] .apr-rail span:nth-child(-n + 1),
+      .apr-card[data-stage="1"] .apr-rail span:nth-child(-n + 2),
+      .apr-card[data-stage="2"] .apr-rail span:nth-child(-n + 3),
+      .apr-card[data-stage="3"] .apr-rail span:nth-child(-n + 4) {
+        background: var(--coral);
+      }
+      .apr-head {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 14px 16px 12px;
+      }
+      .apr-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 11px;
+        background: linear-gradient(150deg, #ffb59f, var(--coral));
+        color: #fff;
+        font-family: var(--font-display);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex: none;
+      }
+      .apr-who {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.25;
+      }
+      .apr-who b {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 0.95rem;
+      }
+      .apr-who span {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--ink-faint);
+      }
+      .apr-chip {
+        margin-left: auto;
+        font-family: var(--font-mono);
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        transition:
+          background 0.45s ease,
+          color 0.45s ease;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .apr-chip::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: currentColor;
+        opacity: 0.9;
+      }
+      .apr-chip.is-draft {
+        background: var(--bg-alt);
+        color: var(--ink-faint);
+      }
+      .apr-chip.is-review {
+        background: var(--cobalt-soft);
+        color: var(--cobalt);
+      }
+      .apr-chip.is-approved {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .apr-chip.is-scheduled {
+        background: var(--coral-soft);
+        color: var(--coral);
+      }
+      .apr-media {
+        position: relative;
+        height: 150px;
+        margin: 0 16px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #ffe9c2, #ffd0be 45%, #e3e8ff);
+        border: 1px solid var(--line);
+      }
+      .apr-media svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .apr-caption {
+        padding: 13px 18px 4px;
+        font-size: 0.92rem;
+        color: var(--ink);
+        line-height: 1.5;
+      }
+      .apr-caption .muted {
+        color: var(--ink-faint);
+      }
+      .apr-metaline {
+        padding: 2px 18px 0;
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--ink-faint);
+        letter-spacing: 0.03em;
+      }
+      .apr-foot {
+        position: relative;
+        margin: 12px 16px 16px;
+        min-height: 64px;
+      }
+      .apr-panel {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        opacity: 0;
+        transform: translateY(8px);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+        pointer-events: none;
+      }
+      .apr-panel.show {
+        opacity: 1;
+        transform: none;
+      }
+      .apr-panel .tag {
+        font-family: var(--font-mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+      }
+      .apr-panel .big {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 0.98rem;
+        color: var(--ink);
+      }
+      .apr-panel .sub {
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+      }
+      .apr-col {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        min-width: 0;
+      }
+      .apr-portal {
+        justify-content: space-between;
+      }
+      .apr-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex: none;
+      }
+      .apr-btn {
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 0.82rem;
+        border-radius: 999px;
+        padding: 0.5rem 1rem;
+        border: 1.5px solid var(--line);
+        background: var(--surface);
+        color: var(--ink);
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .apr-btn.approve {
+        background: var(--coral);
+        border-color: var(--coral);
+        color: #fff;
+        box-shadow: 0 8px 18px -10px rgba(255, 90, 54, 0.7);
+      }
+      .apr-btn.approve.pressed {
+        animation: aprPress 0.5s ease;
+      }
+      @keyframes aprPress {
+        40% {
+          transform: scale(0.9);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+      .apr-cursor {
+        position: absolute;
+        right: 26px;
+        bottom: 14px;
+        width: 16px;
+        height: 16px;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 3;
+      }
+      .apr-cursor svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 2px 3px rgba(16, 21, 26, 0.3));
+      }
+      .apr-card.tap .apr-cursor {
+        animation: aprCursor 1s ease forwards;
+      }
+      @keyframes aprCursor {
+        0% {
+          opacity: 0;
+          transform: translate(10px, 10px);
+        }
+        40% {
+          opacity: 1;
+          transform: translate(0, 0);
+        }
+        70% {
+          transform: translate(0, 3px);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(0, 0);
+        }
+      }
+      .apr-ic {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .apr-ic.ok {
+        background: var(--ok-soft);
+        color: var(--ok);
+      }
+      .apr-ic.cal {
+        background: var(--coral-soft);
+        color: var(--coral);
+      }
+      .apr-note {
+        position: absolute;
+        left: -8px;
+        top: 64px;
+        transform: translateX(-100%);
+        background: var(--ink);
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 0.66rem;
+        letter-spacing: 0.03em;
+        padding: 0.5rem 0.75rem;
+        border-radius: 10px;
+        white-space: nowrap;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        box-shadow: 0 12px 24px -12px rgba(16, 21, 26, 0.5);
+      }
+      .apr-note::after {
+        content: "";
+        position: absolute;
+        right: -5px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+        width: 10px;
+        height: 10px;
+        background: var(--ink);
+        border-radius: 2px;
+      }
+      .apr-card[data-stage="2"] .apr-note {
+        opacity: 1;
+      }
+      @media (max-width: 520px) {
+        .apr-note {
+          display: none;
+        }
+      }
+      @media (max-width: 900px) {
+        .workflow {
+          grid-template-columns: 1fr;
+          gap: 2.4rem;
+        }
+      }
+
+      /* ---------- AI SPOTLIGHT ---------- */
+      .ai-spotlight {
+        padding: 7.5rem 2rem;
+        max-width: 1240px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 3.2rem;
+        align-items: center;
+      }
+      .ai-points {
+        margin-top: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+      .ai-points li {
+        display: flex;
+        gap: 0.7rem;
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+        align-items: flex-start;
+      }
+      .ai-points li::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--coral);
+        margin-top: 0.55em;
+        flex: none;
+      }
+      .ticker {
+        position: relative;
+        height: 270px;
+      }
+      .ticker-card {
+        position: absolute;
+        inset: 0;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.9rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+        transition:
+          opacity 0.6s ease,
+          transform 0.6s ease;
+      }
+      .ticker-card.active {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .ticker-tag {
+        font-family: var(--font-mono);
+        font-size: 0.68rem;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .ticker-subject {
+        font-family: var(--font-display);
+        font-size: 1.32rem;
+        font-weight: 600;
+        margin: 0.9rem 0;
+        color: var(--ink);
+      }
+      .ticker-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-family: var(--font-mono);
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+        border-top: 1px solid var(--line);
+        padding-top: 1rem;
+      }
+      .ticker-stat b {
+        color: var(--cobalt);
+        font-size: 1.1rem;
+      }
+      @media (max-width: 900px) {
+        .ai-spotlight {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- INTEGRATIONS ---------- */
+      .integrations {
+        padding: 7.5rem 2rem;
+        text-align: center;
+      }
+      .integrations h2 {
+        max-width: 620px;
+        margin: 0 auto;
+      }
+      .integrations p.lead {
+        max-width: 480px;
+        margin: 1rem auto 0;
+      }
+      .orbit-wrap {
+        position: relative;
+        width: min(520px, 88vw);
+        height: min(520px, 88vw);
+        margin: 4.5rem auto 0;
+      }
+      .orbit-ring {
+        position: absolute;
+        inset: 0;
+        border: 1px dashed var(--line);
+        border-radius: 50%;
+      }
+      .orbit-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 104px;
+        height: 104px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: 1.02rem;
+        z-index: 3;
+        box-shadow: 0 22px 44px -16px rgba(16, 21, 26, 0.4);
+      }
+      .orbit-line {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          rgba(47, 82, 224, 0.35),
+          rgba(47, 82, 224, 0)
+        );
+        transform-origin: left center;
+        transition: width 0.95s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .orbit-node {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 78px;
+        height: 78px;
+        margin: -39px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: var(--font-mono);
+        font-size: 0.66rem;
+        font-weight: 600;
+        color: var(--ink-soft);
+        box-shadow: 0 12px 22px -14px rgba(16, 21, 26, 0.22);
+        transition:
+          transform 0.95s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.5s ease;
+      }
+      .orbit-node.breathing {
+        animation: pinbreathe 3.4s ease-in-out infinite;
+      }
+      @keyframes pinbreathe {
+        0%,
+        100% {
+          transform: translate(var(--nx), var(--ny)) scale(1);
+        }
+        50% {
+          transform: translate(var(--nx), var(--ny)) scale(1.07);
+        }
+      }
+      @keyframes orbitSpinIn {
+        from {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        to {
+          transform: translate(-50%, -50%) rotate(1080deg);
+        }
+      }
+      .orbit-center.spin-in {
+        animation: orbitSpinIn 1.3s cubic-bezier(0.16, 0.84, 0.44, 1);
+      }
+
+      /* ---------- STATS ---------- */
+      .stats {
+        padding: 7.5rem 2rem;
+        background: var(--ink);
+        color: var(--bg);
+      }
+      .stats-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .stats .eyebrow {
+        color: var(--coral);
+      }
+      .stats .eyebrow::before {
+        background: var(--coral);
+      }
+      .stats h2 {
+        color: var(--bg);
+        max-width: 600px;
+      }
+      .stats-grid {
+        margin-top: 3.4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2.6rem;
+      }
+      .stat {
+        border-top: 1px solid rgba(255, 255, 255, 0.16);
+        padding-top: 1.5rem;
+      }
+      .stat-num {
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(2.3rem, 4vw, 3.3rem);
+        color: var(--bg);
+      }
+      .stat p {
+        color: rgba(255, 255, 255, 0.58);
+        font-size: 0.92rem;
+        margin-top: 0.5rem;
+        max-width: 240px;
+      }
+      @media (max-width: 760px) {
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- SECURITY & PRIVACY ---------- */
+      .security {
+        padding: 7.5rem 2rem;
+      }
+      .security-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+      }
+      .security-head {
+        max-width: 620px;
+      }
+      .security-lead {
+        margin-top: 1rem;
+        font-size: 0.98rem;
+      }
+      .security-grid {
+        margin-top: 3.4rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.6rem;
+      }
+      .sec-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      .sec-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 38px -22px rgba(16, 21, 26, 0.2);
+      }
+      .sec-ic {
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: var(--ok-soft);
+        color: var(--ok);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+      }
+      .sec-card p {
+        font-size: 0.9rem;
+      }
+      @media (max-width: 900px) {
+        .security-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- TESTIMONIAL ---------- */
+      .testimonial {
+        padding: 7.5rem 2rem;
+        max-width: 820px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .testimonial blockquote {
+        font-family: var(--font-display);
+        font-weight: 500;
+        font-size: clamp(1.5rem, 2.6vw, 2.05rem);
+        line-height: 1.35;
+        color: var(--ink);
+      }
+      .testimonial cite {
+        display: block;
+        margin-top: 1.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.85rem;
+        color: var(--ink-faint);
+        font-style: normal;
+      }
+
+      /* ---------- PRICING ---------- */
+      .pricing {
+        padding: 7.5rem 2rem;
+        background: var(--bg-alt);
+      }
+      .pricing-inner {
+        max-width: 1120px;
+        margin: 0 auto;
+      }
+      .pricing-head {
+        max-width: 560px;
+      }
+      .pricing-grid {
+        margin-top: 3.2rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1.6rem;
+      }
+      /* A card with a phrase instead of a price. */
+      .price-amount.is-text {
+        font-size: 1.35rem;
+        line-height: 1.3;
+      }
+      @media (max-width: 1100px) {
+        .pricing-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+      .price-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 2.4rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.3rem;
+        position: relative;
+      }
+      .price-card.featured {
+        border-color: var(--coral);
+        box-shadow: 0 26px 50px -26px rgba(255, 90, 54, 0.38);
+      }
+      .price-card.featured::before {
+        content: "MOST PICKED";
+        position: absolute;
+        top: -13px;
+        left: 2rem;
+        background: var(--coral);
+        color: #fff;
+        font-family: var(--font-mono);
+        font-size: 0.6rem;
+        letter-spacing: 0.1em;
+        padding: 0.3rem 0.7rem;
+        border-radius: 999px;
+      }
+      .price-name {
+        font-family: var(--font-mono);
+        font-size: 0.76rem;
+        letter-spacing: 0.1em;
+        color: var(--ink-faint);
+        text-transform: uppercase;
+      }
+      .price-amount {
+        font-family: var(--font-display);
+        font-size: 2.15rem;
+        font-weight: 700;
+      }
+      .price-amount span {
+        font-family: var(--font-body);
+        font-size: 0.9rem;
+        font-weight: 400;
+        color: var(--ink-soft);
+      }
+      .price-feats {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        font-size: 0.87rem;
+        color: var(--ink-soft);
+      }
+      .price-feats li::before {
+        content: "— ";
+        color: var(--ink-faint);
+      }
+      @media (max-width: 900px) {
+        .pricing-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ---------- FINAL CTA ---------- */
+      .final-cta {
+        position: relative;
+        padding: 8.5rem 2rem;
+        text-align: center;
+        overflow: hidden;
+      }
+      .final-cta h2 {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      .final-cta p {
+        margin: 1.2rem auto 2.3rem;
+        max-width: 400px;
+      }
+      .mini-pin {
+        position: absolute;
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--coral);
+        opacity: 0.4;
+        animation: pinpulse 3s ease-in-out infinite;
+      }
+      @keyframes pinpulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 0.3;
+        }
+        50% {
+          transform: scale(1.7);
+          opacity: 0.65;
+        }
+      }
+
+      /* ---------- FOOTER ---------- */
+      footer {
+        padding: 3rem 2rem 2.5rem;
+        border-top: 1px solid var(--line);
+      }
+      .footer-inner {
+        max-width: 1240px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+      }
+      .footer-links {
+        display: flex;
+        gap: 1.8rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
+      }
+      .footer-links a:hover {
+        color: var(--ink);
+      }
+      .footer-meta {
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        color: var(--ink-faint);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+        * {
+          animation-duration: 0.001ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.15s !important;
+        }
+      }
+      /* ── Approval card ───────────────────────────────────────────────
+         One post moving through both approval gates. Everything runs on a
+         single 9s loop so the four steps, the status pill and the three
+         trail lines stay in step with each other; changing the loop length
+         means changing --ap-cycle and nothing else.
+
+         Motion here is doing a job: the pipeline is a sequence, and a
+         sequence is the thing static copy explains worst. */
+      .ap-card {
+        --ap-cycle: 9s;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 0 0 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+        overflow: hidden;
+      }
+
+      .ap-steps {
+        display: flex;
+        gap: 4px;
+        padding: 1.1rem 1.2rem 0;
+      }
+
+      .ap-step {
+        position: relative;
+        height: 3px;
+        flex: 1;
+        border-radius: 2px;
+        background: var(--coral-soft);
+        overflow: hidden;
+      }
+
+      /* The fill sweeps left to right rather than appearing, so the eye
+         follows the direction of travel. */
+      .ap-step i {
+        position: absolute;
+        inset: 0;
+        display: block;
+        background: var(--coral);
+        transform: scaleX(0);
+        transform-origin: left;
+        animation: ap-fill var(--ap-cycle) linear infinite;
+      }
+
+      @keyframes ap-fill {
+        0%,
+        2% {
+          transform: scaleX(0);
+        }
+        8%,
+        96% {
+          transform: scaleX(1);
+        }
+        100% {
+          transform: scaleX(0);
+        }
+      }
+
+      .ap-head {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0 1.2rem;
+      }
+
+      .ap-avatar {
+        width: 38px;
+        height: 38px;
+        flex: none;
+        border-radius: 11px;
+        background: var(--coral);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: 1.05rem;
+      }
+
+      .ap-who {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .ap-who strong {
+        font-family: var(--font-display);
+        font-size: 0.98rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+
+      .ap-handle {
+        font-family: var(--font-mono);
+        font-size: 0.74rem;
+        color: var(--ink-faint);
+      }
+
+      /* Fixed width so the pill does not resize as the label changes and
+         shove the rest of the row around. */
+      .ap-status {
+        position: relative;
+        margin-left: auto;
+        flex: none;
+        width: 104px;
+        height: 25px;
+      }
+
+      .ap-state {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        background: var(--bg-alt);
+        color: var(--ink-soft);
+        opacity: 0;
+        animation: ap-state var(--ap-cycle) steps(1, end) infinite;
+      }
+
+      .ap-state--1 {
+        animation-delay: 0s;
+      }
+      .ap-state--2 {
+        animation-delay: 2s;
+      }
+      .ap-state--3 {
+        animation-delay: 4s;
+      }
+
+      /* Only the final state is coral: arriving is what deserves the accent. */
+      .ap-state--4 {
+        animation-delay: 6s;
+        background: var(--coral-soft);
+        color: var(--coral);
+      }
+
+      @keyframes ap-state {
+        0%,
+        22% {
+          opacity: 1;
+        }
+        23%,
+        100% {
+          opacity: 0;
+        }
+      }
+
+      .ap-caption {
+        padding: 0 1.2rem;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      .ap-trail {
+        list-style: none;
+        padding: 0 1.2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .ap-line {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+        opacity: 0;
+        transform: translateY(4px);
+        animation: ap-line var(--ap-cycle) ease-out infinite;
+      }
+
+      .ap-line--1 {
+        animation-delay: 0.6s;
+      }
+      .ap-line--2 {
+        animation-delay: 2.6s;
+      }
+      .ap-line--3 {
+        animation-delay: 4.6s;
+      }
+
+      @keyframes ap-line {
+        0% {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        6%,
+        94% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+      }
+
+      .ap-tick {
+        width: 15px;
+        height: 15px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--ok-soft);
+        position: relative;
+      }
+
+      .ap-tick::after {
+        content: "";
+        position: absolute;
+        left: 4.5px;
+        top: 3.5px;
+        width: 4px;
+        height: 7px;
+        border: solid var(--ok);
+        border-width: 0 1.8px 1.8px 0;
+        transform: rotate(42deg);
+      }
+
+      .ap-when {
+        margin: 0.2rem 1.2rem 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.8rem 0.9rem;
+        border-radius: 14px;
+        background: var(--bg-alt);
+        opacity: 0;
+        animation: ap-line var(--ap-cycle) ease-out infinite;
+        animation-delay: 6.4s;
+      }
+
+      .ap-when-icon {
+        width: 34px;
+        height: 34px;
+        flex: none;
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--coral);
+        display: grid;
+        place-items: center;
+      }
+
+      .ap-when-text {
+        display: flex;
+        flex-direction: column;
+        line-height: 1.35;
+      }
+
+      .ap-when-text strong {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .ap-when-text span {
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* Anyone who has asked for less motion gets the finished state, not a
+         frozen half-built one. */
+      @media (prefers-reduced-motion: reduce) {
+        .ap-step i,
+        .ap-state,
+        .ap-line,
+        .ap-when {
+          animation: none;
+        }
+        .ap-step i {
+          transform: scaleX(1);
+        }
+        .ap-line,
+        .ap-when {
+          opacity: 1;
+          transform: none;
+        }
+        .ap-state {
+          opacity: 0;
+        }
+        .ap-state--4 {
+          opacity: 1;
+        }
+      }
+
+      /* ── Live capability cards ───────────────────────────────────────
+         Cards 02–04 each show a built feature working, not a feature list.
+         Shared shell first, then the per-card animation. All loops are long
+         and gentle: these sit beside the reading, they do not compete. */
+      .rc {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1.6rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .rc-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      /* ── 02 · AI review ── */
+      .rv-markets {
+        display: flex;
+        gap: 0.4rem;
+      }
+
+      .rv-mk {
+        padding: 4px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-size: 0.78rem;
+        color: var(--ink-soft);
+      }
+
+      .rv-mk--on {
+        border-color: var(--coral);
+        background: var(--coral-soft);
+        color: var(--coral);
+        font-weight: 600;
+      }
+
+      .rv-panel {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+
+      .rv-head {
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        color: var(--ink-faint);
+      }
+
+      .rv-lines {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+
+      .rv-line {
+        display: flex;
+        gap: 0.55rem;
+        font-size: 0.86rem;
+        line-height: 1.45;
+        color: var(--ink-soft);
+        opacity: 0;
+        transform: translateY(5px);
+        animation: rv-in 9s ease-out infinite;
+      }
+
+      .rv-line--1 { animation-delay: 0.5s; }
+      .rv-line--2 { animation-delay: 1.4s; }
+      .rv-line--3 { animation-delay: 2.3s; }
+
+      .rv-dot {
+        width: 6px;
+        height: 6px;
+        margin-top: 7px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--coral);
+      }
+
+      .rv-gap {
+        font-size: 0.76rem;
+        color: var(--ink-faint);
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--line);
+        opacity: 0;
+        animation: rv-in 9s ease-out infinite;
+        animation-delay: 3.1s;
+      }
+
+      @keyframes rv-in {
+        0% { opacity: 0; transform: translateY(5px); }
+        6%, 94% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(5px); }
+      }
+
+      /* ── 03 · Report ── */
+      .st-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.8rem;
+      }
+
+      .st-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.9rem;
+        border-radius: 12px;
+        background: var(--bg-alt);
+      }
+
+      .st-num {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+      }
+
+      .st-label {
+        font-size: 0.74rem;
+        color: var(--ink-faint);
+      }
+
+      .st-spark {
+        width: 100%;
+        height: 52px;
+      }
+
+      /* Draw the line by animating the dash offset from full length to zero. */
+      .st-path {
+        stroke-dasharray: 520;
+        stroke-dashoffset: 520;
+        animation: st-draw 9s ease-in-out infinite;
+      }
+
+      @keyframes st-draw {
+        0% { stroke-dashoffset: 520; }
+        30%, 92% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 520; }
+      }
+
+      .st-caption {
+        font-size: 0.84rem;
+        color: var(--ink-soft);
+      }
+
+      /* ── 04 · Connect ── */
+      .cn-row {
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        padding: 0.9rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+      }
+
+      .cn-avatar {
+        width: 40px;
+        height: 40px;
+        flex: none;
+        border-radius: 11px;
+        background: var(--coral);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-display);
+        font-weight: 600;
+      }
+
+      .cn-who {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+      }
+
+      .cn-who strong {
+        font-size: 0.92rem;
+        font-weight: 600;
+      }
+
+      .cn-meta {
+        position: relative;
+        font-size: 0.76rem;
+        color: var(--ink-faint);
+        height: 1.1em;
+      }
+
+      /* The two states cross-fade in place, so "Connecting…" becomes the real
+         follower count on the same line. */
+      .cn-connecting,
+      .cn-connected {
+        position: absolute;
+        left: 0;
+        white-space: nowrap;
+        animation: cn-swap 9s ease-in-out infinite;
+      }
+
+      .cn-connected {
+        color: var(--ok);
+        font-weight: 500;
+        opacity: 0;
+        animation-name: cn-swap-in;
+      }
+
+      @keyframes cn-swap {
+        0%, 22% { opacity: 1; }
+        30%, 100% { opacity: 0; }
+      }
+
+      @keyframes cn-swap-in {
+        0%, 22% { opacity: 0; }
+        30%, 94% { opacity: 1; }
+        100% { opacity: 0; }
+      }
+
+      .cn-fb {
+        margin-left: auto;
+        color: #1877f2;
+        flex: none;
+      }
+
+      .cn-insights {
+        list-style: none;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.6rem;
+      }
+
+      .cn-ins {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: 0.7rem;
+        border-radius: 11px;
+        background: var(--bg-alt);
+        opacity: 0;
+        transform: translateY(5px);
+        animation: rv-in 9s ease-out infinite;
+      }
+
+      .cn-ins--1 { animation-delay: 3.4s; }
+      .cn-ins--2 { animation-delay: 3.7s; }
+      .cn-ins--3 { animation-delay: 4s; }
+
+      .cn-ins strong {
+        font-family: var(--font-display);
+        font-size: 1.15rem;
+        font-weight: 600;
+      }
+
+      .cn-ins span {
+        font-size: 0.72rem;
+        color: var(--ink-faint);
+      }
+
+      .cn-caption {
+        font-size: 0.84rem;
+        color: var(--ink-soft);
+      }
+
+      /* One rule covers every new card: reduced motion shows the resting
+         state, fully revealed, nothing moving. */
+      @media (prefers-reduced-motion: reduce) {
+        .rv-line,
+        .rv-gap,
+        .cn-ins,
+        .cn-connecting {
+          animation: none;
+          opacity: 1;
+          transform: none;
+        }
+        .cn-connected {
+          animation: none;
+          opacity: 1;
+        }
+        .cn-connecting {
+          opacity: 0;
+        }
+        .st-path {
+          animation: none;
+          stroke-dashoffset: 0;
+        }
+      }
+
+    </style>
+  </head>
+  <body>
+    <header class="nav" id="nav">
+      <div class="nav-inner">
+        <a href="#top" class="logo"><span class="logo-dot"></span>Movio</a>
+        <nav class="nav-links">
+          <a href="#platform">Platform</a>
+          <a href="#workflow">Approvals</a>
+          <a href="#integrations">Networks</a>
+          <a href="#security">Security</a>
+          <a href="#pricing">Plans</a>
+        </nav>
+        <div style="display:flex;gap:.6rem;align-items:center">
+          <a href="/en/login" class="btn btn-ghost btn-sm">Log in</a>
+          <a href="/en/signup" class="btn btn-primary btn-sm">Start free trial</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div class="hero-content">
+          <span class="eyebrow">Social media management for agencies</span>
+          <h1>Every client. One login. Nothing posts without sign-off.</h1>
+          <p class="hero-sub">
+            Movio is the workspace agencies run client social media from —
+            scheduling, two-step approval, a comment inbox, market-grounded
+            review, and real reports, all under one login.
+          </p>
+          <div class="hero-cta">
+            <a href="/en/signup" class="btn btn-primary btn-lg">Start free trial</a>
+            <a href="#platform" class="btn btn-ghost btn-lg">See the platform</a>
+          </div>
+        </div>
+        <div class="hero-media">
+          <!--
+            Placeholder for the product/promo video.
+            Swap this whole .hero-video block for either:
+              <video class="hero-video" src="your-video.mp4" controls poster="thumb.jpg"></video>
+            or an embed:
+              <iframe class="hero-video" src="https://www.youtube.com/embed/VIDEO_ID" allowfullscreen></iframe>
+          -->
+          <!-- <div class="hero-video">
+            <button class="hero-video-play" aria-label="Play product video">
+              <svg width="22" height="26" viewBox="0 0 22 26" fill="none">
+                <path d="M1 1.5v23l20-11.5-20-11.5Z" fill="#fff"/>
+              </svg>
+            </button>
+            <span class="hero-video-label">Product walkthrough — 90 sec</span>
+          </div> -->
+         <iframe class="hero-video" src="movio.mp4" allowfullscreen></iframe>
+        </div>
+      </div>
+      <div class="scroll-cue">SCROLL</div>
+    </section>
+
+    <!-- ================= MARQUEE =================
+         Hidden until real agency names go in. To publish it:
+           1. Replace the placeholder <span>s with agency names, in both
+              halves — the list is duplicated so the scroll loops seamlessly.
+           2. Remove the `hidden` attribute from .marquee-wrap.
+         Do not put invented names here; a strip of agencies that do not
+         exist is the same thing as a fake testimonial. -->
+    <div class="marquee-wrap" hidden>
+      <div class="marquee-label">Running client rosters for agencies like</div>
+      <div class="marquee-track" id="marquee">
+        <span>Agency one</span><span>Agency two</span><span>Agency three</span
+        ><span>Agency four</span> <span>Agency one</span><span>Agency two</span
+        ><span>Agency three</span><span>Agency four</span><span>Agency one</span><span>Agency two</span
+        ><span>Agency three</span><span>Agency four</span>
+      </div>
+    </div>
+
+    <!-- ================= CAPABILITY RAIL ================= -->
+    <section class="rail" id="platform">
+      <div class="rail-head reveal">
+        <div>
+          <span class="eyebrow">The platform</span>
+          <h2 style="margin-top: 0.8rem">
+            Four things it does today. Not a roadmap.
+          </h2>
+        </div>
+        <p>
+          Every card below is a working feature, shown as it runs. Nothing
+          here is planned — it's built.
+        </p>
+      </div>
+      <div class="rail-track" id="rail">
+        <article class="ap-card reveal">
+          <!-- The approval pipeline, running. Four steps: drafted, internal
+               review, client sign-off, scheduled. The animation is the point —
+               a sequence is the one thing static copy explains badly. -->
+          <div class="ap-steps" aria-hidden="true">
+            <span class="ap-step"><i style="animation-delay: 0.2s"></i></span>
+            <span class="ap-step"><i style="animation-delay: 2.2s"></i></span>
+            <span class="ap-step"><i style="animation-delay: 4.2s"></i></span>
+            <span class="ap-step"><i style="animation-delay: 6.2s"></i></span>
+          </div>
+
+          <header class="ap-head">
+            <span class="ap-avatar" aria-hidden="true">S</span>
+            <span class="ap-who">
+              <strong>Somjai Coffee</strong>
+              <span class="ap-handle">Facebook &middot; Instagram</span>
+            </span>
+            <span class="ap-status" aria-hidden="true">
+              <span class="ap-state ap-state--1">Draft</span>
+              <span class="ap-state ap-state--2">In review</span>
+              <span class="ap-state ap-state--3">With client</span>
+              <span class="ap-state ap-state--4">Scheduled</span>
+            </span>
+          </header>
+
+          <p class="ap-caption">
+            เมล็ดใหม่จากเชียงราย — แก้วแรกเราเลี้ยงเอง เสาร์นี้ 8 โมงเช้า
+          </p>
+
+          <!-- Screen-reader users get the outcome, not the performance. -->
+          <p class="sr-only">
+            Drafted, reviewed internally by Mai, approved by the client, and
+            scheduled for Saturday at 9:00.
+          </p>
+
+          <ol class="ap-trail" aria-hidden="true">
+            <li class="ap-line ap-line--1">
+              <span class="ap-tick"></span>Written by Mai
+            </li>
+            <li class="ap-line ap-line--2">
+              <span class="ap-tick"></span>Reviewed for Thailand
+            </li>
+            <li class="ap-line ap-line--3">
+              <span class="ap-tick"></span>Approved by Somchai at Somjai Coffee
+            </li>
+          </ol>
+
+          <footer class="ap-when" aria-hidden="true">
+            <span class="ap-when-icon">
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="3" y="5" width="18" height="16" rx="3" />
+                <path d="M8 3v4M16 3v4M3 11h18" />
+              </svg>
+            </span>
+            <span class="ap-when-text">
+              <strong>Saturday, 9:00</strong>
+              <span>Posts itself. Nothing left in your inbox.</span>
+            </span>
+          </footer>
+        </article>
+        <article class="rc reveal">
+          <div class="rc-top">
+            <span class="rail-index">02 · Advice before it posts</span>
+            <div class="rail-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3.5 13.9 8.6 19 10.5l-5.1 1.9L12 17.5l-1.9-5.1L5 10.5l5.1-1.9L12 3.5Z" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- The market selector is the whole point: the advice is different
+               for each country, and no competitor has this. -->
+          <div class="rv-markets" aria-hidden="true">
+            <span class="rv-mk rv-mk--on">Thailand</span>
+            <span class="rv-mk">Myanmar</span>
+            <span class="rv-mk">Laos</span>
+          </div>
+
+          <div class="rv-panel">
+            <span class="rv-head">Reviewing for Thailand</span>
+            <ul class="rv-lines">
+              <li class="rv-line rv-line--1"><span class="rv-dot"></span>Add a clear call-to-action — Thai shoppers buy through Messenger.</li>
+              <li class="rv-line rv-line--2"><span class="rv-dot"></span>Use polite tone with ครับ / ค่ะ to match local norms.</li>
+              <li class="rv-line rv-line--3"><span class="rv-dot"></span>Tie the offer to a payday window — promotions perform then.</li>
+            </ul>
+            <span class="rv-gap">No follower or competitor data — advice is market-based.</span>
+          </div>
+
+          <p class="sr-only">
+            AI review gives market-specific advice for Thailand, Myanmar or
+            Laos, grounded in local knowledge rather than guesses.
+          </p>
+        </article>
+        <article class="rc reveal">
+          <div class="rc-top">
+            <span class="rail-index">03 · Prove the work</span>
+            <div class="rail-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 20V10M10 20V4M16 20v-6M22 20H2" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="st-grid" aria-hidden="true">
+            <div class="st-cell">
+              <span class="st-num" data-to="13">0</span>
+              <span class="st-label">Views</span>
+            </div>
+            <div class="st-cell">
+              <span class="st-num" data-to="2088">0</span>
+              <span class="st-label">Followers</span>
+            </div>
+            <div class="st-cell">
+              <span class="st-num" data-to="5">0</span>
+              <span class="st-label">Reached</span>
+            </div>
+          </div>
+
+          <!-- The trend line draws itself; the path length trick animates a
+               stroke without any script. -->
+          <svg class="st-spark" viewBox="0 0 240 60" preserveAspectRatio="none" aria-hidden="true">
+            <path class="st-path" d="M4 52 L44 52 L60 14 L76 52 L150 52 L166 34 L182 52 L214 52 L226 26 L236 40" fill="none" stroke="var(--coral)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+
+          <p class="st-caption">Real numbers, straight from each connected page.</p>
+
+          <p class="sr-only">
+            A client report showing real figures pulled from the connected
+            Facebook page: views, followers and people reached, with a trend line.
+          </p>
+        </article>
+        <article class="rc reveal">
+          <div class="rc-top">
+            <span class="rail-index">04 · One place per client</span>
+            <div class="rail-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 17H7A5 5 0 0 1 7 7h2M15 7h2a5 5 0 0 1 0 10h-2M8 12h8" />
+              </svg>
+            </div>
+          </div>
+
+          <div class="cn-row" aria-hidden="true">
+            <span class="cn-avatar">C</span>
+            <span class="cn-who">
+              <strong>Chill with Choco Bomb</strong>
+              <span class="cn-meta">
+                <span class="cn-connecting">Connecting…</span>
+                <span class="cn-connected">Connected · 2,088 followers</span>
+              </span>
+            </span>
+            <span class="cn-fb" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M22 12a10 10 0 1 0-11.6 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7A10 10 0 0 0 22 12Z"/></svg>
+            </span>
+          </div>
+
+          <ul class="cn-insights">
+            <li class="cn-ins cn-ins--1"><strong>2,088</strong><span>Followers</span></li>
+            <li class="cn-ins cn-ins--2"><strong>13</strong><span>Views</span></li>
+            <li class="cn-ins cn-ins--3"><strong>5</strong><span>Reached</span></li>
+          </ul>
+
+          <p class="cn-caption">Facebook now. Instagram and LINE on the same board.</p>
+
+          <p class="sr-only">
+            A client's Facebook page connected, showing live follower count and
+            page insights, with Instagram and LINE on the same board.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= WORKFLOW (approval) ================= -->
+    <section class="workflow-section" id="workflow">
+      <div class="workflow">
+        <div class="workflow-text reveal">
+          <span class="eyebrow">Approve</span>
+          <h2 style="margin-top: 0.8rem">
+            Clients approve in their own workspace.
+          </h2>
+          <p>
+            Your team reviews first. Then the client sees the post exactly as
+            it'll go out, in a workspace that shows only their posts and nothing
+            else from your agency. They approve or ask for a change, and the
+            moment they approve, it schedules itself.
+          </p>
+          <div class="aside">Watch a post move from draft to live</div>
+        </div>
+
+        <div class="apr-stage reveal">
+          <div class="apr-card" id="aprCard" data-stage="0">
+            <div class="apr-rail">
+              <span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="apr-head">
+              <div class="apr-avatar">L</div>
+              <div class="apr-who">
+                <b>Somjai Coffee</b><span>@somjaicoffee · Facebook</span>
+              </div>
+              <div class="apr-chip is-draft" id="aprChip">Draft</div>
+            </div>
+
+            <div class="apr-media">
+              <svg
+                viewBox="0 0 400 150"
+                preserveAspectRatio="xMidYMid slice"
+                aria-hidden="true"
+              >
+                <circle cx="312" cy="40" r="26" fill="#fff" opacity=".55" />
+                <path
+                  d="M0 126 Q70 92 140 112 T280 104 T400 120 V150 H0 Z"
+                  fill="#fff"
+                  opacity=".35"
+                />
+                <path
+                  d="M0 138 Q90 116 180 130 T400 128 V150 H0 Z"
+                  fill="#fff"
+                  opacity=".45"
+                />
+              </svg>
+            </div>
+            <div class="apr-caption">
+              <b>เมล็ดใหม่จากเชียงราย ☕</b> แก้วแรกเราเลี้ยงเอง
+              <span class="muted">เสาร์นี้ 8 โมงเช้า</span>
+            </div>
+            <div class="apr-metaline">WRITTEN BY MAI · REVIEWED FOR THAILAND</div>
+
+            <div class="apr-foot" id="aprFoot">
+              <!-- 0 draft -->
+              <div class="apr-panel" data-p="0">
+                <div
+                  class="apr-ic cal"
+                  style="background: var(--bg-alt); color: var(--ink-faint)"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                </div>
+                <div class="apr-col">
+                  <span class="big">Draft ready</span
+                  ><span class="sub">Your team polishes the words before it goes out.</span>
+                </div>
+              </div>
+              <!-- 1 review = guest portal -->
+              <div class="apr-panel apr-portal" data-p="1">
+                <div class="apr-col">
+                  <span class="tag">Sent to client</span
+                  ><span class="big">Somchai · Somjai Coffee</span>
+                </div>
+                <div class="apr-actions">
+                  <button class="apr-btn">Request change</button>
+                  <button class="apr-btn approve" id="aprApprove">Approve</button>
+                </div>
+              </div>
+              <!-- 2 approved -->
+              <div class="apr-panel" data-p="2">
+                <div class="apr-ic ok">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </div>
+                <div class="apr-col">
+                  <span class="big">Approved by Somchai</span
+                  ><span class="sub">Signed off from the client workspace.</span>
+                </div>
+              </div>
+              <!-- 3 scheduled -->
+              <div class="apr-panel" data-p="3">
+                <div class="apr-ic cal">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+                </div>
+                <div class="apr-col">
+                  <span class="big">Scheduled · Tue 9:00 AM</span
+                  ><span class="sub">Posts itself. Nothing left in your inbox.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="apr-cursor" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="#10151a"><path d="M4 2l6.5 16 2.2-6.3 6.3-2.2z" stroke="#fff" stroke-width="1.2"/></svg>
+            </div>
+            <div class="apr-note">Signed off in their workspace.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= AI SPOTLIGHT ================= -->
+    <section class="ai-spotlight">
+      <div class="ai-text reveal">
+        <span class="eyebrow">Before it posts</span>
+        <h2 style="margin-top: 0.8rem">
+          Advice for this market, before it posts.
+        </h2>
+        <p>
+          Before a post goes for review, Movio checks it against local market
+          knowledge for Thailand, Myanmar or Laos — timing, tone, what works on
+          Facebook there, and cultural lines not to cross. Advice, not
+          autopilot: it never writes the post for you, and it says what it
+          doesn't know.
+        </p>
+        <ul class="ai-points">
+          <li>Pick the market per post — a Bangkok client can run a Myanmar campaign</li>
+          <li>Knowledge written by people from each market, not a general model</li>
+          <li>Flags gaps instead of guessing</li>
+        </ul>
+      </div>
+      <div class="ticker reveal">
+        <div class="ticker-card">
+          <span class="ticker-tag">Reviewing for Thailand · Facebook</span>
+          <span class="ticker-subject"
+            >"Add a call-to-action — Thai shoppers buy through Messenger."</span
+          >
+          <div class="ticker-stat">
+            <span>Source</span><b>Market knowledge</b>
+          </div>
+        </div>
+        <div class="ticker-card">
+          <span class="ticker-tag">Reviewing for Myanmar · Facebook</span>
+          <span class="ticker-subject"
+            >"Lead with Burmese — English reads as secondary here."</span
+          >
+          <div class="ticker-stat"><span>Source</span><b>Native-verified</b></div>
+        </div>
+        <div class="ticker-card">
+          <span class="ticker-tag">Watch out for · Thailand</span>
+          <span class="ticker-subject"
+            >"Visakha Bucha this week — no alcohol in the creative."</span
+          >
+          <div class="ticker-stat"><span>Rule</span><b>Absolute</b></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= INTEGRATIONS ================= -->
+    <section class="integrations" id="integrations">
+      <div class="reveal">
+        <span class="eyebrow">Growth</span>
+        <h2 style="margin-top: 0.8rem">
+          Facebook today. The rest on the same board as they land.
+        </h2>
+        <p class="lead">
+          Facebook publishing, comments and insights work now. Instagram
+          connects alongside a client's Facebook Page. LINE and WhatsApp are
+          next, and they'll live in the same workspace — no extra tab, no extra
+          login.
+        </p>
+      </div>
+      <div class="orbit-wrap reveal" id="orbit"></div>
+    </section>
+
+    <!-- ================= STATS ================= -->
+    <section class="stats" id="analytics">
+      <div class="stats-inner">
+        <div class="reveal">
+          <span class="eyebrow">Built to hold up</span>
+          <h2 style="margin-top: 0.8rem">
+            Built to be trusted with someone else's page.
+          </h2>
+        </div>
+        <div class="stats-grid">
+          <div class="stat reveal">
+            <span class="stat-num" data-count="2" data-suffix="">0</span>
+            <p>approvals before anything reaches a page — yours, then the client's</p>
+          </div>
+          <div class="stat reveal">
+            <span class="stat-num" data-count="1" data-suffix="">0</span>
+            <p>login for your whole team, every client, every page</p>
+          </div>
+          <div class="stat reveal">
+            <span class="stat-num" data-count="0" data-suffix="">0</span>
+            <p>posts published without a human approving them first</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= SECURITY & PRIVACY ================= -->
+    <section class="security" id="security">
+      <div class="security-inner">
+        <div class="security-head reveal">
+          <span class="eyebrow">Security &amp; privacy</span>
+          <h2 style="margin-top: 0.8rem">
+            Your clients' data is handled like it's your own.
+          </h2>
+          <p class="security-lead">
+            Agencies trust Movio with their clients' pages and audiences. Here
+            is exactly what that means.
+          </p>
+        </div>
+        <div class="security-grid">
+          <div class="sec-card reveal">
+            <div class="sec-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"/></svg>
+            </div>
+            <h3>Scoped per client</h3>
+            <p>Each client's pages, posts and contacts live in their own workspace. One client can never see or reach another's, and clients only ever see their own.</p>
+          </div>
+          <div class="sec-card reveal">
+            <div class="sec-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 0 1 8 0v3.5"/></svg>
+            </div>
+            <h3>Isolated by design</h3>
+            <p>Each agency and client lives in a separate, access-controlled workspace. Roles and permissions decide exactly who sees and does what.</p>
+          </div>
+          <div class="sec-card reveal">
+            <div class="sec-ic">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 8l9-5 9 5"/><path d="M3 8v8l9 5 9-5V8"/></svg>
+            </div>
+            <h3>You own your data</h3>
+            <p>Your data stays yours. We never sell it and never use it to train models. Contacts export to CSV at any time.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= PRICING ================= -->
+    <section class="pricing" id="pricing">
+      <div class="pricing-inner">
+        <div class="pricing-head reveal">
+          <span class="eyebrow">Plans</span>
+          <h2 style="margin-top: 0.8rem">
+            Try Starter free for 14 days.
+          </h2>
+        </div>
+        <div class="pricing-grid">
+          <div class="price-card reveal">
+            <span class="price-name">Starter</span>
+            <div class="price-amount">Free<span> for 14 days</span></div>
+            <ul class="price-feats">
+              <li>1 client workspace</li>
+              <li>One Facebook and one Instagram page</li>
+              <li>Publishing and scheduling</li>
+              <li>Two-step client approval</li>
+              <li>Comment inbox, contacts and templates</li>
+            </ul>
+            <a href="/en/signup" class="btn btn-ghost">Start free trial</a>
+          </div>
+          <div class="price-card featured reveal">
+            <span class="price-name">Pro</span>
+            <div class="price-amount is-text">For growing agencies</div>
+            <ul class="price-feats">
+              <li>Up to 3 client workspaces</li>
+              <li>Everything in Starter</li>
+              <li>AI review grounded in your market</li>
+              <li>Client analytics and reports</li>
+            </ul>
+            <a href="mailto:hello@area29labs.com?subject=Movio%20Pro" class="btn btn-primary">Talk to us</a>
+          </div>
+          <div class="price-card reveal">
+            <span class="price-name">Agency</span>
+            <div class="price-amount is-text">For established agencies</div>
+            <ul class="price-feats">
+              <li>Up to 10 client workspaces</li>
+              <li>Everything in Pro</li>
+              <li>Team roles for your staff</li>
+              <li>Priority support</li>
+            </ul>
+            <a href="mailto:hello@area29labs.com?subject=Movio%20Agency" class="btn btn-ghost">Talk to us</a>
+          </div>
+          <div class="price-card reveal">
+            <span class="price-name">Enterprise</span>
+            <div class="price-amount is-text">Tailored to you</div>
+            <ul class="price-feats">
+              <li>Unlimited client workspaces</li>
+              <li>Everything in Agency</li>
+              <li>Onboarding for your team</li>
+              <li>A direct line to us</li>
+            </ul>
+            <a href="mailto:hello@area29labs.com?subject=Movio%20Enterprise" class="btn btn-ghost">Contact sales</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FINAL CTA ================= -->
+    <section class="final-cta" id="cta">
+      <div
+        class="mini-pin"
+        style="top: 18%; left: 12%; animation-delay: 0s"
+      ></div>
+      <div
+        class="mini-pin"
+        style="top: 30%; left: 82%; animation-delay: 0.6s"
+      ></div>
+      <div
+        class="mini-pin"
+        style="top: 70%; left: 20%; animation-delay: 1.1s"
+      ></div>
+      <div
+        class="mini-pin"
+        style="top: 76%; left: 78%; animation-delay: 1.6s"
+      ></div>
+      <div
+        class="mini-pin"
+        style="top: 14%; left: 60%; animation-delay: 0.3s"
+      ></div>
+      <div
+        class="mini-pin"
+        style="top: 60%; left: 48%; animation-delay: 2s"
+      ></div>
+      <div class="reveal">
+        <h2>Bring your first client over.</h2>
+        <p>Try the Starter plan free for 14 days.</p>
+        <a href="/en/signup" class="btn btn-primary btn-lg">Start free trial</a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-inner">
+        <a href="#top" class="logo"><span class="logo-dot"></span>Movio</a>
+        <nav class="footer-links">
+          <a href="#platform">Platform</a>
+          <a href="#workflow">Approvals</a>
+          <a href="#integrations">Networks</a>
+          <a href="#security">Security</a>
+          <a href="#pricing">Plans</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/terms">Terms</a>
+          <a href="/data-deletion">Data deletion</a>
+        </nav>
+        <span class="footer-meta">© 2026 Movio. All rights reserved.</span>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var reduceMotion = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        /* ---------- NAV ---------- */
+        var nav = document.getElementById("nav");
+        function onScrollNav() {
+          nav.classList.toggle("scrolled", window.scrollY > 10);
+        }
+        window.addEventListener("scroll", onScrollNav, { passive: true });
+        onScrollNav();
+
+        /* ---------- REVEAL ---------- */
+        var revealEls = document.querySelectorAll(".reveal");
+        if ("IntersectionObserver" in window) {
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                  e.target.classList.add("is-visible");
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { threshold: 0.14 },
+          );
+          revealEls.forEach(function (el) {
+            io.observe(el);
+          });
+        } else {
+          revealEls.forEach(function (el) {
+            el.classList.add("is-visible");
+          });
+        }
+
+        /* ---------- STAT COUNTERS ---------- */
+        var statEls = document.querySelectorAll(".stat-num");
+        if ("IntersectionObserver" in window) {
+          var statIO = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                  var el = e.target;
+                  var target = parseFloat(el.getAttribute("data-count"));
+                  var suffix = el.getAttribute("data-suffix") || "";
+                  var isDecimal = String(target).indexOf(".") > -1;
+                  var dur = reduceMotion ? 1 : 1400;
+                  var start = null;
+                  function step(ts) {
+                    if (!start) start = ts;
+                    var p = Math.min((ts - start) / dur, 1);
+                    var val = target * p;
+                    el.textContent =
+                      (isDecimal ? val.toFixed(1) : Math.round(val)) + suffix;
+                    if (p < 1) requestAnimationFrame(step);
+                  }
+                  requestAnimationFrame(step);
+                  statIO.unobserve(el);
+                }
+              });
+            },
+            { threshold: 0.5 },
+          );
+          statEls.forEach(function (el) {
+            statIO.observe(el);
+          });
+        }
+
+        /* ---------- RAIL DRAG ---------- */
+        var rail = document.getElementById("rail");
+        if (rail) {
+          var isDown = false,
+            startX = 0,
+            scrollLeft = 0;
+          rail.addEventListener("pointerdown", function (e) {
+            isDown = true;
+            rail.classList.add("dragging");
+            startX = e.pageX;
+            scrollLeft = rail.scrollLeft;
+          });
+          window.addEventListener("pointerup", function () {
+            isDown = false;
+            rail.classList.remove("dragging");
+          });
+          rail.addEventListener("pointerleave", function () {
+            isDown = false;
+            rail.classList.remove("dragging");
+          });
+          rail.addEventListener("pointermove", function (e) {
+            if (!isDown) return;
+            var dx = e.pageX - startX;
+            rail.scrollLeft = scrollLeft - dx;
+          });
+        }
+
+        /* ---------- TICKER ---------- */
+        var tickers = document.querySelectorAll(".ticker-card");
+        if (tickers.length) {
+          var idx = 0;
+          tickers[0].classList.add("active");
+          if (!reduceMotion) {
+            setInterval(function () {
+              tickers[idx].classList.remove("active");
+              idx = (idx + 1) % tickers.length;
+              tickers[idx].classList.add("active");
+            }, 3200);
+          }
+        }
+
+        /* ---------- APPROVAL CARD ---------- */
+        var aprCard = document.getElementById("aprCard");
+        if (aprCard) {
+          var aprChip = document.getElementById("aprChip");
+          var aprApprove = document.getElementById("aprApprove");
+          var aprPanels = aprCard.querySelectorAll(".apr-panel");
+          var aprChipData = [
+            ["Draft", "is-draft"],
+            ["In review", "is-review"],
+            ["Approved", "is-approved"],
+            ["Scheduled", "is-scheduled"],
+          ];
+          var aprDwell = [2000, 3200, 2200, 2800];
+          var aprStage = 0,
+            aprTimer = null;
+
+          function aprPaint(n) {
+            aprCard.setAttribute("data-stage", n);
+            aprChip.className = "apr-chip " + aprChipData[n][1];
+            aprChip.textContent = aprChipData[n][0];
+            aprPanels.forEach(function (p) {
+              p.classList.toggle("show", +p.getAttribute("data-p") === n);
+            });
+          }
+          function aprAdvance() {
+            if (aprStage === 1 && !reduceMotion) {
+              setTimeout(function () {
+                aprCard.classList.add("tap");
+              }, 900);
+              setTimeout(function () {
+                aprApprove.classList.add("pressed");
+              }, 1700);
+              setTimeout(function () {
+                aprCard.classList.remove("tap");
+                aprApprove.classList.remove("pressed");
+              }, 2600);
+            }
+            aprTimer = setTimeout(function () {
+              aprStage = (aprStage + 1) % 4;
+              aprPaint(aprStage);
+              aprAdvance();
+            }, aprDwell[aprStage]);
+          }
+          function aprStart() {
+            aprPaint(0);
+            if (reduceMotion) {
+              aprPaint(2);
+              return;
+            }
+            aprAdvance();
+          }
+          if ("IntersectionObserver" in window) {
+            var aprIO = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (e) {
+                  if (e.isIntersecting) {
+                    aprStart();
+                    aprIO.unobserve(e.target);
+                  }
+                });
+              },
+              { threshold: 0.4 },
+            );
+            aprIO.observe(aprCard);
+          } else {
+            aprStart();
+          }
+        }
+
+        /* ---------- ORBIT (integrations) ---------- */
+        var orbit = document.getElementById("orbit");
+        if (orbit) {
+          var cats = [
+            "Facebook",
+            "Instagram",
+            "Messenger",
+            "WhatsApp",
+            "TikTok",
+            "YouTube",
+            "LinkedIn & X",
+            "LINE OA",
+          ];
+          var ring = document.createElement("div");
+          ring.className = "orbit-ring";
+          orbit.appendChild(ring);
+          var center = document.createElement("div");
+          center.className = "orbit-center";
+          center.textContent = "Movio";
+          orbit.appendChild(center);
+          var radius = orbit.clientWidth ? orbit.clientWidth * 0.44 : 220;
+          var orbitNodes = [];
+          var orbitLines = [];
+          cats.forEach(function (label, i) {
+            var angle = (i / cats.length) * Math.PI * 2 - Math.PI / 2;
+            var nx = Math.cos(angle) * radius;
+            var ny = Math.sin(angle) * radius;
+            var line = document.createElement("div");
+            line.className = "orbit-line";
+            line.style.transform = "rotate(" + (angle * 180) / Math.PI + "deg)";
+            line.style.width = reduceMotion ? radius + "px" : "0px";
+            orbit.appendChild(line);
+            var node = document.createElement("div");
+            node.className = "orbit-node";
+            node.style.setProperty("--nx", nx + "px");
+            node.style.setProperty("--ny", ny + "px");
+            node.style.transform = reduceMotion
+              ? "translate(" + nx + "px," + ny + "px) scale(1)"
+              : "translate(0px,0px) scale(0.2)";
+            node.style.opacity = reduceMotion ? "1" : "0";
+            node.textContent = label;
+            orbit.appendChild(node);
+            if (reduceMotion) node.classList.add("breathing");
+            orbitNodes.push({ el: node, nx: nx, ny: ny });
+            orbitLines.push({ el: line, width: radius });
+          });
+
+          function launchOrbit() {
+            center.classList.add("spin-in");
+            orbitNodes.forEach(function (n, i) {
+              setTimeout(function () {
+                n.el.style.opacity = "1";
+                n.el.style.transform =
+                  "translate(" + n.nx + "px," + n.ny + "px) scale(1)";
+                n.el.addEventListener(
+                  "transitionend",
+                  function onEnd(e) {
+                    if (e.propertyName !== "transform") return;
+                    n.el.classList.add("breathing");
+                    n.el.removeEventListener("transitionend", onEnd);
+                  },
+                );
+              }, i * 90);
+              setTimeout(
+                function () {
+                  orbitLines[i].el.style.width = orbitLines[i].width + "px";
+                },
+                i * 90,
+              );
+            });
+          }
+
+          if (reduceMotion) {
+            // already placed in final position, nothing to launch
+          } else if ("IntersectionObserver" in window) {
+            var orbitIO = new IntersectionObserver(
+              function (entries) {
+                entries.forEach(function (e) {
+                  if (e.isIntersecting) {
+                    launchOrbit();
+                    orbitIO.unobserve(e.target);
+                  }
+                });
+              },
+              { threshold: 0.3 },
+            );
+            orbitIO.observe(orbit);
+          } else {
+            launchOrbit();
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

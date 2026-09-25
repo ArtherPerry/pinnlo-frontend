@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styles from './AIReview.module.css'
 import { Sparkles, AlertCircle } from 'lucide-react'
 import { useAIReview } from '@/hooks/useAI'
@@ -67,6 +67,12 @@ function renderReview(markdown: string) {
   })
 }
 
+/** What a stored review was produced from, so an edited post can be told apart. */
+interface StoredReview {
+  signature: string
+  review: string
+}
+
 export function AIReview({
   clientId,
   content,
@@ -75,21 +81,35 @@ export function AIReview({
   defaultMarket,
 }: AIReviewProps) {
   const [market, setMarket] = useState(defaultMarket)
+  // One result per market. Reviews are metered, so a market already reviewed
+  // for this exact post is shown again for free rather than asked for twice.
+  const [results, setResults] = useState<Record<string, StoredReview>>({})
   const review = useAIReview()
-  const { mutate } = review
 
-  const run = (targetMarket: string) => {
-    mutate({ clientId, content, platforms, hasMedia, market: targetMarket })
+  // Everything the review depends on. If any of it changes, a stored review
+  // describes a different post.
+  const signature = JSON.stringify({ content, platforms, hasMedia })
+  const shown = results[market]
+  const stale = shown !== undefined && shown.signature !== signature
+  const marketLabel = MARKETS.find((m) => m.value === market)?.label ?? market
+  const canRun = Boolean(clientId && content.trim()) && !review.isPending
+
+  // Nothing runs until asked: choosing a market only selects it. Before, both
+  // opening this panel and clicking a market spent a review straight away.
+  const run = () => {
+    const forMarket = market
+    const forSignature = signature
+    review.mutate(
+      { clientId, content, platforms, hasMedia, market: forMarket },
+      {
+        onSuccess: (data) =>
+          setResults((prev) => ({
+            ...prev,
+            [forMarket]: { signature: forSignature, review: data.review },
+          })),
+      },
+    )
   }
-
-  // Runs once when opened. The parent only mounts this after the user clicks
-  // AI review, so mounting is the request.
-  useEffect(() => {
-    if (clientId && content.trim()) {
-      run(market)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <div className={styles.wrap}>
@@ -104,10 +124,8 @@ export function AIReview({
         </div>
       </div>
 
-      {/* Changing the market re-runs straight away — the intent is
-          unambiguous, and a second click to confirm would be friction. */}
       <div className={styles.marketRow}>
-        <span className={styles.marketLabel}>Reviewing for</span>
+        <span className={styles.marketLabel}>Review for</span>
         {MARKETS.map((m) => (
           <button
             key={m.value}
@@ -116,19 +134,37 @@ export function AIReview({
               styles.marketOption,
               market === m.value && styles.marketOptionActive,
             )}
-            onClick={() => { setMarket(m.value); run(m.value) }}
+            onClick={() => setMarket(m.value)}
             disabled={review.isPending}
+            aria-pressed={market === m.value}
           >
             {m.label}
+            {results[m.value] && <span className={styles.reviewedMark} aria-label="reviewed"> ✓</span>}
           </button>
         ))}
       </div>
 
-      {review.isPending && (
-        <div className={styles.state}>Reading the post…</div>
+      {/* The one action that costs a review, stated plainly. */}
+      {(!shown || stale) && !review.isPending && (
+        <div className={styles.runRow}>
+          <button
+            type="button"
+            className={styles.runButton}
+            onClick={run}
+            disabled={!canRun}
+          >
+            <Sparkles size={15} />
+            {stale ? 'Review the updated post' : `Review for ${marketLabel}`}
+          </button>
+          <span className={styles.hint}>Uses one AI review from your plan.</span>
+        </div>
       )}
 
-      {review.isError && (
+      {review.isPending && (
+        <div className={styles.state}>Reading the post for {marketLabel}…</div>
+      )}
+
+      {review.isError && !review.isPending && (
         <div className={styles.error}>
           <AlertCircle size={16} />
           <span>
@@ -138,17 +174,26 @@ export function AIReview({
         </div>
       )}
 
-      {review.data && !review.isPending && (
+      {/* The advice stays visible after an edit — people usually edit because
+          of it — but says plainly that it describes the earlier version. */}
+      {shown && !review.isPending && (
         <>
-          <div className={styles.body}>{renderReview(review.data.review)}</div>
-          <button
-            type="button"
-            className={styles.regenerate}
-            onClick={() => run(market)}
-            disabled={review.isPending}
-          >
-            Review again
-          </button>
+          {stale && (
+            <div className={styles.staleNote}>
+              The post has changed since this review.
+            </div>
+          )}
+          <div className={styles.body}>{renderReview(shown.review)}</div>
+          {!stale && (
+            <button
+              type="button"
+              className={styles.regenerate}
+              onClick={run}
+              disabled={!canRun}
+            >
+              Review again · uses one review
+            </button>
+          )}
         </>
       )}
     </div>

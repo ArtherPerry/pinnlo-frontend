@@ -12,6 +12,12 @@ const MONTH_NAMES = [
   'July','August','September','October','November','December',
 ]
 
+/** Published time if it went out, otherwise when it's due; local clock. */
+function chipTime(post: { scheduledAt: string | null; publishedAt: string | null }) {
+  const at = post.publishedAt ?? post.scheduledAt
+  return at ? new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
+}
+
 export function PostCalendar() {
   const today = new Date()
   const [year,  setYear ] = useState(today.getFullYear())
@@ -102,10 +108,17 @@ export function PostCalendar() {
                   <div
                     key={post.id}
                     className={cn(styles.postDot, styles[post.status])}
-                    title={`${post.clientName} — ${post.status}`}
+                    title={`${post.clientName} — ${post.status}\n${post.content}`}
                   >
                     <span className={cn(styles.dotIndicator, styles[post.status])} />
-                    {post.clientName}
+                    {/* Time and client on one line, the caption under it. The
+                        client name stays because this calendar mixes clients. */}
+                    <span className={styles.postText}>
+                      <span className={styles.postMeta}>
+                        {[chipTime(post), post.clientName].filter(Boolean).join(' · ')}
+                      </span>
+                      <span className={styles.postCaption}>{post.content}</span>
+                    </span>
                   </div>
                 ))}
 

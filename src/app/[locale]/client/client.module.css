@@ -552,3 +552,27 @@
   font-size: var(--text-small);
   cursor: pointer;
 }
+/* Columns share the width equally whatever their content. With plain 1fr a
+   long caption widened its column and pushed Wednesday to Saturday out of
+   view. */
+.calendarGrid {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.calendarPost {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+.calendarPostMeta,
+.calendarPostText {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calendarPostMeta {
+  font-weight: 600;
+}
+.calendarPostText {
+  opacity: 0.8;
+}

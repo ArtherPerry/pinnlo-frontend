@@ -165,3 +165,62 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* ── Choose, then review ─────────────────────────────────────────────
+ * Reviews are metered, so the one action that spends a review is a single,
+ * clearly labelled button rather than a side effect of opening the panel or
+ * picking a market. */
+.runRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.runButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-teal-600);
+  color: var(--color-white);
+  font-family: var(--font-sans);
+  font-size: var(--text-small);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.runButton:hover:not(:disabled) {
+  background: var(--color-teal-700, var(--color-teal-600));
+}
+
+.runButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.runButton:focus-visible {
+  outline: 2px solid var(--color-teal-600);
+  outline-offset: 2px;
+}
+
+.hint {
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}
+
+/* A market already reviewed for this post. */
+.reviewedMark {
+  color: var(--color-teal-600);
+  font-weight: 600;
+}
+
+.staleNote {
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-bg);
+  font-size: var(--text-small);
+  color: var(--color-muted);
+}

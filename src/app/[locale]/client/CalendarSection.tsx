@@ -12,6 +12,10 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
+const PLATFORM_NAMES: Record<string, string> = {
+  FACEBOOK: 'Facebook', INSTAGRAM: 'Instagram', LINE: 'LINE', WHATSAPP: 'WhatsApp',
+}
+
 /** Local YYYY-MM-DD, so a post lands on the day the client sees it. */
 function localDateKey(iso: string): string {
   const d = new Date(iso)
@@ -20,6 +24,12 @@ function localDateKey(iso: string): string {
 
 function dateKey(year: number, month: number, day: number): string {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+/** Published time if it went out, otherwise when it's due; local clock. */
+function chipTime(post: { scheduledAt: string | null; publishedAt: string | null }) {
+  const at = post.publishedAt ?? post.scheduledAt
+  return at ? new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''
 }
 
 export function CalendarSection() {
@@ -119,7 +129,12 @@ export function CalendarSection() {
                   onClick={() => setOpenPostId(post.id)}
                   title={`${post.content}\n${post.platforms.join(', ')}`}
                 >
-                  {post.content}
+                  {/* Time and platform on one line, the caption under it. */}
+                  <span className={styles.calendarPostMeta}>
+                    {[chipTime(post), post.platforms.map((p) => PLATFORM_NAMES[p] ?? p).join(', ')]
+                      .filter(Boolean).join(' · ')}
+                  </span>
+                  <span className={styles.calendarPostText}>{post.content}</span>
                 </button>
               ))}
             </div>
@@ -168,7 +183,9 @@ function PostDetail({ id, onClose }: { id: string; onClose: () => void }) {
 
         {post && (
           <>
-            <div className={styles.modalTitle}>{post.platforms.join(' · ')}</div>
+            <div className={styles.modalTitle}>
+              {post.platforms.map((p) => PLATFORM_NAMES[p] ?? p).join(' · ')}
+            </div>
 
             <div className={styles.detailStatus}>
               {post.publishedAt

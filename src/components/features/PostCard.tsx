@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import type { Post } from '@/lib/types'
 import { Badge, PlatformIcons } from '@/components/ui'
+import { useAuth } from '@/hooks/useAuth'
 import {
   useApprovePost,
   useRejectPost,
@@ -11,6 +12,7 @@ import {
   useSubmitPost,
   useCancelPost,
   useRetryPost,
+  useReschedulePost,
 } from '@/hooks/usePosts'
 import { useToast } from '@/hooks/useToast'
 import { cn, formatDate, apiErrorMessage } from '@/lib/utils'
@@ -50,12 +52,20 @@ interface PostCardProps {
   post: Post
 }
 
+/** A Date as the value a datetime-local input expects, in local time. */
+function toLocalInput(d: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 export function PostCard({ post }: PostCardProps) {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const [confirmCancel, setConfirmCancel] = useState(false)
-  const [rejectModal,   setRejectModal  ] = useState(false)
-  const [rejectComment, setRejectComment] = useState('')
-  const [editModal,     setEditModal    ] = useState(false)
+  const [confirmDelete,   setConfirmDelete  ] = useState(false)
+  const [confirmCancel,   setConfirmCancel  ] = useState(false)
+  const [rejectModal,     setRejectModal    ] = useState(false)
+  const [rejectComment,   setRejectComment  ] = useState('')
+  const [editModal,       setEditModal      ] = useState(false)
+  const [rescheduleModal, setRescheduleModal] = useState(false)
+  const [rescheduleValue, setRescheduleValue] = useState('')
 
   const toast      = useToast()
   const locale     = useLocale()
@@ -65,6 +75,8 @@ export function PostCard({ post }: PostCardProps) {
   const submit     = useSubmitPost()
   const cancel     = useCancelPost()
   const retry      = useRetryPost()
+  const reschedule = useReschedulePost()
+  const role       = useAuth((s) => s.user?.role)
 
   const isPending = post.status === 'PENDING_REVIEW'
   const isDraft   = post.status === 'DRAFT'
@@ -77,8 +89,18 @@ export function PostCard({ post }: PostCardProps) {
   const canSubmit = isDraft || isChanges
   const canEdit   = isDraft || isChanges
   const canDelete = isDraft || isPending || isChanges || post.status === 'CANCELLED'
-  const canCancel = ['PENDING_CLIENT', 'APPROVED', 'SCHEDULED', 'FAILED'].includes(post.status)
   const canRetry  = isFailed || isPartial
+
+  // Cancelling a post the client approved undoes their decision, so only
+  // owners and managers see it then — matching the server's rule.
+  const clientApproved = ['APPROVED', 'SCHEDULED', 'FAILED'].includes(post.status)
+  const isManager      = role === 'OWNER' || role === 'MANAGER'
+  const canCancel      = ['PENDING_CLIENT', 'APPROVED', 'SCHEDULED', 'FAILED'].includes(post.status)
+                         && (!clientApproved || isManager)
+
+  // Moving the time is open to the whole agency: the approved content is
+  // untouched, so the client's decision still stands.
+  const canReschedule  = post.status === 'APPROVED' || post.status === 'SCHEDULED'
 
   // A post can be live on one platform and failed on another, so the two are
   // shown separately. Retry only re-sends the failed ones.
@@ -136,6 +158,32 @@ export function PostCard({ post }: PostCardProps) {
       setConfirmCancel(false)
     } catch (error) {
       toast.show(apiErrorMessage(error, 'Could not cancel this post'), 'error')
+    }
+  }
+
+  const openReschedule = () => {
+    // Start from the current time if it's still ahead; otherwise an hour from now.
+    const soonest = Date.now() + 5 * 60 * 1000
+    const current = post.scheduledAt ? new Date(post.scheduledAt) : null
+    const start   = current && current.getTime() > soonest
+      ? current
+      : new Date(Date.now() + 60 * 60 * 1000)
+    setRescheduleValue(toLocalInput(start))
+    setRescheduleModal(true)
+  }
+
+  const handleReschedule = async () => {
+    if (!rescheduleValue) return
+    try {
+      // datetime-local is local time; the server wants a UTC instant.
+      await reschedule.mutateAsync({
+        id: post.id,
+        scheduledAt: new Date(rescheduleValue).toISOString(),
+      })
+      toast.show(post.status === 'APPROVED' ? 'Post scheduled' : 'Post rescheduled', 'success')
+      setRescheduleModal(false)
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Could not change the time'), 'error')
     }
   }
 
@@ -296,6 +344,16 @@ export function PostCard({ post }: PostCardProps) {
               </button>
             )}
 
+            {/* Reschedule — moves the time only, so no new approval */}
+            {canReschedule && (
+              <button
+                className={cn(styles.actionBtn, styles.editBtn)}
+                onClick={openReschedule}
+              >
+                <Clock size={14} /> {post.status === 'APPROVED' ? 'Schedule' : 'Reschedule'}
+              </button>
+            )}
+
             {/* Cancel — the way out for anything past DRAFT */}
             {canCancel && (
               <button
@@ -358,6 +416,43 @@ export function PostCard({ post }: PostCardProps) {
                 disabled={cancel.isPending}
               >
                 {cancel.isPending ? 'Cancelling...' : 'Yes, cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reschedule */}
+      {rescheduleModal && (
+        <div className={styles.overlay} onClick={() => setRescheduleModal(false)}>
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+            <h3 className={styles.modalTitle}>
+              {post.status === 'APPROVED' ? 'Schedule this post' : 'Move to a new time'}
+            </h3>
+            <p className={styles.modalSub}>
+              Only the time changes. The content stays exactly as the client
+              approved it, so it does not go back for approval.
+            </p>
+            <input
+              type="datetime-local"
+              className={styles.rescheduleInput}
+              value={rescheduleValue}
+              min={toLocalInput(new Date(Date.now() + 5 * 60 * 1000))}
+              onChange={(e) => setRescheduleValue(e.target.value)}
+            />
+            <div className={styles.modalActions}>
+              <button
+                className={cn(styles.actionBtn, styles.editBtn)}
+                onClick={() => setRescheduleModal(false)}
+              >
+                Keep current time
+              </button>
+              <button
+                className={cn(styles.actionBtn, styles.approveBtn)}
+                onClick={handleReschedule}
+                disabled={reschedule.isPending || !rescheduleValue}
+              >
+                {reschedule.isPending ? 'Saving...' : 'Save time'}
               </button>
             </div>
           </div>

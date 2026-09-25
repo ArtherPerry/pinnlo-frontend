@@ -23,6 +23,7 @@ const GRANT_UNITS: Record<string, [string, string]> = {
 }
 
 const RATE_NAMES: Record<string, string> = {
+  AI_SUMMARY: 'AI summary',
   AI_REVIEW: 'AI review',
   EMAIL_SENT: 'email',
   WHATSAPP_MESSAGE: 'WhatsApp message',

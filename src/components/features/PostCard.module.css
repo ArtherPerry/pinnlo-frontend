@@ -244,3 +244,10 @@
   font-family: inherit;
   font-size: var(--text-body, 14px);
 }
+
+/* Icon and label centred on one line in every action button. */
+.actionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}

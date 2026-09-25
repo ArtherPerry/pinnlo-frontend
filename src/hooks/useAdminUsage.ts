@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import api from '@/lib/api'
 
-export type UsageMetricKey = 'AI_REVIEW' | 'EMAIL_SENT' | 'WHATSAPP_MESSAGE'
+export type UsageMetricKey = 'AI_REVIEW' | 'EMAIL_SENT' | 'WHATSAPP_MESSAGE' | 'AI_SUMMARY'
 
 export interface MetricUsage {
   metric: UsageMetricKey

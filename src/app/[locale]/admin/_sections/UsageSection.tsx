@@ -16,6 +16,7 @@ const count = new Intl.NumberFormat('en-US')
 const METRIC_ORDER: UsageMetricKey[] = ['AI_REVIEW', 'EMAIL_SENT', 'WHATSAPP_MESSAGE']
 
 const METRIC_NAMES: Record<UsageMetricKey, string> = {
+  AI_SUMMARY: 'AI summary', 
   AI_REVIEW: 'AI review',
   EMAIL_SENT: 'Email',
   WHATSAPP_MESSAGE: 'WhatsApp',
@@ -23,6 +24,7 @@ const METRIC_NAMES: Record<UsageMetricKey, string> = {
 
 /** Singular/plural units, used in sentences like "Granted 500 emails". */
 const METRIC_UNITS: Record<UsageMetricKey, [string, string]> = {
+   AI_SUMMARY: ['AI summary', 'AI summaries'],
   AI_REVIEW: ['AI review', 'AI reviews'],
   EMAIL_SENT: ['email', 'emails'],
   WHATSAPP_MESSAGE: ['WhatsApp message', 'WhatsApp messages'],

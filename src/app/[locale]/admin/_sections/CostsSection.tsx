@@ -28,18 +28,22 @@ const rateFormat = new Intl.NumberFormat('en-US', {
 /** Rates start at midnight Bangkok, so dates must be shown in Bangkok time. */
 const ZONE = 'Asia/Bangkok'
 
-const METRIC_ORDER: UsageMetricKey[] = ['AI_REVIEW', 'EMAIL_SENT', 'WHATSAPP_MESSAGE']
+const METRIC_ORDER: UsageMetricKey[] = ['AI_REVIEW', 'AI_SUMMARY', 'EMAIL_SENT', 'WHATSAPP_MESSAGE']
 const METRIC_NAMES: Record<UsageMetricKey, string> = {
+  AI_SUMMARY: 'AI summary', 
   AI_REVIEW: 'AI review',
   EMAIL_SENT: 'Email',
   WHATSAPP_MESSAGE: 'WhatsApp',
+
 }
 const PER_UNIT: Record<UsageMetricKey, string> = {
+   AI_SUMMARY: 'per summary', 
   AI_REVIEW: 'per review',
   EMAIL_SENT: 'per email',
   WHATSAPP_MESSAGE: 'per message',
 }
 const UNITS_OF_1000: Record<UsageMetricKey, string> = {
+  AI_SUMMARY: '1,000 AI summaries',
   AI_REVIEW: '1,000 AI reviews',
   EMAIL_SENT: '1,000 emails',
   WHATSAPP_MESSAGE: '1,000 WhatsApp messages',

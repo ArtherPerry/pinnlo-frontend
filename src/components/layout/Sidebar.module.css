@@ -210,3 +210,15 @@
     width: min(280px, 85vw);
   }
 }
+
+/* Line logout up with the user row: icon centred under the avatar, text
+   starting where the role does. */
+.logoutBtn svg {
+  flex-shrink: 0;
+  /* (avatar 28px − icon 14px) ÷ 2 */
+  margin-inline: 7px;
+}
+
+.logoutBtn {
+  padding-top: var(--space-1);
+}

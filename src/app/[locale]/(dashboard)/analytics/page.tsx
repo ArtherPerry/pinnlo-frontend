@@ -13,6 +13,7 @@ import { FEATURES } from '@/lib/features'
 import { cn, formatDate } from '@/lib/utils'
 import styles from './analytics.module.css'
 import { BarChart3, Info } from 'lucide-react'
+import { ReportLauncher } from '@/components/features/ReportPanel'
 
 const RANGES = [
   { days: 7,  label: '7 days'  },
@@ -184,16 +185,21 @@ export default function AnalyticsPage() {
           )}
         </div>
 
-        <div className={styles.rangeTabs}>
-          {RANGES.map((r) => (
-            <button
-              key={r.days}
-              className={cn(styles.rangeTab, days === r.days && styles.rangeTabActive)}
-              onClick={() => setDays(r.days)}
-            >
-              {r.label}
-            </button>
-          ))}
+        {/* Tabs and Report together on the right; the bar spaces its children
+            apart, so a third child would drift to the middle. */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
+          <div className={styles.rangeTabs}>
+            {RANGES.map((r) => (
+              <button
+                key={r.days}
+                className={cn(styles.rangeTab, days === r.days && styles.rangeTabActive)}
+                onClick={() => setDays(r.days)}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          <ReportLauncher clientId={clientId} clientName={selectedClient?.name} />
         </div>
       </div>
 
@@ -338,11 +344,8 @@ export default function AnalyticsPage() {
 
       {/* Heatmap needs hourly engagement, which no platform metric provides —
           it has to be derived from published-post performance once there is
-          enough of it. AnalystSummary and the PDF export are similarly
-          unbacked. All three are flagged off rather than deleted. */}
+          enough of it. Flagged off rather than deleted. */}
       {FEATURES.analyticsHeatmap && <div />}
-      {FEATURES.analystSummary && <div />}
-      {FEATURES.reportExport && <div />}
     </div>
   )
 }

@@ -1957,6 +1957,24 @@
         }
       }
 
+      /* Hero video: sized by its column, in its own shape. A video's built-in
+   width otherwise widens the grid column, pushing the video off-screen and
+   squeezing the headline to one word per line. */
+@media (min-width: 901px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  }
+}
+.hero-media {
+  min-width: 0;
+}
+video.hero-video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  display: block;
+}
+
     </style>
   </head>
   <body>
@@ -2009,7 +2027,8 @@
             </button>
             <span class="hero-video-label">Product walkthrough — 90 sec</span>
           </div> -->
-         <iframe class="hero-video" src="movio.mp4" allowfullscreen></iframe>
+        <video class="hero-video" src="/movio.mp4" autoplay muted loop playsinline controls
+       preload="metadata"></video>
         </div>
       </div>
       <div class="scroll-cue">SCROLL</div>

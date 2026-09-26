@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { Button, Input, PlatformIcon } from '@/components/ui'
 import { useToast } from '@/hooks/useToast'
 import { useAuth } from '@/hooks/useAuth'
-import { cn, formatDate } from '@/lib/utils'
+import { apiErrorMessage, cn, formatDate } from '@/lib/utils'
 import api from '@/lib/api'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import type { Role, Plan, Platform } from '@/lib/types'
@@ -189,73 +189,133 @@ const ROLE_CLASS: Record<string, string> = {
   STAFF:   styles.roleStaff,
 }
 
+/**
+ * Adds a team member and shows their password until it has been copied.
+ *
+ * The password used to go into a toast, which faded after a few seconds —
+ * before anyone could copy it, and it is never shown again. It now stays in
+ * the modal until Done.
+ */
 function InviteModal({ onClose }: { onClose: () => void }) {
-  const [email,       setEmail      ] = useState('')
-  const [role,        setRole       ] = useState('STAFF')
-  const [isSubmitting,setIsSubmitting] = useState(false)
+  const [email,        setEmail       ] = useState('')
+  const [role,         setRole        ] = useState('STAFF')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [created,      setCreated     ] = useState<{ email: string; password: string } | null>(null)
+  const [copied,       setCopied      ] = useState(false)
   const qc    = useQueryClient()
   const toast = useToast()
 
   const handleInvite = async () => {
-  if (!email.trim()) { toast.show('Enter an email address', 'warning'); return }
-  setIsSubmitting(true)
-  try {
-    const { data } = await api.post('/api/settings/team/invite', { email, role })
-    qc.invalidateQueries({ queryKey: ['settings', 'team'] })
-    toast.show(
-      `Member added. Temporary password: ${data.tempPassword}`,
-      'success'
-    )
-    onClose()
-  } catch {
-    toast.show('Failed to add member', 'error')
-  } finally {
-    setIsSubmitting(false)
+    if (!email.trim()) { toast.show('Enter an email address', 'warning'); return }
+    setIsSubmitting(true)
+    try {
+      const { data } = await api.post('/api/settings/team/invite', { email, role })
+      qc.invalidateQueries({ queryKey: ['settings', 'team'] })
+      setCreated({ email: email.trim(), password: data.tempPassword })
+    } catch (error) {
+      toast.show(apiErrorMessage(error, 'Failed to add member'), 'error')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
-}
+
+  const copyPassword = async () => {
+    if (!created) return
+    try {
+      await navigator.clipboard.writeText(created.password)
+      setCopied(true)
+    } catch {
+      toast.show('Could not copy — select the password and copy it instead', 'warning')
+    }
+  }
+
+  // Once created, the modal only closes through Done: clicking outside by
+  // accident would lose a password that is never shown again.
+  const close = created ? undefined : onClose
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={close}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
-          <span className={styles.modalTitle}>Invite team member</span>
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
+          <span className={styles.modalTitle}>{created ? 'Member added' : 'Add team member'}</span>
+          {!created && (
+            <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
+          )}
         </div>
-        <div className={styles.modalBody}>
-          <Input
-            label="Email address"
-            type="email"
-            placeholder="colleague@agency.co.th"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <div>
-            <span className={styles.sectionLabel}>Role</span>
-            <div className={styles.roleGrid}>
-              {['MANAGER', 'STAFF'].map((r) => (
-                <button
-                  key={r}
-                  type="button"
-                  className={cn(styles.roleOption, role === r && styles.roleOptionActive)}
-                  onClick={() => setRole(r)}
-                >
-                  {ROLE_LABELS[r]}
-                </button>
-              ))}
+
+        {created ? (
+          <div className={styles.modalBody}>
+            <p style={{ margin: 0 }}>
+              <strong>{created.email}</strong> can now sign in with this password.
+            </p>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
+              <input
+                readOnly
+                value={created.password}
+                onFocus={(e) => e.target.select()}
+                aria-label="Temporary password"
+                style={{
+                  flex: 1,
+                  padding: 'var(--space-2) var(--space-3)',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--radius-md)',
+                  fontFamily: 'monospace',
+                  fontSize: 15,
+                }}
+              />
+              <Button variant="secondary" onClick={copyPassword}>
+                {copied ? 'Copied' : 'Copy'}
+              </Button>
             </div>
-            <p className={styles.roleHint}>
-              {role === 'MANAGER'
-                ? 'Can manage all content, clients and staff. Cannot manage billing.'
-                : 'Can create and submit posts. Cannot manage clients or billing.'
-              }
+            <p className={styles.roleHint} style={{ margin: 0 }}>
+              This is shown only once. Send it to them privately, and ask them to change it after
+              signing in.
             </p>
           </div>
-        </div>
+        ) : (
+          <div className={styles.modalBody}>
+            <Input
+              label="Email address"
+              type="email"
+              placeholder="colleague@agency.co.th"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <div>
+              <span className={styles.sectionLabel}>Role</span>
+              <div className={styles.roleGrid}>
+                {['MANAGER', 'STAFF'].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    className={cn(styles.roleOption, role === r && styles.roleOptionActive)}
+                    onClick={() => setRole(r)}
+                  >
+                    {ROLE_LABELS[r]}
+                  </button>
+                ))}
+              </div>
+              <p className={styles.roleHint}>
+                {role === 'MANAGER'
+                  ? 'Can manage all content, clients and staff. Cannot manage billing.'
+                  : 'Can create and submit posts. Cannot manage clients or billing.'
+                }
+              </p>
+            </div>
+          </div>
+        )}
+
         <div className={styles.modalFooter}>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleInvite} loading={isSubmitting}>
-            Send invitation
-          </Button>
+          {created ? (
+            <Button variant="primary" onClick={onClose}>Done</Button>
+          ) : (
+            <>
+              <Button variant="secondary" onClick={onClose}>Cancel</Button>
+              <Button variant="primary" onClick={handleInvite} loading={isSubmitting}>
+                Add member
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>

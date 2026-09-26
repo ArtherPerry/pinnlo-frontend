@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { useAuth } from '@/hooks/useAuth'
@@ -13,6 +13,21 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error,    setError   ] = useState('')
   const [loading,  setLoading ] = useState(false)
+  const [notice, setNotice] = useState('')
+
+  // Sent here with a reason when an account was blocked mid-session. Read from
+  // window.location rather than useSearchParams, which would need this page
+  // restructured around a Suspense boundary.
+  useEffect(() => {
+    const reason = new URLSearchParams(window.location.search).get('reason')
+    const notices: Record<string, string> = {
+      AGENCY_SUSPENDED:      "Your agency's account is suspended. Please contact Movio to restore access.",
+      WORKSPACE_UNAVAILABLE: 'This workspace is temporarily unavailable. Please contact your agency.',
+      AGENCY_PENDING:        'Your agency is still awaiting approval.',
+      USER_INACTIVE:         "Your account is not active. Please contact your agency's owner.",
+    }
+    if (reason && notices[reason]) setNotice(notices[reason])
+  }, [])
 
   const { setUser } = useAuth()
   const router      = useRouter()
@@ -42,14 +57,19 @@ export default function LoginPage() {
       // would 403. Send them to their own workspace.
       const destination = data.user.role === 'CLIENT' ? 'client' : 'dashboard'
       router.push(`/${data.user.locale ?? locale}/${destination}`)
-    } catch (err) {
-  const status = (err as { response?: { status?: number } })?.response?.status
-  setError(
-    status === 401
-      ? 'Invalid email or password'
-      : 'Login failed — please try again'
-  )
-} finally {
+        } catch (err) {
+      const response = (err as { response?: { status?: number; data?: { message?: string } } })?.response
+      // 403 means the account exists but cannot be used right now — suspended,
+      // or awaiting approval — and the server says which. Showing a generic
+      // failure left people retrying a password that was never the problem.
+      setError(
+        response?.status === 401
+          ? 'Invalid email or password'
+          : response?.status === 403 && response.data?.message
+            ? response.data.message
+            : 'Login failed — please try again'
+      )
+    } finally {
       setLoading(false)
     }
   }
@@ -92,6 +112,19 @@ export default function LoginPage() {
         </div>
 
         {/* Form */}
+                {notice && (
+          <div role="alert" style={{
+            padding: 'var(--space-3) var(--space-4)',
+            borderRadius: 'var(--radius-md)',
+            background: '#fff4e0',
+            color: '#9a5b00',
+            fontSize: 'var(--text-small)',
+            lineHeight: 1.5,
+            marginBottom: 'var(--space-4)',
+          }}>
+            {notice}
+          </div>
+        )}
         <form onSubmit={handleLogin} style={{
           display: 'flex', flexDirection: 'column', gap: 'var(--space-4)',
         }}>

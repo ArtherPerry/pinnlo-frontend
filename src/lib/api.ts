@@ -49,20 +49,29 @@ async function refreshAccessToken(): Promise<string> {
   return refreshPromise
 }
 
-function redirectToLogin() {
+function redirectToLogin(reason?: string) {
   clearAccessToken()
   clearAuthState()
   if (typeof window !== 'undefined') {
     const locale = window.location.pathname.split('/')[1] || 'en'
-    window.location.href = `/${locale}/login`
+    window.location.href = `/${locale}/login${reason ? `?reason=${reason}` : ''}`
   }
 }
+
+/** Refused because of the account's state, not an expired session. */
+const BLOCKED = ['AGENCY_SUSPENDED', 'WORKSPACE_UNAVAILABLE', 'AGENCY_PENDING', 'USER_INACTIVE']
 
 // ── Response interceptor — refresh once on 401 ────────────────────
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config
+        // Refreshing cannot fix a blocked account: sign out, and say why.
+    const code = error.response?.data?.code
+    if (error.response?.status === 403 && BLOCKED.includes(code)) {
+      redirectToLogin(code)
+      return Promise.reject(error)
+    }
 
         // A 401 on a request that carried no token means "not logged in", not
     // "token expired" — refreshing would be pointless and would redirect

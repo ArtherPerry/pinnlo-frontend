@@ -38,12 +38,12 @@ a:hover { text-decoration: underline; }
   outline-offset: 2px;
 }
 /* ── Print / PDF export styles ── */
+/*
 @media print {
-  /* Hide everything except the report */
   body > * { display: none !important; }
   #movio-report { display: block !important; }
 
-  /* Reset */
+ 
   #movio-report {
     position: fixed;
     inset: 0;
@@ -56,7 +56,7 @@ a:hover { text-decoration: underline; }
     z-index: 99999;
   }
 
-  /* Page breaks */
   .report-section { page-break-inside: avoid; margin-bottom: 32px; }
   .report-page-break { page-break-before: always; }
-}
+} 
+*/

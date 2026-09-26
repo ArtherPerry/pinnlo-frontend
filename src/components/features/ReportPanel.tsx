@@ -13,6 +13,7 @@ import {
   type ReportLanguage,
 } from '@/hooks/useReport'
 import { useToast } from '@/hooks/useToast'
+import { useAuth } from '@/hooks/useAuth'
 import { apiErrorMessage, cn, formatDate } from '@/lib/utils'
 import styles from './ReportPanel.module.css'
 
@@ -25,6 +26,7 @@ import styles from './ReportPanel.module.css'
  */
 export function ReportLauncher({ clientId, clientName }: { clientId: string | null; clientName?: string }) {
   const [open, setOpen] = useState(false)
+  const plan = useAuth((s) => s.user?.plan)
   return (
     <>
       <button
@@ -36,9 +38,38 @@ export function ReportLauncher({ clientId, clientName }: { clientId: string | nu
         <FileText size={15} aria-hidden="true" /> Report
       </button>
       {open && clientId && (
-        <ReportPanel clientId={clientId} clientName={clientName ?? ''} onClose={() => setOpen(false)} />
+        // Starter sees what reports are rather than a disabled button: clearer
+        // than guessing why it does nothing, and the moment to show what Pro adds.
+        plan === 'STARTER'
+          ? <UpgradePanel onClose={() => setOpen(false)} />
+          : <ReportPanel clientId={clientId} clientName={clientName ?? ''} onClose={() => setOpen(false)} />
       )}
     </>
+  )
+}
+
+/**
+ * Starter agencies see what reports are, and that they come with Pro. A
+ * separate component rather than an early return in ReportPanel, whose hooks
+ * must run in the same order on every render.
+ */
+function UpgradePanel({ onClose }: { onClose: () => void }) {
+  return (
+    <div className={styles.overlay} onClick={onClose}>
+      <aside className={styles.panel} onClick={(e) => e.stopPropagation()} aria-label="Report">
+        <header className={styles.head}>
+          <h2 className={styles.title}>Report</h2>
+          <button type="button" className={styles.close} onClick={onClose} aria-label="Close">
+            <X size={18} />
+          </button>
+        </header>
+        <p>Monthly client reports are included from the <strong>Pro</strong> plan.</p>
+        <p className={styles.hint}>
+          Each report covers a calendar month in English, Thai, Burmese or Lao, with the month&apos;s
+          figures, a summary your team approves, and a PDF ready to send.
+        </p>
+      </aside>
+    </div>
   )
 }
 
